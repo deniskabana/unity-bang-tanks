@@ -8,87 +8,42 @@ using UnityEngine.U2D;
 [ExecuteInEditMode]
 public class TerrainGenerator : MonoBehaviour
 {
+    [Header("Terrain Settings")]
+    [SerializeField, Range(3f, 100f)] private float terrainWidth = 25;
+    [SerializeField, Range(3f, 100f)] private float terrainHeight = 8;
+    [SerializeField, Range(0.01f, 1)] private float minHeightFactor = 0.15f;
+    [SerializeField, Range(0.01f, 1)] private float maxHeightFactor = 0.9f;
+    [SerializeField, Range(0, 6)] private int hillCount = 3;
+    [SerializeField, Range(1, 80)] private int resolution = 50;
+    [Header("References")]
     [SerializeField] private SpriteShapeController spriteShapeController;
-    [SerializeField, Range(3f, 100f)] private int levelLength = 50;
-    [SerializeField, Range(1f, 50f)] private int xMultiplier = 2;
-    [SerializeField, Range(1f, 50f)] private int yMultiplier = 2;
-    [SerializeField, Range(0f, 1f)] private float curveSmoothness = 0.5f;
-    [SerializeField] private float noiseStep = 0.5f;
-    [SerializeField] private float bottom = 10f;
+    [Header("Debug")]
+    [SerializeField] private bool showAdvancedGizmos = false;
 
-    private Vector3 lastPosition;
+    // Private variables
+    // --------------------------------------------------
+
+    private struct Explosion
+    {
+        public float radius;
+        public float x;
+        public float y;
+
+        public Explosion(float radius, float x, float y)
+        {
+            this.radius = radius;
+            this.x = x;
+            this.y = y;
+        }
+    }
+    private List<Explosion> explosions = new List<Explosion>();
+
+    // Built-in methods
+    // --------------------------------------------------
 
     private void OnValidate()
     {
-        noiseStep = Random.Range(0.1f, 3f);
-        spriteShapeController.spline.Clear();
-
-        for (int i = 0; i < levelLength; i++)
-        {
-            lastPosition = transform.position + new Vector3(i * xMultiplier, Mathf.PerlinNoise(transform.position.y, transform.position.y + i * noiseStep) * yMultiplier);
-            spriteShapeController.spline.InsertPointAt(i, lastPosition);
-
-            if (i > 0)
-            {
-                spriteShapeController.spline.SetTangentMode(i, ShapeTangentMode.Continuous);
-                spriteShapeController.spline.SetLeftTangent(i, Vector3.left * xMultiplier * curveSmoothness);
-                spriteShapeController.spline.SetRightTangent(i, Vector3.right * xMultiplier * curveSmoothness);
-            }
-        }
-
-        spriteShapeController.spline.InsertPointAt(levelLength, new Vector3(lastPosition.x, transform.position.y - bottom));
-        spriteShapeController.spline.InsertPointAt(levelLength + 1, new Vector3(transform.position.x, transform.position.y - bottom));
-    }
-
-    public void Generate()
-    {
-        OnValidate();
-    }
-
-    public void CreateHole(float radius, float xPosition)
-    {
-        int pointCount = 20; // Number of points to approximate the circle
-        float angleStep = 360f / pointCount;
-        List<Vector3> newPoints = new List<Vector3>();
-
-        // Find the y position at the given x position
-        float yPosition = 0f;
-        for (int i = 0; i < spriteShapeController.spline.GetPointCount(); i++)
-        {
-            Vector3 point = spriteShapeController.spline.GetPosition(i);
-            if (Mathf.Approximately(point.x, xPosition))
-            {
-                yPosition = point.y;
-                break;
-            }
-        }
-
-        // Generate points for the circular hole
-        for (int i = 0; i < pointCount; i++)
-        {
-            float angle = Mathf.Deg2Rad * (i * angleStep);
-            float x = xPosition + Mathf.Cos(angle) * radius;
-            float y = yPosition + Mathf.Sin(angle) * radius;
-            newPoints.Add(new Vector3(x, y));
-        }
-
-        // Insert new points into the spline
-        foreach (var newPoint in newPoints)
-        {
-            spriteShapeController.spline.InsertPointAt(spriteShapeController.spline.GetPointCount(), newPoint);
-        }
-
-        // Ensure the tangents are set correctly for smoothness
-        for (int i = 0; i < spriteShapeController.spline.GetPointCount(); i++)
-        {
-            spriteShapeController.spline.SetTangentMode(i, ShapeTangentMode.Continuous);
-            spriteShapeController.spline.SetLeftTangent(i, Vector3.left * xMultiplier * curveSmoothness);
-            spriteShapeController.spline.SetRightTangent(i, Vector3.right * xMultiplier * curveSmoothness);
-        }
-    }
-
-    void Start()
-    {
+        GenerateTerrain();
     }
 
     void Update()
@@ -97,11 +52,120 @@ public class TerrainGenerator : MonoBehaviour
         {
             Debug.Log("Mouse down detected!");
             Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Collider2D collider = Physics2D.OverlapPoint(mousePosition);
-            if (collider != null && collider.gameObject == gameObject)
+            HandleExplosion(0.8f, mousePosition.x, mousePosition.y);
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (!showAdvancedGizmos) return;
+        if (spriteShapeController == null) return;
+
+        Spline spline = spriteShapeController.spline;
+        int pointCount = spline.GetPointCount();
+
+        // Set Gizmos color to uncolored (white)
+        Gizmos.color = Color.white;
+
+        // Get the position offset of the Sprite Shape
+        Vector3 offset = spriteShapeController.transform.position;
+
+        // Draw a small circle at each point's position
+        for (int i = 0; i < pointCount; i++)
+        {
+            Vector3 pointPosition = spline.GetPosition(i) + offset;
+            Gizmos.DrawWireSphere(pointPosition, 0.1f); // Adjust the radius (0.1f) as needed
+        }
+
+        // Draw lines between the points to visualize the spline
+        Gizmos.color = Color.white;
+        for (int i = 0; i < pointCount - 1; i++)
+        {
+            Vector3 startPoint = spline.GetPosition(i) + offset;
+            Vector3 endPoint = spline.GetPosition(i + 1) + offset;
+            Gizmos.DrawLine(startPoint, endPoint);
+        }
+
+        // Draw a Gizmo circle for each explosion in the list
+        Gizmos.color = Color.red;
+        foreach (var explosion in explosions)
+        {
+            Gizmos.DrawWireSphere(new Vector3(explosion.x, explosion.y, 0), explosion.radius);
+        }
+
+        // Draw Gizmos for explosion affected points
+        if (explosions.Count == 0) return;
+
+        foreach (var explosion in explosions)
+        {
+            bool foundAffectedPoints = false;
+            Vector3 explosionPosition = new Vector3(explosion.x, explosion.y, 0);
+            Debug.Log($"Explosion position (world space): {explosionPosition}");
+
+            for (int i = 0; i < pointCount; i++)
             {
-                Debug.Log("Mouse down detected on terrain!");
+                Vector3 point = spriteShapeController.transform.TransformPoint(spline.GetPosition(i));
+                float distanceToExplosion = Vector2.Distance(new Vector2(point.x, point.y), new Vector2(explosionPosition.x, explosionPosition.y));
+
+                if (distanceToExplosion <= explosion.radius + 0.01f)
+                {
+                    foundAffectedPoints = true;
+                    Gizmos.color = Color.yellow;
+                    Gizmos.DrawSphere(point, 0.05f);
+                }
+            }
+
+            if (!foundAffectedPoints)
+            {
+                // TODO: if necessary
             }
         }
+    }
+
+    // Custom methods
+    // --------------------------------------------------
+
+    public void HandleExplosion(float explosionRadius, float explosionX, float explosionY)
+    {
+        // Step 1: Store the explosion data
+        explosions.Add(new Explosion(explosionRadius, explosionX, explosionY));
+        Debug.Log($"Explosion added at ({explosionX}, {explosionY}) with radius {explosionRadius}");
+    }
+
+    public void GenerateTerrain()
+    {
+        // Clear existing terrain points
+        Spline spline = spriteShapeController.spline;
+        spline.Clear();
+
+        // Calculate noise scale
+        float noiseScale = hillCount / (float)terrainWidth; // Ensures smooth hills
+
+        // Adjusted height range
+        float minHeight = terrainHeight * minHeightFactor; // Minimum height (adjust as needed)
+        float maxHeight = terrainHeight * maxHeightFactor; // Maximum height (adjust as needed)
+
+        // Generate terrain points
+        for (int i = 0; i <= resolution; i++)
+        {
+            float t = i / (float)resolution; // Normalized value from 0 to 1
+            float x = t * terrainWidth; // X position across the entire width
+
+            // Use Perlin noise to generate smooth Y values for hills
+            float noiseValue = Mathf.PerlinNoise(x * noiseScale, 0f);
+            float y = Mathf.Lerp(minHeight, maxHeight, noiseValue);
+
+            // Insert point into the Sprite Shape spline
+            spline.InsertPointAt(i, new Vector3(x, y, 0));
+            spline.SetTangentMode(i, ShapeTangentMode.Continuous);
+        }
+
+        // Close the terrain by adding the last two points (left and right bottom edges)
+        spline.InsertPointAt(resolution + 1, new Vector3(terrainWidth, 0, 0));
+        spline.InsertPointAt(resolution + 2, new Vector3(0, 0, 0));
+        spline.InsertPointAt(0, new Vector3(0 / (float)resolution * terrainWidth, 0.01f, 0));
+
+        // Refresh the Sprite Shape to apply the changes
+        spriteShapeController.RefreshSpriteShape();
     }
 }
