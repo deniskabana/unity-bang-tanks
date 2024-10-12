@@ -44,24 +44,12 @@ public class TerrainGenerator : MonoBehaviour
     private void OnValidate()
     {
         GenerateTerrain();
-
-        // DEBUG
-        Spline spline = spriteShapeController.spline;
-        int pointCount = spline.GetPointCount();
-        Debug.Log($"Spline has {pointCount} points.");
-
-        for (int i = 0; i < pointCount; i++)
-        {
-            Vector3 point = spline.GetPosition(i);
-            Debug.Log($"Point {i}: (X: {point.x}, Y: {point.y})");
-        }
     }
 
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log("Mouse down detected!");
             Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             HandleExplosion(0.8f, mousePosition.x, mousePosition.y);
         }
@@ -109,14 +97,10 @@ public class TerrainGenerator : MonoBehaviour
 
         foreach (var explosion in explosions)
         {
-            bool foundAffectedPoints = false;
             Vector3 explosionPosition = new Vector3(explosion.x, explosion.y, 0);
-            Vector3 terrainPosition = transform.position;
-            Vector3 explosionLocalPosition = new Vector3(explosion.x, explosion.y, 0) - transform.position;
+            // Vector3 terrainPosition = transform.position;
+            // Vector3 explosionLocalPosition = new Vector3(explosion.x, explosion.y, 0) - transform.position;
 
-
-            // Log the adjusted positions
-            Debug.Log($"Explosion (world): {explosionPosition}, Explosion (local): {explosionLocalPosition}");
 
             for (int i = 0; i < pointCount; i++)
             {
@@ -125,74 +109,15 @@ public class TerrainGenerator : MonoBehaviour
 
                 if (distanceToExplosion <= explosion.radius + 0.01f)
                 {
-                    foundAffectedPoints = true;
                     Gizmos.color = Color.yellow;
                     Gizmos.DrawSphere(point, 0.1f);
                 }
-            }
-
-            float leftEdge = explosionLocalPosition.x - explosion.radius;
-            float rightEdge = explosionLocalPosition.x + explosion.radius;
-            Debug.Log($"Adjusted Explosion Local Position: {explosionLocalPosition}, Left edge X: {leftEdge}, Right edge X: {rightEdge}");
-            float leftY = GetLinearInterpolatedY(spline, leftEdge);
-            float rightY = GetLinearInterpolatedY(spline, rightEdge);
-            Debug.Log($"Interpolated Y for left edge: {leftY}, right edge: {rightY}");
-
-            Vector3 leftPointWorld = new Vector3(leftEdge, leftY, 0) + transform.position;
-            Vector3 rightPointWorld = new Vector3(rightEdge, rightY, 0) + transform.position;
-
-
-            // Draw blue Gizmos at the positions where the new points would be added
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawSphere(leftPointWorld, 0.1f);
-            Gizmos.DrawSphere(rightPointWorld, 0.1f);
-
-            if (!foundAffectedPoints)
-            {
-                // TODO: if necessary
             }
         }
     }
 
     // Custom methods
     // --------------------------------------------------
-
-    private float GetLinearInterpolatedY(Spline spline, float xPosition)
-    {
-        int pointCount = spline.GetPointCount();
-
-        // Find the two points surrounding the xPosition
-        for (int i = 0; i < pointCount - 1; i++)
-        {
-            Vector3 p1 = spline.GetPosition(i);
-            Vector3 p2 = spline.GetPosition(i + 1);
-
-            if (p1.x <= xPosition && p2.x >= xPosition)
-            {
-                // Perform linear interpolation between p1 and p2
-                float t = (xPosition - p1.x) / (p2.x - p1.x);
-                float interpolatedY = Mathf.Lerp(p1.y, p2.y, t);
-                Debug.Log($"Linear interpolation between ({p1.x}, {p1.y}) and ({p2.x}, {p2.y}), result: {interpolatedY}");
-                return interpolatedY;
-            }
-        }
-
-        // If xPosition is outside the range of the spline, return the nearest endpoint's Y
-        if (xPosition < spline.GetPosition(0).x)
-        {
-            Debug.LogWarning($"xPosition {xPosition} is before the first point. Using Y: {spline.GetPosition(0).y}");
-            return spline.GetPosition(0).y;
-        }
-        else if (xPosition > spline.GetPosition(pointCount - 1).x)
-        {
-            Debug.LogWarning($"xPosition {xPosition} is after the last point. Using Y: {spline.GetPosition(pointCount - 1).y}");
-            return spline.GetPosition(pointCount - 1).y;
-        }
-
-        // In case something goes wrong (shouldn't happen)
-        Debug.LogError("Failed to interpolate Y value.");
-        return 0;
-    }
 
     public void HandleExplosion(float explosionRadius, float explosionX, float explosionY)
     {
