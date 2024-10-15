@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.U2D;
@@ -9,156 +10,130 @@ using UnityEngine.U2D;
 public class TerrainGenerator : MonoBehaviour
 {
     [Header("Terrain Settings")]
-    [SerializeField, Range(3f, 100f)] private float terrainWidth = 25;
-    [SerializeField, Range(3f, 100f)] private float terrainHeight = 8;
-    [SerializeField, Range(0.01f, 1)] private float minHeightFactor = 0.15f;
-    [SerializeField, Range(0.01f, 1)] private float maxHeightFactor = 0.9f;
-    [SerializeField, Range(0, 6)] private int hillCount = 3;
-    [SerializeField, Range(1, 80)] private int resolution = 50;
-    [Header("References")]
-    [SerializeField] private SpriteShapeController spriteShapeController;
+    [SerializeField] private int numberOfPoints = 50;
+    [SerializeField] private float terrainWidth = 20f;
+    [SerializeField] private float maxHeight = 5f;
+    [SerializeField] private float noiseScale = 0.2f;
+    [SerializeField] private float noiseScaleRandomFactor = 2f;
+
     [Header("Debug")]
     [SerializeField] private bool showAdvancedGizmos = false;
 
     // Private variables
     // --------------------------------------------------
 
-    private struct Explosion
-    {
-        public float radius;
-        public float x;
-        public float y;
-
-        public Explosion(float radius, float x, float y)
-        {
-            this.radius = radius;
-            this.x = x;
-            this.y = y;
-        }
-    }
-    private List<Explosion> explosions = new List<Explosion>();
+    private List<Vector3> splinePoints = new List<Vector3>();
+    private float randomizedNoiseScale;
+    private float xOffset;
 
     // Built-in methods
     // --------------------------------------------------
 
-    private void OnValidate()
+    void Start()
     {
-        GenerateTerrain();
+        Initialize();
     }
 
-    void Update()
+    void OnValidate()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            HandleExplosion(0.8f, mousePosition.x, mousePosition.y);
-        }
+        Initialize();
     }
 
-    private void OnDrawGizmos()
+    void OnDrawGizmos()
     {
         if (!showAdvancedGizmos) return;
-        if (spriteShapeController == null) return;
+        if (splinePoints == null || splinePoints.Count == 0) return;
 
-        Spline spline = spriteShapeController.spline;
-        int pointCount = spline.GetPointCount();
-
-        // Set Gizmos color to uncolored (white)
         Gizmos.color = Color.white;
 
-        // Get the position offset of the Sprite Shape
-        Vector3 offset = spriteShapeController.transform.position;
-
-        // Draw a small circle at each point's position
-        for (int i = 0; i < pointCount; i++)
+        // Draw a sphere at each spline point
+        foreach (var point in splinePoints)
         {
-            Vector3 pointPosition = spline.GetPosition(i) + offset;
-            Gizmos.DrawWireSphere(pointPosition, 0.1f); // Adjust the radius (0.1f) as needed
+            Gizmos.DrawWireSphere(point, 0.15f);
         }
 
-        // Draw lines between the points to visualize the spline
-        Gizmos.color = Color.white;
-        for (int i = 0; i < pointCount - 1; i++)
+        // Draw connecting lines between the points
+        for (int i = 0; i < splinePoints.Count - 1; i++)
         {
-            Vector3 startPoint = spline.GetPosition(i) + offset;
-            Vector3 endPoint = spline.GetPosition(i + 1) + offset;
-            Gizmos.DrawLine(startPoint, endPoint);
+            Gizmos.DrawLine(splinePoints[i], splinePoints[i + 1]);
         }
 
-        // Draw a Gizmo circle for each explosion in the list
-        Gizmos.color = Color.red;
-        foreach (var explosion in explosions)
-        {
-            Gizmos.DrawWireSphere(new Vector3(explosion.x, explosion.y, 0), explosion.radius);
-        }
-
-        // Draw Gizmos for explosion affected points
-        if (explosions.Count == 0) return;
-
-        foreach (var explosion in explosions)
-        {
-            Vector3 explosionPosition = new Vector3(explosion.x, explosion.y, 0);
-            // Vector3 terrainPosition = transform.position;
-            // Vector3 explosionLocalPosition = new Vector3(explosion.x, explosion.y, 0) - transform.position;
-
-
-            for (int i = 0; i < pointCount; i++)
-            {
-                Vector3 point = spriteShapeController.transform.TransformPoint(spline.GetPosition(i));
-                float distanceToExplosion = Vector2.Distance(new Vector2(point.x, point.y), new Vector2(explosionPosition.x, explosionPosition.y));
-
-                if (distanceToExplosion <= explosion.radius + 0.01f)
-                {
-                    Gizmos.color = Color.yellow;
-                    Gizmos.DrawSphere(point, 0.1f);
-                }
-            }
-        }
     }
 
     // Custom methods
     // --------------------------------------------------
 
-    public void HandleExplosion(float explosionRadius, float explosionX, float explosionY)
+    void Initialize()
     {
-        // Step 1: Store the explosion data
-        explosions.Add(new Explosion(explosionRadius, explosionX, explosionY));
-        Debug.Log($"Explosion added at ({explosionX}, {explosionY}) with radius {explosionRadius}");
+        // Randomize the noise scale to create different terrain each time
+        randomizedNoiseScale = Random.Range(noiseScale / noiseScaleRandomFactor, noiseScale * noiseScaleRandomFactor);
+        xOffset = Random.Range(0f, 100f); // Random offset to avoid repetitive starting terrain behavior
+
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        // Debug check the assigned sprite
+        Debug.Log("Assigned Sprite: " + spriteRenderer.sprite.name);
+
+        // Debug check the assigned material
+        Debug.Log("Assigned Material: " + spriteRenderer.material.name);
+
+        GenerateTerrainSpline();
     }
 
-    public void GenerateTerrain()
+    void GenerateTerrainSpline()
     {
-        // Clear existing terrain points
-        Spline spline = spriteShapeController.spline;
-        spline.Clear();
+        splinePoints.Clear();
+        float spacing = terrainWidth / (numberOfPoints - 1);
 
-        // Calculate noise scale
-        float noiseScale = hillCount / (float)terrainWidth; // Ensures smooth hills
-
-        // Adjusted height range
-        float minHeight = terrainHeight * minHeightFactor; // Minimum height (adjust as needed)
-        float maxHeight = terrainHeight * maxHeightFactor; // Maximum height (adjust as needed)
-
-        // Generate terrain points
-        for (int i = 0; i <= resolution; i++)
+        for (int i = 0; i < numberOfPoints; i++)
         {
-            float t = i / (float)resolution; // Normalized value from 0 to 1
-            float x = t * terrainWidth; // X position across the entire width
+            float xPos = i * spacing;
 
-            // Use Perlin noise to generate smooth Y values for hills
-            float noiseValue = Mathf.PerlinNoise(x * noiseScale, 0f);
-            float y = Mathf.Lerp(minHeight, maxHeight, noiseValue);
+            // Use Perlin noise with randomization and offset to generate terrain heights
+            float yPos = Mathf.PerlinNoise((xPos * randomizedNoiseScale) + xOffset, 0) * maxHeight;
 
-            // Insert point into the Sprite Shape spline
-            spline.InsertPointAt(i, new Vector3(x, y, 0));
-            spline.SetTangentMode(i, ShapeTangentMode.Continuous);
+            splinePoints.Add(new Vector3(xPos, yPos, 0));
         }
 
-        // Properly close the terrain at both ends
-        spline.InsertPointAt(spline.GetPointCount(), new Vector3(terrainWidth, 0, 0)); // Right bottom edge
-        spline.InsertPointAt(spline.GetPointCount(), new Vector3(0, 0, 0)); // Left bottom edge
+        // Use Catmull-Rom smoothing for a better curve
+        splinePoints = GenerateCatmullRomSpline(splinePoints);
+    }
 
-        // Refresh the Sprite Shape to apply the changes
-        spriteShapeController.RefreshSpriteShape();
+    // Catmull-Rom spline interpolation for smoother curves
+    private List<Vector3> GenerateCatmullRomSpline(List<Vector3> points)
+    {
+        List<Vector3> smoothPoints = new List<Vector3>();
+
+        for (int i = 0; i < points.Count - 1; i++)
+        {
+            Vector3 p0 = (i == 0) ? points[i] : points[i - 1]; // Handle boundary case
+            Vector3 p1 = points[i];
+            Vector3 p2 = points[i + 1];
+            Vector3 p3 = (i + 2 < points.Count) ? points[i + 2] : points[i + 1]; // Handle boundary case
+
+            // Interpolate between points p1 and p2 with tangents
+            smoothPoints.Add(p1); // Add the first point directly
+            for (int t = 1; t <= 10; t++) // Increase 10 for more smoothness
+            {
+                float tNorm = t / 10f;
+                smoothPoints.Add(CatmullRom(p0, p1, p2, p3, tNorm));
+            }
+        }
+
+        smoothPoints.Add(points[points.Count - 1]); // Add the last point directly
+        return smoothPoints;
+    }
+
+    // Catmull-Rom spline interpolation formula
+    private Vector3 CatmullRom(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t)
+    {
+        // Catmull-Rom spline calculation using 4 control points
+        float t2 = t * t;
+        float t3 = t2 * t;
+
+        return 0.5f * (
+            (2 * p1) +
+            (-p0 + p2) * t +
+            (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 +
+            (-p0 + 3 * p1 - 3 * p2 + p3) * t3);
     }
 }
