@@ -123,6 +123,7 @@ public class TerrainTextureGenerator : MonoBehaviour
         // Debug: Check if the texture is sampled correctly
         Debug.Log("Texture generated. First pixel sampled from high-res texture: " + terrainTexture.GetPixel(0, 0));
 
+        if (!Application.isPlaying) return;
         ApplyTextureToSpriteRenderer();  // Apply the texture as a sprite to the SpriteRenderer
     }
 
