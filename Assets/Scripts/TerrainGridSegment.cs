@@ -13,11 +13,7 @@ public class TerrainGridSegment : MonoBehaviour
 
     void OnDestroy()
     {
-        if (terrainCollider != null)
-        {
-            Destroy(terrainCollider);
-            terrainCollider = null;
-        }
+        DestroyCollider();
     }
 
     public void UpdateCollider(Sprite newSprite = null)
@@ -33,8 +29,15 @@ public class TerrainGridSegment : MonoBehaviour
         spriteRenderer.enabled = true;
         if (newSprite != null) spriteRenderer.sprite = newSprite;
         terrainCollider = gameObject.AddComponent<PolygonCollider2D>();
-        // Create a new PolygonCollider2D based on alpha cutoff (use the alpha channel in the texture to avoid transparency artifacts)
-        terrainCollider.autoTiling = false;
         spriteRenderer.enabled = false;
+    }
+
+    public void DestroyCollider()
+    {
+        if (terrainCollider != null)
+        {
+            Destroy(terrainCollider);
+            terrainCollider = null;
+        }
     }
 }

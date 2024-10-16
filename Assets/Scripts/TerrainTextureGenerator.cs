@@ -91,7 +91,7 @@ public class TerrainTextureGenerator : MonoBehaviour
         heightmapTexture.Apply();
 
         // Set the sprite for the heightmap mask object
-        heightmapMaskObject.GetComponent<SpriteMask>().sprite = Sprite.Create(heightmapTexture, new Rect(0, 0, textureWidth, textureHeight), new Vector2(0, 0), pixelsPerUnit);
+        heightmapMaskObject.GetComponent<SpriteMask>().sprite = Sprite.Create(heightmapTexture, new Rect(0, 0, textureWidth, textureHeight), new Vector2(0.5f, 0.5f), pixelsPerUnit);
 
         // Ensure the heightmapMaskObject retains the same size and position as the texture
         heightmapMaskObject.transform.position = gridParentObject.transform.position;
@@ -140,11 +140,17 @@ public class TerrainTextureGenerator : MonoBehaviour
 
                 // Create texture for the current segment and assign it
                 Texture2D spriteForCurrentSegment = CreateTextureForSegment(xCursor, yCursor);
-                spriteForCurrentSegment.filterMode = FilterMode.Point;
+                // spriteForCurrentSegment.filterMode = FilterMode.Point;
                 Sprite segmentSprite = Sprite.Create(spriteForCurrentSegment, new Rect(0, 0, terrainGridCellSize, terrainGridCellSize), new Vector2(0.5f, 0.5f), pixelsPerUnit);
                 gridSegment.GetComponent<TerrainGridSegment>().UpdateCollider(segmentSprite);
             }
         }
+
+        // Align the grid with the heightmap mask object
+        gridParentObject.transform.position = new Vector3(
+            -textureWidth / 2 / pixelsPerUnit + terrainGridCellSize / 2 / pixelsPerUnit,
+            -textureHeight / 2 / pixelsPerUnit + terrainGridCellSize / 2 / pixelsPerUnit,
+            0);
     }
 
     Texture2D CreateTextureForSegment(int xCursor, int yCursor)
