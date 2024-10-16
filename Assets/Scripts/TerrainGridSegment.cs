@@ -33,6 +33,8 @@ public class TerrainGridSegment : MonoBehaviour
         spriteRenderer.enabled = true;
         if (newSprite != null) spriteRenderer.sprite = newSprite;
         terrainCollider = gameObject.AddComponent<PolygonCollider2D>();
-        // spriteRenderer.enabled = false;
+        // Create a new PolygonCollider2D based on alpha cutoff (use the alpha channel in the texture to avoid transparency artifacts)
+        terrainCollider.autoTiling = false;
+        spriteRenderer.enabled = false;
     }
 }
