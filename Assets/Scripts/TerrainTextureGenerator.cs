@@ -1,9 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class TerrainTextureGenerator : MonoBehaviour
 {
@@ -14,10 +9,12 @@ public class TerrainTextureGenerator : MonoBehaviour
     [SerializeField] float heightMultiplier = 600f; // Controls the maximum height
 
     [Header("References")]
-    // [SerializeField] SpriteRenderer spriteRenderer; // The 2D SpriteRenderer to display the texture
-    [SerializeField] GameObject terrainGridPrefab; // The 2D SpriteRenderer to display the texture
+    [SerializeField] GameObject gridParentObject;
+    [SerializeField] GameObject heightmapMaskObject;
+    [SerializeField] GameObject terrainGridPrefab;
 
     [Header("Advanced terrain settings")]
+    [SerializeField] float pixelsPerUnit = 32f;
     [SerializeField] float minRandomOffset = 0; // The maximum random offset for Perlin noise
     [SerializeField] float maxRandomOffset = 1000f; // The maximum random offset for Perlin noise
     [SerializeField, Range(2, 512)] int terrainGridCellSize = 32; // Size in pixels by which we will subdivide the terrain
@@ -26,6 +23,7 @@ public class TerrainTextureGenerator : MonoBehaviour
     // --------------------------------------------------
 
     private float[] heightmap;
+    private Texture2D heightmapTexture;
 
     // Built-in methods
     // --------------------------------------------------
@@ -46,12 +44,14 @@ public class TerrainTextureGenerator : MonoBehaviour
     void Initialize()
     {
         // Step 1: Generate the Perlin noise-based heightmap
-        GenerateHeightmap();
-        // Step 2: Render the heightmap as a texture
+        GenerateHeightmapData();
+        // Step 2: Generate a single big texture based on the heightmap
+        GenerateHeightmapTexture();
+        // Step 3: Create a grid of terrain segments based on the heightmap
         GenerateTerrainGridTextured();
     }
 
-    void GenerateHeightmap()
+    void GenerateHeightmapData()
     {
         heightmap = new float[textureWidth];
         float randomOffset = Random.Range(minRandomOffset, maxRandomOffset); // The range can be adjusted to vary the terrain more or less
@@ -64,13 +64,55 @@ public class TerrainTextureGenerator : MonoBehaviour
         }
     }
 
+    void GenerateHeightmapTexture()
+    {
+        heightmapTexture = new Texture2D(textureWidth, textureHeight, TextureFormat.RGBA32, false);
+        Color[] pixelColorList = new Color[textureWidth * textureHeight];
+
+        // Generate the heightmap texture based on the heightmap data
+        for (int x = 0; x < textureWidth; x++)
+        {
+            for (int y = 0; y < textureHeight; y++)
+            {
+                if (y < heightmap[x])
+                {
+                    pixelColorList[y * textureWidth + x] = Color.white;
+                }
+                else
+                {
+                    pixelColorList[y * textureWidth + x] = Color.clear;
+                }
+            }
+        }
+
+        heightmapTexture.SetPixels(pixelColorList);
+        heightmapTexture.Apply();
+
+        // Set the sprite for the heightmap mask object
+        heightmapMaskObject.GetComponent<SpriteMask>().sprite = Sprite.Create(heightmapTexture, new Rect(0, 0, textureWidth, textureHeight), new Vector2(0.5f, 0.5f), 1);
+
+        // Ensure the heightmapMaskObject retains the same size and position as the texture
+        heightmapMaskObject.transform.position = transform.position;
+
+        // Adjust the scale to match the texture size
+        float scaleX = textureWidth / heightmapMaskObject.GetComponent<SpriteMask>().sprite.bounds.size.x;
+        float scaleY = textureHeight / heightmapMaskObject.GetComponent<SpriteMask>().sprite.bounds.size.y;
+
+        // Adjust the scale to match the world units
+        float pixelsPerUnit = 32f; // Adjust this value based on your project's settings
+        heightmapMaskObject.transform.localScale = new Vector3(scaleX / pixelsPerUnit, scaleY / pixelsPerUnit, 1);
+
+        // Adjust the position to account for the texture's width and height
+        heightmapMaskObject.transform.position = new Vector3(
+            transform.position.x + (textureWidth / pixelsPerUnit) / 2,
+            transform.position.y + (textureHeight / pixelsPerUnit) / 2,
+            transform.position.z
+        );
+    }
+
     void GenerateTerrainGridTextured()
     {
-        if (terrainGridPrefab == null || heightmap == null)
-        {
-            Debug.LogError("TerrainTextureGenerator: Terrain grid prefab or heightmap not set!");
-            return;
-        }
+        if (terrainGridPrefab == null || heightmap == null || gridParentObject == null) return;
 
         // Calculate the grid width and height based on the terrain grid cell size
         int gridWidth = Mathf.CeilToInt(textureWidth / terrainGridCellSize);
@@ -98,25 +140,22 @@ public class TerrainTextureGenerator : MonoBehaviour
 
                 if (!isTerrain) continue;
 
-                GameObject terrainGridParent = GameObject.Find("TerrainGrid");
-                if (terrainGridParent == null) terrainGridParent = new GameObject("TerrainGrid");
-
                 // Position the grid segment to ensure no gaps
-                Vector3 terrainGridPosition = terrainGridParent.transform.position;
+                Vector3 terrainGridPosition = gridParentObject.transform.position;
                 Vector3 position = new Vector3(xCursor * segmentSize + terrainGridPosition.x, yCursor * segmentSize + terrainGridPosition.y, 0);
 
                 // Instantiate the grid segment prefab
-                GameObject gridSegment = Instantiate(terrainGridPrefab, position, Quaternion.identity, terrainGridParent.transform);
+                GameObject gridSegment = Instantiate(terrainGridPrefab, position, Quaternion.identity, gridParentObject.transform);
 
                 // Scale to match the segment size in world units (no extra scaling needed here)
                 gridSegment.transform.localScale = new Vector3(1, 1, 1);
 
                 // Create texture for the current segment and assign it
-                Texture2D spriteForCurrentSegment = CreateTextureForSegment(xCursor, yCursor);
-                gridSegment.GetComponent<SpriteMask>().sprite = Sprite.Create(spriteForCurrentSegment, new Rect(0, 0, terrainGridCellSize, terrainGridCellSize), new Vector2(0.5f, 0.5f), terrainGridCellSize);
 
-                // Update collider if needed
-                gridSegment.GetComponent<TerrainGridSegment>().UpdateCollider();
+                // TODO: UNCOMMENT
+                // Texture2D spriteForCurrentSegment = CreateTextureForSegment(xCursor, yCursor);
+                // gridSegment.GetComponent<SpriteMask>().sprite = Sprite.Create(spriteForCurrentSegment, new Rect(0, 0, terrainGridCellSize, terrainGridCellSize), new Vector2(0.5f, 0.5f), terrainGridCellSize);
+                // gridSegment.GetComponent<TerrainGridSegment>().UpdateCollider();
             }
         }
     }

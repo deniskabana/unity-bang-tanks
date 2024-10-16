@@ -1,7 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+[@RequireComponent(typeof(SpriteMask))]
 public class TerrainGridSegment : MonoBehaviour
 {
     private PolygonCollider2D terrainCollider;
