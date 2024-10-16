@@ -151,11 +151,9 @@ public class TerrainTextureGenerator : MonoBehaviour
                 gridSegment.transform.localScale = new Vector3(1, 1, 1);
 
                 // Create texture for the current segment and assign it
-
-                // TODO: UNCOMMENT
-                // Texture2D spriteForCurrentSegment = CreateTextureForSegment(xCursor, yCursor);
-                // gridSegment.GetComponent<SpriteMask>().sprite = Sprite.Create(spriteForCurrentSegment, new Rect(0, 0, terrainGridCellSize, terrainGridCellSize), new Vector2(0.5f, 0.5f), terrainGridCellSize);
-                // gridSegment.GetComponent<TerrainGridSegment>().UpdateCollider();
+                Texture2D spriteForCurrentSegment = CreateTextureForSegment(xCursor, yCursor);
+                Sprite segmentSprite = Sprite.Create(spriteForCurrentSegment, new Rect(0, 0, terrainGridCellSize, terrainGridCellSize), new Vector2(0.5f, 0.5f), pixelsPerUnit);
+                gridSegment.GetComponent<TerrainGridSegment>().UpdateCollider(segmentSprite);
             }
         }
     }
@@ -163,31 +161,17 @@ public class TerrainTextureGenerator : MonoBehaviour
     Texture2D CreateTextureForSegment(int xCursor, int yCursor)
     {
         Texture2D gridSegmentTexture = new Texture2D(terrainGridCellSize, terrainGridCellSize, TextureFormat.RGBA32, false);
-        Color[] pixelColorList = new Color[terrainGridCellSize * terrainGridCellSize];
 
-        // Generate the grid segment texture based on the heightmap
-        for (int x = 0; x < terrainGridCellSize; x++)
-        {
-            for (int y = 0; y < terrainGridCellSize; y++)
-            {
-                int heightmapX = xCursor * terrainGridCellSize + x;
-                int heightmapY = yCursor * terrainGridCellSize + y;
+        // Copy the pixels from the heightmapTexture to the grid segment texture
+        Color[] pixels = heightmapTexture.GetPixels(
+            xCursor * terrainGridCellSize,
+            yCursor * terrainGridCellSize,
+            terrainGridCellSize,
+            terrainGridCellSize
+        );
 
-                // Ensure we are within the bounds of the heightmap
-                if (heightmapX < heightmap.Length && heightmapY < heightmap[heightmapX])
-                {
-                    pixelColorList[y * terrainGridCellSize + x] = Color.white;
-                }
-                else
-                {
-                    pixelColorList[y * terrainGridCellSize + x] = Color.clear;
-                }
-            }
-        }
-
-        gridSegmentTexture.SetPixels(pixelColorList);
+        gridSegmentTexture.SetPixels(pixels);
         gridSegmentTexture.Apply();
         return gridSegmentTexture;
     }
-
 }

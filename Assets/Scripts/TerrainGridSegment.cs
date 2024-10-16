@@ -1,9 +1,10 @@
 using UnityEngine;
 
-[@RequireComponent(typeof(SpriteMask))]
+[@RequireComponent(typeof(SpriteRenderer))]
 public class TerrainGridSegment : MonoBehaviour
 {
     private PolygonCollider2D terrainCollider;
+    private SpriteRenderer spriteRenderer;
 
     void Start()
     {
@@ -19,20 +20,19 @@ public class TerrainGridSegment : MonoBehaviour
         }
     }
 
-    public void UpdateCollider()
+    public void UpdateCollider(Sprite newSprite = null)
     {
+        if (!spriteRenderer) spriteRenderer = GetComponent<SpriteRenderer>();
+
         if (terrainCollider != null)
         {
             Destroy(terrainCollider);
             terrainCollider = null;
         }
 
-        // Set sprite temporarily to make sure the collider is the same shape as the sprite
-        SpriteRenderer tempSpriteRenderer = gameObject.GetComponent<SpriteRenderer>();
-        if (tempSpriteRenderer == null) tempSpriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-        tempSpriteRenderer.sprite = GetComponent<SpriteMask>().sprite;
-
+        spriteRenderer.enabled = true;
+        if (newSprite != null) spriteRenderer.sprite = newSprite;
         terrainCollider = gameObject.AddComponent<PolygonCollider2D>();
-        Destroy(tempSpriteRenderer);
+        // spriteRenderer.enabled = false;
     }
 }
