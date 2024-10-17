@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class ExplosionManager : MonoBehaviour
 {
+    [Header("Explosion Visuals")]
+    [SerializeField] float maxSpriteLifetime = 0.25f;
+
+    [Header("References")]
     [SerializeField] private GameObject explosionPrefab;
-    [SerializeField] private GameObject spriteMaskPrefab;
 
     void Update()
     {
@@ -14,25 +17,37 @@ public class ExplosionManager : MonoBehaviour
             Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mousePosition.z = 0; // Set z to 0 since we are in 2D
             float radius = Random.Range(0.5f, 1.5f);
-            CreateExplosionVisual(radius, mousePosition);
-            CreateExplosionMask(radius, mousePosition);
+            CreateExplosion(radius, mousePosition);
         }
     }
 
-    public void CreateExplosionMask(float radius, Vector3 position)
+    public void CreateExplosion(float radius, Vector3 position)
     {
-        GameObject spriteMask = Instantiate(spriteMaskPrefab, position, Quaternion.identity);
-        spriteMask.transform.localScale = new Vector3(radius * 2, radius * 2, 1);
+        // Create explosion GameObject
+        GameObject explosion = Instantiate(explosionPrefab, position, Quaternion.identity);
+
+        // TODO: replace with animation / sprite / whatever
+        Sprite circleSprite = CreateCircleSprite(radius, Color.yellow);
+
+        // Add a SpriteRenderer component to the explosion and assign sprite
+        SpriteRenderer spriteRenderer = explosion.GetComponent<SpriteRenderer>();
+        spriteRenderer.sprite = circleSprite;
+        spriteRenderer.sortingOrder = 1; // Set sorting order to render above terrain and player
+
+        // Clear spriteRenderer.sprite after maxSpriteLifetime
+        StartCoroutine(ClearSpriteAfterDelay(spriteRenderer, maxSpriteLifetime)); // Clear sprite after a delay
+
+        // Create permanent terrain mask
+        Sprite spriteForMask = CreateCircleSprite(radius, Color.black);
+        SpriteMask spriteMaskComponent = explosion.GetComponent<SpriteMask>();
+        spriteMaskComponent.sprite = spriteForMask; // Assign the explosion sprite to the SpriteMask component to uncover terrain
     }
 
-    public void CreateExplosionVisual(float radius, Vector3 position)
+    private IEnumerator ClearSpriteAfterDelay(SpriteRenderer spriteRenderer, float delay)
     {
-        GameObject explosion = Instantiate(explosionPrefab, position, Quaternion.identity);
-        // Add a SpriteRenderer component to the explosion
-        SpriteRenderer spriteRenderer = explosion.AddComponent<SpriteRenderer>();
-        spriteRenderer.sprite = CreateCircleSprite(radius, Color.yellow); // Create and assign a yellow circle sprite
-        spriteRenderer.sortingOrder = 1; // Set sorting order to render above terrain and player
-        Destroy(explosion, 0.25f); // Destroy the explosion after 0.25 seconds
+        yield return new WaitForSeconds(delay);
+        spriteRenderer.sprite = null;
+        Destroy(spriteRenderer);
     }
 
     Sprite CreateCircleSprite(float radius, Color color)

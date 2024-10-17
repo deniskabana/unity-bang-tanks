@@ -471,6 +471,7 @@ GameObject:
   m_Component:
   - component: {fileID: 624826800}
   - component: {fileID: 624826799}
+  - component: {fileID: 624826801}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -505,6 +506,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &624826801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 624826798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf7dd60f65ff14b86949b48bc1620bca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  explosionPrefab: {fileID: 7781946742746118445, guid: a6ee80721016a43cab1eb217bee1d384, type: 3}
+  spriteMaskPrefab: {fileID: 0}
 --- !u!213 &920550662
 Sprite:
   m_ObjectHideFlags: 0
@@ -1149,7 +1164,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -2.71, y: 6.03, z: -1}
-  m_LocalScale: {x: 0.35, y: 0.35, z: 1}
+  m_LocalScale: {x: 0.15, y: 0.15, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 399212687}
