@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5614751257455353219}
   - component: {fileID: 5053960084914616681}
   - component: {fileID: 7615154678316935380}
+  - component: {fileID: 3026117634720536278}
   m_Layer: 0
   m_Name: TerrainGridSegmentPrefab
   m_TagString: Untagged
@@ -45,6 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 559ce1b3d0ba946d9955b79b6bbc76fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minPixelThreshold: 0.005
 --- !u!212 &7615154678316935380
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -97,3 +99,15 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &3026117634720536278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8154103436714464343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7e3a4a470e07450f90b4c65377ff2d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

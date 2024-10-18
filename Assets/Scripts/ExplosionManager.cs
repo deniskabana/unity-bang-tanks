@@ -34,6 +34,10 @@ public class ExplosionManager : MonoBehaviour
         spriteRenderer.sprite = circleSprite;
         spriteRenderer.sortingOrder = 1; // Set sorting order to render above terrain and player
 
+        // Set circle collider size to match the sprite size
+        CircleCollider2D circleCollider = explosion.GetComponent<CircleCollider2D>();
+        circleCollider.radius = radius;
+
         // Clear spriteRenderer.sprite after maxSpriteLifetime
         StartCoroutine(ClearSpriteAfterDelay(spriteRenderer, maxSpriteLifetime)); // Clear sprite after a delay
 
