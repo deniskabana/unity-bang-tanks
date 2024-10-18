@@ -92,6 +92,7 @@ public class TerrainTextureGenerator : MonoBehaviour
 
         // Set the sprite for the heightmap mask object
         SpriteRenderer heightmapSpriteRenderer = heightmapMaskObject.GetComponent<SpriteRenderer>();
+        heightmapSpriteRenderer.enabled = true;
         heightmapSpriteRenderer.material.SetTexture("_HeightMap", heightmapTexture);
 
         // Set the sprite renderer to the exact same bounds and size as the heightmapTexture
