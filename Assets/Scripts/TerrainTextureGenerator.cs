@@ -144,11 +144,15 @@ public class TerrainTextureGenerator : MonoBehaviour
                 // Instantiate the grid segment prefab
                 GameObject gridSegment = Instantiate(terrainGridPrefab, position, Quaternion.identity, gridParentObject.transform);
                 gridSegment.transform.localScale = new Vector3(1, 1, 1);
+                TerrainGridSegment gridSegmentScript = gridSegment.GetComponent<TerrainGridSegment>();
+                gridSegmentScript.pixelsPerUnit = pixelsPerUnit;
+                gridSegmentScript.terrainGridCellSize = terrainGridCellSize;
 
                 // Create texture for the current segment and assign it
-                Texture2D spriteForCurrentSegment = CreateTextureForSegment(xCursor, yCursor);
+                Texture2D textureForCurrentSegment = CreateTextureForSegment(xCursor, yCursor);
+
                 // spriteForCurrentSegment.filterMode = FilterMode.Point;
-                Sprite segmentSprite = Sprite.Create(spriteForCurrentSegment, new Rect(0, 0, terrainGridCellSize, terrainGridCellSize), new Vector2(0.5f, 0.5f), pixelsPerUnit);
+                Sprite segmentSprite = Sprite.Create(textureForCurrentSegment, new Rect(0, 0, terrainGridCellSize, terrainGridCellSize), new Vector2(0.5f, 0.5f), pixelsPerUnit);
                 gridSegment.GetComponent<TerrainGridSegment>().UpdateCollider(segmentSprite);
             }
         }

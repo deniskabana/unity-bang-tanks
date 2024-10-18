@@ -51,6 +51,7 @@ public class ExplosionManager : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         spriteRenderer.sprite = null;
+        gameObject.tag = "Untagged";
         Destroy(spriteRenderer);
     }
 

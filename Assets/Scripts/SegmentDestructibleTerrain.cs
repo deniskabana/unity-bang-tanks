@@ -41,6 +41,9 @@ public class SegmentDestructibleTerrain : MonoBehaviour
                 {
                     Destroy(gameObject);
                 }
+
+                TerrainGridSegment terrainGridSegment = GetComponent<TerrainGridSegment>();
+                terrainGridSegment.HandleExplosion(explosionCenter, explosionRadius);
             }
         }
     }
