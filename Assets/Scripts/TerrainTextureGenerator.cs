@@ -50,7 +50,7 @@ public class TerrainTextureGenerator : MonoBehaviour
         GenerateHeightmapTexture();
 
         // Step 3: Create a grid of terrain segments based on the heightmap
-        GenerateTerrainGridTextured();
+        GenerateTerrainGridColliders();
     }
 
     void GenerateHeightmapData()
@@ -88,21 +88,23 @@ public class TerrainTextureGenerator : MonoBehaviour
         }
 
         heightmapTexture.SetPixels(pixelColorList);
-        // heightmapTexture.filterMode = FilterMode.Point;
         heightmapTexture.Apply();
 
         // Set the sprite for the heightmap mask object
         SpriteRenderer heightmapSpriteRenderer = heightmapMaskObject.GetComponent<SpriteRenderer>();
-        // heightmapSpriteRenderer.sprite = Sprite.Create(heightmapTexture, new Rect(0, 0, textureWidth, textureHeight), new Vector2(0.5f, 0.5f), pixelsPerUnit);
-        // heightmapSpriteRenderer.sortingOrder = 1;
         heightmapSpriteRenderer.material.SetTexture("_HeightMap", heightmapTexture);
+
+        // Set the sprite renderer to the exact same bounds and size as the heightmapTexture
+        heightmapSpriteRenderer.size = new Vector2(textureWidth / pixelsPerUnit, textureHeight / pixelsPerUnit);
+        heightmapSpriteRenderer.bounds.SetMinMax(Vector3.zero, new Vector3(textureWidth / pixelsPerUnit, textureHeight / pixelsPerUnit, 0));
+        heightmapSpriteRenderer.drawMode = SpriteDrawMode.Sliced;
 
         // Ensure the heightmapMaskObject retains the same size and position as the texture
         heightmapMaskObject.transform.position = gridParentObject.transform.position;
         heightmapMaskObject.transform.localScale = new Vector3(1, 1, 1);
     }
 
-    void GenerateTerrainGridTextured()
+    void GenerateTerrainGridColliders()
     {
         if (terrainGridPrefab == null || heightmap == null || gridParentObject == null) return;
 
