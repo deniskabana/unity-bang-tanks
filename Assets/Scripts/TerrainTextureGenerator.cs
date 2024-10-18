@@ -88,10 +88,14 @@ public class TerrainTextureGenerator : MonoBehaviour
         }
 
         heightmapTexture.SetPixels(pixelColorList);
+        // heightmapTexture.filterMode = FilterMode.Point;
         heightmapTexture.Apply();
 
         // Set the sprite for the heightmap mask object
-        heightmapMaskObject.GetComponent<SpriteMask>().sprite = Sprite.Create(heightmapTexture, new Rect(0, 0, textureWidth, textureHeight), new Vector2(0.5f, 0.5f), pixelsPerUnit);
+        SpriteRenderer heightmapSpriteRenderer = heightmapMaskObject.GetComponent<SpriteRenderer>();
+        // heightmapSpriteRenderer.sprite = Sprite.Create(heightmapTexture, new Rect(0, 0, textureWidth, textureHeight), new Vector2(0.5f, 0.5f), pixelsPerUnit);
+        // heightmapSpriteRenderer.sortingOrder = 1;
+        heightmapSpriteRenderer.material.SetTexture("_HeightMap", heightmapTexture);
 
         // Ensure the heightmapMaskObject retains the same size and position as the texture
         heightmapMaskObject.transform.position = gridParentObject.transform.position;
