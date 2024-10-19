@@ -6,10 +6,14 @@ using UnityEngine;
 [@RequireComponent(typeof(TerrainGridSegment))]
 public class SegmentDestructibleTerrain : MonoBehaviour
 {
+    private List<int> handledExplosionIds = new List<int>();
+
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Explosion"))
         {
+            if (handledExplosionIds.Contains(other.GetInstanceID())) return;
+
             CircleCollider2D explosionCollider = other.GetComponent<CircleCollider2D>();
             if (explosionCollider != null)
             {
@@ -44,6 +48,7 @@ public class SegmentDestructibleTerrain : MonoBehaviour
 
                 TerrainGridSegment terrainGridSegment = GetComponent<TerrainGridSegment>();
                 terrainGridSegment.HandleExplosion(explosionCenter, explosionRadius);
+                handledExplosionIds.Add(other.GetInstanceID());
             }
         }
     }
