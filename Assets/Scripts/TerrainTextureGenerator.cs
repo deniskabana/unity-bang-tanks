@@ -94,6 +94,7 @@ public class TerrainTextureGenerator : MonoBehaviour
         SpriteRenderer heightmapSpriteRenderer = heightmapMaskObject.GetComponent<SpriteRenderer>();
         heightmapSpriteRenderer.enabled = true;
         heightmapSpriteRenderer.material.SetTexture("_HeightMap", heightmapTexture);
+        SetMaterialTextureTiling(heightmapSpriteRenderer.material, heightmapTexture, heightmapSpriteRenderer.sprite.texture);
 
         // Set the sprite renderer to the exact same bounds and size as the heightmapTexture
         heightmapSpriteRenderer.size = new Vector2(textureWidth / pixelsPerUnit, textureHeight / pixelsPerUnit);
@@ -179,5 +180,20 @@ public class TerrainTextureGenerator : MonoBehaviour
         gridSegmentTexture.SetPixels(pixels);
         gridSegmentTexture.Apply();
         return gridSegmentTexture;
+    }
+
+    void SetMaterialTextureTiling(Material material, Texture2D heightmapTexture, Texture2D texture)
+    {
+        // Get the texture width and height
+        float textureWidth = texture.width;
+        float textureHeight = texture.height;
+
+        // Calculate the tiling factors based on terrain size and texture size
+        float tilingX = heightmapTexture.width / textureWidth;
+        float tilingY = heightmapTexture.height / textureHeight;
+
+        // Set the tiling factors in the material (for MainTex only)
+        material.SetFloat("_TilingX", tilingX);
+        material.SetFloat("_TilingY", tilingY);
     }
 }
