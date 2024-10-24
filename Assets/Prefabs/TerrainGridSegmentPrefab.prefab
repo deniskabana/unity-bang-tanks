@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5053960084914616681}
   - component: {fileID: 7615154678316935380}
   - component: {fileID: 3026117634720536278}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: TerrainGridSegmentPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -47,6 +47,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minPixelThreshold: 0.005
+  pixelsPerUnit: 100
+  terrainGridCellSize: 32
 --- !u!212 &7615154678316935380
 SpriteRenderer:
   m_ObjectHideFlags: 0
