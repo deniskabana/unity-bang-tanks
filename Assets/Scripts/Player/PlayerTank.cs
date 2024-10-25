@@ -5,7 +5,6 @@ public class PlayerTank : MonoBehaviour
     [Header("Movement Settings")]
     [SerializeField] private float speed = 1f;  // Tank's horizontal speed
     [SerializeField] private float groundRaycastDistance = 0.15f;  // Small distance for ground detection
-    [SerializeField] private float slopeRaycastDistance = 0.25f;  // Distance to check for ground ahead
     [SerializeField] private float maxSlopeAngle = 60f;  // Maximum distance between jumps
     [SerializeField] private LayerMask groundLayer;  // Layer to detect ground
 
@@ -46,9 +45,6 @@ public class PlayerTank : MonoBehaviour
         Gizmos.color = Color.green;
         Gizmos.DrawLine(groundCheck.position, raycastOrigin.position + Vector3.down * groundRaycastDistance);
         Gizmos.DrawWireSphere(groundCheck.position, 0.05f);
-
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(raycastOrigin.position, slopeRaycastDistance);
     }
 
     // Custom methods
@@ -65,45 +61,17 @@ public class PlayerTank : MonoBehaviour
         RaycastHit2D groundHit = Physics2D.Raycast(raycastOrigin.position, Vector2.down, groundRaycastDistance * 100f, groundLayer);
         if (groundHit.collider == null) return;
 
-        // Cast a ray forward to detect the slope ahead
-        Vector2 forwardDirection = new Vector2(inputX, 0).normalized;
-        RaycastHit2D slopeHit = Physics2D.Raycast(raycastOrigin.position, forwardDirection, slopeRaycastDistance, groundLayer);
+        // Get the slope angle and movement direction
+        float slopeAngle = Vector2.Angle(groundHit.normal, Vector2.up);
+        bool isGoingUphill = (inputX > 0 && groundHit.normal.x < 0) || (inputX < 0 && groundHit.normal.x > 0);
 
-        float currentSpeed = speed;
+        // If going uphill and slope is too steep, prevent movement
+        if (isGoingUphill && slopeAngle > maxSlopeAngle) return;
 
-        if (slopeHit.collider != null)
-        {
-            // Calculate the actual slope angle considering movement direction
-            Vector2 slopeNormal = slopeHit.normal;
-            float slopeAngle = Vector2.Angle(slopeNormal, Vector2.up);
-
-            // Determine if we're going uphill or downhill
-            float slopeDirection = Vector2.Dot(forwardDirection, Vector2.right);
-            float normalDirection = Vector2.Dot(slopeNormal, Vector2.right);
-
-            bool isGoingUphill = (slopeDirection > 0 && normalDirection < 0) || (slopeDirection < 0 && normalDirection > 0);
-
-            if (isGoingUphill)
-            {
-                // Check if slope is too steep
-                if (slopeAngle > maxSlopeAngle) return;
-
-                // Optional: Reduce speed when going uphill
-                currentSpeed *= Mathf.Lerp(1f, 0.5f, slopeAngle / maxSlopeAngle);
-            }
-            else
-            {
-                // Increase speed when going downhill
-                currentSpeed *= downhillSpeedMultiplier;
-            }
-        }
-
-        // Update Y position to follow ground
+        // Snap to ground and move
         float y = groundHit.point.y + (raycastOrigin.position.y - groundCheck.position.y);
         transform.position = new Vector2(transform.position.x, y);
-
-        // Apply movement with adjusted speed
-        transform.Translate(inputX * currentSpeed * Time.deltaTime * Vector3.right);
+        transform.Translate(inputX * speed * Time.deltaTime * Vector3.right);
     }
 
     private void ApplyGravity()
