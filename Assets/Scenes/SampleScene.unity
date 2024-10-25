@@ -874,9 +874,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fc6485ff3244489e853f4ab7650927a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 2
-  groundRaycastDistance: 25
+  speed: 1.25
+  groundRaycastDistance: 0.15
   slopeRaycastDistance: 0.25
+  maxSlopeAngle: 60
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
