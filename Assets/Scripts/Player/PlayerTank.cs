@@ -3,7 +3,7 @@ using UnityEngine;
 public class PlayerTank : MonoBehaviour
 {
     [Header("Movement Settings")]
-    [SerializeField] private float speed = 1.25f;  // Tank's horizontal speed
+    [SerializeField] private float speed = 1f;  // Tank's horizontal speed
     [SerializeField] private float groundRaycastDistance = 0.15f;  // Small distance for ground detection
     [SerializeField] private float slopeRaycastDistance = 0.25f;  // Distance to check for ground ahead
     [SerializeField] private float maxSlopeAngle = 60f;  // Maximum distance between jumps
@@ -11,6 +11,8 @@ public class PlayerTank : MonoBehaviour
 
     [Header("Physics Settings")]
     [SerializeField] private float gravityForce = 9.8f;  // Custom gravity force
+    [SerializeField] private float downhillSpeedMultiplier = 1.5f; // Speed multiplier when going downhill
+
 
     [Header("References")]
     [SerializeField] private Transform groundCheck;  // Empty GameObject at the bottom of the tank for ground detection
@@ -39,6 +41,16 @@ public class PlayerTank : MonoBehaviour
         ApplyGravity();
     }
 
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(groundCheck.position, raycastOrigin.position + Vector3.down * groundRaycastDistance);
+        Gizmos.DrawWireSphere(groundCheck.position, 0.05f);
+
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(raycastOrigin.position, slopeRaycastDistance);
+    }
+
     // Custom methods
     // --------------------------------------------------
 
@@ -47,26 +59,51 @@ public class PlayerTank : MonoBehaviour
         // Read horizontal input (A/D or arrow keys)
         float inputX = Input.GetAxisRaw("Horizontal");
         isMoving = inputX != 0;
-        if (!isMoving) return;
-        if (!isGrounded) return; // if the tank is mid-air, don't move it
+        if (!isMoving || !isGrounded) return;
 
-        RaycastHit2D groundHit = Physics2D.Raycast(raycastOrigin.position, Vector2.down, groundRaycastDistance * 100f, groundLayer); // Super long raycast
+        // Cast a ray downward to find the ground
+        RaycastHit2D groundHit = Physics2D.Raycast(raycastOrigin.position, Vector2.down, groundRaycastDistance * 100f, groundLayer);
+        if (groundHit.collider == null) return;
 
-        if (groundHit.collider != null)
+        // Cast a ray forward to detect the slope ahead
+        Vector2 forwardDirection = new Vector2(inputX, 0).normalized;
+        RaycastHit2D slopeHit = Physics2D.Raycast(raycastOrigin.position, forwardDirection, slopeRaycastDistance, groundLayer);
+
+        float currentSpeed = speed;
+
+        if (slopeHit.collider != null)
         {
-            float y = groundHit.point.y + (raycastOrigin.position.y - groundCheck.position.y);
-            float slopeAngle = Vector2.Angle(groundHit.normal, Vector2.up);
+            // Calculate the actual slope angle considering movement direction
+            Vector2 slopeNormal = slopeHit.normal;
+            float slopeAngle = Vector2.Angle(slopeNormal, Vector2.up);
 
-            // TODO: Fix the slope angle calculation - it stops tank movement even if there are downward slopes, not just upward slopes
-            Debug.Log(slopeAngle);
+            // Determine if we're going uphill or downhill
+            float slopeDirection = Vector2.Dot(forwardDirection, Vector2.right);
+            float normalDirection = Vector2.Dot(slopeNormal, Vector2.right);
 
-            if (slopeAngle > maxSlopeAngle) return;
-            // Snap and fix Y position to the ground
-            transform.position = new Vector2(transform.position.x, y);
+            bool isGoingUphill = (slopeDirection > 0 && normalDirection < 0) || (slopeDirection < 0 && normalDirection > 0);
+
+            if (isGoingUphill)
+            {
+                // Check if slope is too steep
+                if (slopeAngle > maxSlopeAngle) return;
+
+                // Optional: Reduce speed when going uphill
+                currentSpeed *= Mathf.Lerp(1f, 0.5f, slopeAngle / maxSlopeAngle);
+            }
+            else
+            {
+                // Increase speed when going downhill
+                currentSpeed *= downhillSpeedMultiplier;
+            }
         }
 
-        // Apply horziontal movement
-        transform.Translate(inputX * speed * Time.deltaTime * Vector3.right);
+        // Update Y position to follow ground
+        float y = groundHit.point.y + (raycastOrigin.position.y - groundCheck.position.y);
+        transform.position = new Vector2(transform.position.x, y);
+
+        // Apply movement with adjusted speed
+        transform.Translate(inputX * currentSpeed * Time.deltaTime * Vector3.right);
     }
 
     private void ApplyGravity()
