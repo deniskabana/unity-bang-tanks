@@ -587,11 +587,11 @@ MonoBehaviour:
   collidersGroupTransform: {fileID: 472513522}
   terrainTextureObject: {fileID: 54272526}
   terrainChunkPrefab: {fileID: 8154103436714464343, guid: 492287e959b5c40119724b455def5488, type: 3}
-  enableTerrainChunking: 0
+  enableTerrainChunking: 1
   pixelsPerUnit: 100
   minRandomOffset: 0
   maxRandomOffset: 1000
-  chunkSize: 512
+  chunkSize: 200
 --- !u!1 &1093926518
 GameObject:
   m_ObjectHideFlags: 0

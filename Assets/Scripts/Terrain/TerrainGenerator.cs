@@ -46,7 +46,8 @@ public class TerrainGenerator : MonoBehaviour
         GenerateHeightmapTexture();
 
         // Step 3: Split terrain into chunks (for collision detection)
-        CreateTerrainChunks();
+        if (enableTerrainChunking) CreateTerrainChunks();
+        else CreateTerrainSingleChunk();
     }
 
     void GenerateHeightmapData()
@@ -104,11 +105,12 @@ public class TerrainGenerator : MonoBehaviour
 
     void CreateTerrainSingleChunk()
     {
-        if (terrainChunkPrefab == null || heightmap == null || collidersGroupTransform == null) return;
+        if (terrainChunkPrefab == null || heightmap == null || collidersGroupTransform == null)
+            throw new System.Exception("TerrainGenerator: Missing required references for terrain chunk generation.");
 
         // Instantiate the grid segment prefab
         GameObject chunkObject = Instantiate(terrainChunkPrefab, collidersGroupTransform.position, Quaternion.identity, collidersGroupTransform);
-        chunkObject.name = "TerrainChunk";
+        chunkObject.name = "TerrainSingleCollider";
 
         TerrainChunk chunkScript = chunkObject.GetComponent<TerrainChunk>();
         TerrainChunkData chunkData = new TerrainChunkData
@@ -125,13 +127,8 @@ public class TerrainGenerator : MonoBehaviour
 
     void CreateTerrainChunks()
     {
-        if (terrainChunkPrefab == null || heightmap == null || collidersGroupTransform == null) return;
-        if (!enableTerrainChunking)
-        {
-            // If chunking is disabled, create a single chunk for the entire terrain
-            CreateTerrainSingleChunk();
-            return;
-        }
+        if (terrainChunkPrefab == null || heightmap == null || collidersGroupTransform == null)
+            throw new System.Exception("TerrainGenerator: Missing required references for terrain chunk generation.");
 
         // Calculate the grid width and height based on the terrain grid cell size
         int gridWidth = Mathf.CeilToInt((float)textureWidth / chunkSize);
