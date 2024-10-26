@@ -44,4 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 559ce1b3d0ba946d9955b79b6bbc76fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minSolidChunkThreshold: 0.005
+  minSolidChunkThreshold: 0.001

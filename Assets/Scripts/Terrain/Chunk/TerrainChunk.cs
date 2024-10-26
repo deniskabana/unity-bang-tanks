@@ -42,7 +42,7 @@ public class TerrainChunk : MonoBehaviour
     {
         if (wasInitialized) return;
         data = newData;
-        UpdateCollider();
+        GenerateColliderFromHeightMap();
         wasInitialized = true;
     }
 
@@ -51,21 +51,23 @@ public class TerrainChunk : MonoBehaviour
         if (!terrainCollider) terrainCollider = gameObject.AddComponent<PolygonCollider2D>();
         if (!spriteRenderer) spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
 
-        if (terrainCollider != null)
-        {
-            Destroy(terrainCollider);
-            terrainCollider = null;
-        }
+        if (terrainCollider != null) Destroy(terrainCollider);
 
         spriteRenderer.enabled = true;
-        if (!spriteRenderer.sprite) spriteRenderer.sprite = Sprite.Create(data.ChunkHeightmapTexture, new Rect(0, 0, data.TerrainGridCellSize, data.TerrainGridCellSize), new Vector2(0.5f, 0.5f), data.PixelsPerUnit);
+        if (!spriteRenderer.sprite) spriteRenderer.sprite = Sprite.Create(data.HeightmapTexture, new Rect(0, 0, data.HeightmapTexture.width, data.HeightmapTexture.height), new Vector2(0.5f, 0.5f), data.PixelsPerUnit);
         if (!IsSolidEnough()) Destroy(gameObject);
         terrainCollider = gameObject.AddComponent<PolygonCollider2D>();
+        terrainCollider.useDelaunayMesh = true;
         spriteRenderer.enabled = false;
     }
 
+    void GenerateColliderFromHeightMap()
+    {
+        UpdateCollider();
+    }
+
     // Pixel checking on the texture to determine if the sprite has enough non-transparent pixels
-    private bool IsSolidEnough(Color[] pixels = null)
+    bool IsSolidEnough(Color[] pixels = null)
     {
         if (spriteRenderer.sprite == null) return false;
 
@@ -89,7 +91,7 @@ public class TerrainChunk : MonoBehaviour
     }
 
     // Handling explosions by updating the sprite's texture and updating collider
-    public void DrawExplosionToTexture(Vector2 explosionCenter, float explosionRadius)
+    void DrawExplosionToTexture(Vector2 explosionCenter, float explosionRadius)
     {
         if (spriteRenderer == null || terrainCollider == null) return;
 

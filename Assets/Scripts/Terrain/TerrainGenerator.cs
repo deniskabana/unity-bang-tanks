@@ -14,10 +14,11 @@ public class TerrainGenerator : MonoBehaviour
     [SerializeField] GameObject terrainChunkPrefab;
 
     [Header("Advanced terrain settings")]
+    [SerializeField] bool enableTerrainChunking = true;
     [SerializeField] float pixelsPerUnit = 100f;
     [SerializeField] float minRandomOffset = 0; // The maximum random offset for Perlin noise
     [SerializeField] float maxRandomOffset = 1000f; // The maximum random offset for Perlin noise
-    [SerializeField, Range(2, 512)] int chunkSize = 32; // Size in pixels by which we will subdivide the terrain
+    [SerializeField, Range(2, 2048)] int chunkSize = 256; // Size in pixels by which we will subdivide the terrain
 
     // Private variables
     // --------------------------------------------------
@@ -101,13 +102,40 @@ public class TerrainGenerator : MonoBehaviour
         terrainTextureObject.transform.localScale = new Vector3(1, 1, 1);
     }
 
-    void CreateTerrainChunks()
+    void CreateTerrainSingleChunk()
     {
         if (terrainChunkPrefab == null || heightmap == null || collidersGroupTransform == null) return;
 
+        // Instantiate the grid segment prefab
+        GameObject chunkObject = Instantiate(terrainChunkPrefab, collidersGroupTransform.position, Quaternion.identity, collidersGroupTransform);
+        chunkObject.name = "TerrainChunk";
+
+        TerrainChunk chunkScript = chunkObject.GetComponent<TerrainChunk>();
+        TerrainChunkData chunkData = new TerrainChunkData
+        {
+            PixelsPerUnit = pixelsPerUnit,
+            ChunkSize = textureWidth,
+            Heightmap = heightmap,
+            HeightmapTexture = heightmapTexture
+        };
+
+        // Initialize the terrain chunk
+        chunkScript.Initialize(chunkData);
+    }
+
+    void CreateTerrainChunks()
+    {
+        if (terrainChunkPrefab == null || heightmap == null || collidersGroupTransform == null) return;
+        if (!enableTerrainChunking)
+        {
+            // If chunking is disabled, create a single chunk for the entire terrain
+            CreateTerrainSingleChunk();
+            return;
+        }
+
         // Calculate the grid width and height based on the terrain grid cell size
-        int gridWidth = Mathf.CeilToInt(textureWidth / chunkSize);
-        int gridHeight = Mathf.CeilToInt(textureHeight / chunkSize);
+        int gridWidth = Mathf.CeilToInt((float)textureWidth / chunkSize);
+        int gridHeight = Mathf.CeilToInt((float)textureHeight / chunkSize);
 
         for (int xCursor = 0; xCursor < gridWidth; xCursor++)
         {
@@ -141,12 +169,14 @@ public class TerrainGenerator : MonoBehaviour
                 chunkObject.name = $"TerrainChunk_{xCursor}_{yCursor}";
 
                 TerrainChunk chunkScript = chunkObject.GetComponent<TerrainChunk>();
-                TerrainChunkData chunkData = new TerrainChunkData(
-                    pixelsPerUnit,
-                    CreateChunkBoolHeightmap(xCursor, yCursor),
-                    chunkSize,
-                    CreateChunkTexture(xCursor, yCursor)
-                );
+                TerrainChunkData chunkData = new TerrainChunkData
+                {
+                    PixelsPerUnit = pixelsPerUnit,
+                    ChunkSize = chunkSize,
+                    Heightmap = CreateChunkHeightmap(xCursor, yCursor),
+                    HeightmapTexture = CreateChunkTexture(xCursor, yCursor)
+
+                };
 
                 // Initialize the terrain chunk
                 chunkScript.Initialize(chunkData);
@@ -161,26 +191,17 @@ public class TerrainGenerator : MonoBehaviour
         );
     }
 
-    // Create a grid of booleans referring to empty or solid pixels
-    bool[,] CreateChunkBoolHeightmap(int xCursor, int yCursor)
+    float[] CreateChunkHeightmap(int xCursor, int yCursor)
     {
-        bool[,] chunkHeightmap = new bool[chunkSize, chunkSize];
-
+        float[] chunkHeightmap = new float[chunkSize];
         int startX = xCursor * chunkSize;
-        int startY = yCursor * chunkSize;
 
         for (int x = 0; x < chunkSize; x++)
         {
             int worldX = startX + x;
+            // If out of bounds, skip
             if (worldX >= textureWidth) continue;
-
-            float heightAtX = heightmap[worldX];
-
-            for (int y = 0; y < chunkSize; y++)
-            {
-                int worldY = startY + y;
-                chunkHeightmap[x, y] = worldY < heightAtX;
-            }
+            chunkHeightmap[x] = heightmap[worldX] - yCursor * chunkSize;
         }
 
         return chunkHeightmap;
