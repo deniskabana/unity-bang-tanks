@@ -142,8 +142,8 @@ public class TerrainTextureGenerator : MonoBehaviour
                     0);
 
                 // Instantiate the grid segment prefab
-                TerrainGridSegment gridSegmentScript = Instantiate(terrainGridPrefab, position, Quaternion.identity, gridParentObject.transform)
-                    .GetComponent<TerrainGridSegment>();
+                TerrainChunk gridSegmentScript = Instantiate(terrainGridPrefab, position, Quaternion.identity, gridParentObject.transform)
+                    .GetComponent<TerrainChunk>();
                 TerrainChunkData terrainChunkData = new TerrainChunkData
                 {
                     PixelsPerUnit = pixelsPerUnit,

@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Data.Common;
+using Unity.VisualScripting;
 using UnityEngine;
 
-[@RequireComponent(typeof(SpriteRenderer))]
-public class TerrainGridSegment : MonoBehaviour
+public class TerrainChunk : MonoBehaviour
 {
     [SerializeField] private float minSolidChunkThreshold = 0.005f;
 
@@ -15,12 +15,24 @@ public class TerrainGridSegment : MonoBehaviour
     private PolygonCollider2D terrainCollider;
     private SpriteRenderer spriteRenderer;
 
+    private readonly List<int> handledExplosionIds = new List<int>();
+
     // Built-in methods
     // --------------------------------------------------
 
     void OnDestroy()
     {
         DestroyCollider();
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Explosion"))
+        {
+            if (handledExplosionIds.Contains(other.GetInstanceID())) return;
+            HandleExplosionCollision(other.GetComponent<CircleCollider2D>());
+            handledExplosionIds.Add(other.GetInstanceID());
+        }
     }
 
     // Custom methods
@@ -36,8 +48,8 @@ public class TerrainGridSegment : MonoBehaviour
 
     void UpdateCollider()
     {
-        if (!terrainCollider) terrainCollider = GetComponent<PolygonCollider2D>();
-        if (!spriteRenderer) spriteRenderer = GetComponent<SpriteRenderer>();
+        if (!terrainCollider) terrainCollider = gameObject.AddComponent<PolygonCollider2D>();
+        if (!spriteRenderer) spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
 
         if (terrainCollider != null)
         {
@@ -47,7 +59,8 @@ public class TerrainGridSegment : MonoBehaviour
 
         spriteRenderer.enabled = true;
         if (!spriteRenderer.sprite) spriteRenderer.sprite = Sprite.Create(data.ChunkHeightmapTexture, new Rect(0, 0, data.TerrainGridCellSize, data.TerrainGridCellSize), new Vector2(0.5f, 0.5f), data.PixelsPerUnit);
-        if (IsSolidEnough()) terrainCollider = gameObject.AddComponent<PolygonCollider2D>();
+        if (!IsSolidEnough()) Destroy(gameObject);
+        terrainCollider = gameObject.AddComponent<PolygonCollider2D>();
         spriteRenderer.enabled = false;
     }
 
@@ -76,7 +89,7 @@ public class TerrainGridSegment : MonoBehaviour
     }
 
     // Handling explosions by updating the sprite's texture and updating collider
-    public void HandleExplosion(Vector2 explosionCenter, float explosionRadius)
+    public void DrawExplosionToTexture(Vector2 explosionCenter, float explosionRadius)
     {
         if (spriteRenderer == null || terrainCollider == null) return;
 
@@ -121,10 +134,38 @@ public class TerrainGridSegment : MonoBehaviour
                           (int)spriteRect.height,
                           pixels);
         texture.Apply();
+    }
 
-        if (!IsSolidEnough(pixels)) Destroy(gameObject);
+    void HandleExplosionCollision(CircleCollider2D explosionCollider)
+    {
+        if (explosionCollider == null) return;
 
-        // Update the collider to reflect the changes
+        Vector2 explosionCenter = explosionCollider.bounds.center;
+        float explosionRadius = explosionCollider.radius;
+
+        // Get the bounds of the SpriteRenderer
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        Bounds bounds = spriteRenderer.bounds;
+
+        // Get the corners of the bounds
+        Vector2[] corners = new Vector2[4];
+        corners[0] = new Vector2(bounds.min.x, bounds.min.y);
+        corners[1] = new Vector2(bounds.max.x, bounds.min.y);
+        corners[2] = new Vector2(bounds.min.x, bounds.max.y);
+        corners[3] = new Vector2(bounds.max.x, bounds.max.y);
+
+        bool allCornersInside = true;
+        foreach (Vector2 corner in corners)
+        {
+            if (Vector2.Distance(corner, explosionCenter) > explosionRadius)
+            {
+                allCornersInside = false;
+                break;
+            }
+        }
+
+        if (allCornersInside) Destroy(gameObject);
+        DrawExplosionToTexture(explosionCenter, explosionRadius);
         UpdateCollider();
     }
 
