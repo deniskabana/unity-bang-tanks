@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5614751257455353219}
   - component: {fileID: 8770450015714611788}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: TerrainChunkPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
