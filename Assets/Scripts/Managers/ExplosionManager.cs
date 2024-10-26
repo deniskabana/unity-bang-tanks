@@ -8,6 +8,7 @@ public class ExplosionManager : MonoBehaviour
     [SerializeField] float maxSpriteLifetime = 0.25f;
 
     [Header("References")]
+    [SerializeField] private Transform explosionParent;
     [SerializeField] private GameObject explosionPrefab;
 
     void Update()
@@ -24,7 +25,7 @@ public class ExplosionManager : MonoBehaviour
     public void CreateExplosion(float radius, Vector3 position)
     {
         // Create explosion GameObject
-        GameObject explosion = Instantiate(explosionPrefab, position, Quaternion.identity);
+        GameObject explosion = Instantiate(explosionPrefab, position, Quaternion.identity, explosionParent);
 
         // TODO: replace with animation / sprite / whatever
         Sprite circleSprite = CreateCircleSprite(radius, Color.yellow);

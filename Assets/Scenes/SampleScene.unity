@@ -181,7 +181,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 4.577, y: 4.577, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1659254435}
@@ -396,7 +396,7 @@ GameObject:
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
   m_Layer: 0
-  m_Name: Main Camera
+  m_Name: MainCamera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -488,7 +488,7 @@ GameObject:
   - component: {fileID: 624826799}
   - component: {fileID: 624826801}
   m_Layer: 0
-  m_Name: Game Manager
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -533,7 +533,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf7dd60f65ff14b86949b48bc1620bca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpriteLifetime: 0.25
+  maxSpriteLifetime: 0.2
+  explosionParent: {fileID: 476266739}
   explosionPrefab: {fileID: 7781946742746118445, guid: a6ee80721016a43cab1eb217bee1d384, type: 3}
 --- !u!1 &1025358063
 GameObject:
@@ -583,13 +584,13 @@ MonoBehaviour:
   textureHeight: 1024
   noiseScale: 0.0022
   heightMultiplier: 800
-  gridParentObject: {fileID: 472513521}
-  heightmapMaskObject: {fileID: 54272526}
-  terrainGridPrefab: {fileID: 8154103436714464343, guid: 492287e959b5c40119724b455def5488, type: 3}
+  collidersGroupTransform: {fileID: 472513522}
+  terrainTextureObject: {fileID: 54272526}
+  terrainChunkPrefab: {fileID: 8154103436714464343, guid: 492287e959b5c40119724b455def5488, type: 3}
   pixelsPerUnit: 100
   minRandomOffset: 0
   maxRandomOffset: 1000
-  terrainGridCellSize: 32
+  chunkSize: 32
 --- !u!1 &1093926518
 GameObject:
   m_ObjectHideFlags: 0

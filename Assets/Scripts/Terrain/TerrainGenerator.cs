@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class TerrainTextureGenerator : MonoBehaviour
+public class TerrainGenerator : MonoBehaviour
 {
     [Header("Terrain Settings")]
     [SerializeField] int textureWidth = 1920;  // The width of the terrain (in pixels)
@@ -9,15 +9,15 @@ public class TerrainTextureGenerator : MonoBehaviour
     [SerializeField] float heightMultiplier = 600f; // Controls the maximum height
 
     [Header("References")]
-    [SerializeField] GameObject gridParentObject;
-    [SerializeField] GameObject heightmapMaskObject;
-    [SerializeField] GameObject terrainGridPrefab;
+    [SerializeField] Transform collidersGroupTransform;
+    [SerializeField] GameObject terrainTextureObject;
+    [SerializeField] GameObject terrainChunkPrefab;
 
     [Header("Advanced terrain settings")]
     [SerializeField] float pixelsPerUnit = 100f;
     [SerializeField] float minRandomOffset = 0; // The maximum random offset for Perlin noise
     [SerializeField] float maxRandomOffset = 1000f; // The maximum random offset for Perlin noise
-    [SerializeField, Range(2, 512)] int terrainGridCellSize = 32; // Size in pixels by which we will subdivide the terrain
+    [SerializeField, Range(2, 512)] int chunkSize = 32; // Size in pixels by which we will subdivide the terrain
 
     // Private variables
     // --------------------------------------------------
@@ -33,24 +33,19 @@ public class TerrainTextureGenerator : MonoBehaviour
         Initialize();
     }
 
-    void OnValidate()
-    {
-        // Initialize();
-    }
-
     // Custom methods
     // --------------------------------------------------
 
     void Initialize()
     {
-        // Step 1: Generate the Perlin noise-based heightmap
+        // Step 1: Generate the Perlin noise-based float[] heightmap
         GenerateHeightmapData();
 
-        // Step 2: Generate a single big texture based on the heightmap
+        // Step 2: Generate and apply the texture
         GenerateHeightmapTexture();
 
-        // Step 3: Create a grid of terrain segments based on the heightmap
-        GenerateTerrainGridColliders();
+        // Step 3: Split terrain into chunks (for collision detection)
+        CreateTerrainChunks();
     }
 
     void GenerateHeightmapData()
@@ -91,28 +86,28 @@ public class TerrainTextureGenerator : MonoBehaviour
         heightmapTexture.Apply();
 
         // Set the sprite for the heightmap mask object
-        SpriteRenderer heightmapSpriteRenderer = heightmapMaskObject.GetComponent<SpriteRenderer>();
-        heightmapSpriteRenderer.enabled = true;
-        heightmapSpriteRenderer.material.SetTexture("_HeightMap", heightmapTexture);
-        SetMaterialTextureTiling(heightmapSpriteRenderer.material, heightmapTexture, heightmapSpriteRenderer.sprite.texture);
+        SpriteRenderer renderer = terrainTextureObject.GetComponent<SpriteRenderer>();
+        renderer.enabled = true;
+        renderer.material.SetTexture("_HeightMap", heightmapTexture); // Shader needs to know about the heightmap texture
+        SetMaterialTextureTiling(renderer.material, heightmapTexture, renderer.sprite.texture); // Set the tiling factors
 
         // Set the sprite renderer to the exact same bounds and size as the heightmapTexture
-        heightmapSpriteRenderer.size = new Vector2(textureWidth / pixelsPerUnit, textureHeight / pixelsPerUnit);
-        heightmapSpriteRenderer.bounds.SetMinMax(Vector3.zero, new Vector3(textureWidth / pixelsPerUnit, textureHeight / pixelsPerUnit, 0));
-        heightmapSpriteRenderer.drawMode = SpriteDrawMode.Sliced;
+        renderer.size = new Vector2(textureWidth / pixelsPerUnit, textureHeight / pixelsPerUnit);
+        renderer.bounds.SetMinMax(Vector3.zero, new Vector3(textureWidth / pixelsPerUnit, textureHeight / pixelsPerUnit, 0));
+        renderer.drawMode = SpriteDrawMode.Sliced;
 
         // Ensure the heightmapMaskObject retains the same size and position as the texture
-        heightmapMaskObject.transform.position = gridParentObject.transform.position;
-        heightmapMaskObject.transform.localScale = new Vector3(1, 1, 1);
+        terrainTextureObject.transform.position = collidersGroupTransform.position;
+        terrainTextureObject.transform.localScale = new Vector3(1, 1, 1);
     }
 
-    void GenerateTerrainGridColliders()
+    void CreateTerrainChunks()
     {
-        if (terrainGridPrefab == null || heightmap == null || gridParentObject == null) return;
+        if (terrainChunkPrefab == null || heightmap == null || collidersGroupTransform == null) return;
 
         // Calculate the grid width and height based on the terrain grid cell size
-        int gridWidth = Mathf.CeilToInt(textureWidth / terrainGridCellSize);
-        int gridHeight = Mathf.CeilToInt(textureHeight / terrainGridCellSize);
+        int gridWidth = Mathf.CeilToInt(textureWidth / chunkSize);
+        int gridHeight = Mathf.CeilToInt(textureHeight / chunkSize);
 
         for (int xCursor = 0; xCursor < gridWidth; xCursor++)
         {
@@ -120,10 +115,10 @@ public class TerrainTextureGenerator : MonoBehaviour
             {
                 bool isTerrain = false;
 
-                for (int i = 0; i < terrainGridCellSize; i++)
+                for (int i = 0; i < chunkSize; i++)
                 {
-                    if (xCursor * terrainGridCellSize + i >= heightmap.Length) break;
-                    if (yCursor * terrainGridCellSize <= heightmap[xCursor * terrainGridCellSize + i])
+                    if (xCursor * chunkSize + i >= heightmap.Length) break;
+                    if (yCursor * chunkSize <= heightmap[xCursor * chunkSize + i])
                     {
                         isTerrain = true;
                         break;
@@ -132,53 +127,56 @@ public class TerrainTextureGenerator : MonoBehaviour
                 // Skip this iteration if the segment is not part of the terrain
                 if (!isTerrain) continue;
 
-                Vector3 terrainGridPosition = gridParentObject.transform.position;
-                float gridWorldSize = terrainGridCellSize / pixelsPerUnit;
+                Vector3 chunkPosition = collidersGroupTransform.position;
+                float chunkWorldSize = chunkSize / pixelsPerUnit;
 
-                // For each grid segment, set its position in world space relative to the TerrainGridGroup object
+                // For each chunk, set its position in world space relative to the parent object
                 Vector3 position = new Vector3(
-                    terrainGridPosition.x + xCursor * gridWorldSize,
-                    terrainGridPosition.y + yCursor * gridWorldSize,
+                    chunkPosition.x + xCursor * chunkWorldSize,
+                    chunkPosition.y + yCursor * chunkWorldSize,
                     0);
 
                 // Instantiate the grid segment prefab
-                TerrainChunk gridSegmentScript = Instantiate(terrainGridPrefab, position, Quaternion.identity, gridParentObject.transform)
-                    .GetComponent<TerrainChunk>();
-                TerrainChunkData terrainChunkData = new TerrainChunkData
-                {
-                    PixelsPerUnit = pixelsPerUnit,
-                    ChunkHeightmapGrid = CreateChunkHeightmap(xCursor, yCursor),
-                    TerrainGridCellSize = terrainGridCellSize,
-                    ChunkHeightmapTexture = CreateTextureForSegment(xCursor, yCursor)
-                };
+                GameObject chunkObject = Instantiate(terrainChunkPrefab, position, Quaternion.identity, collidersGroupTransform);
+                chunkObject.name = $"TerrainChunk_{xCursor}_{yCursor}";
+
+                TerrainChunk chunkScript = chunkObject.GetComponent<TerrainChunk>();
+                TerrainChunkData chunkData = new TerrainChunkData(
+                    pixelsPerUnit,
+                    CreateChunkBoolHeightmap(xCursor, yCursor),
+                    chunkSize,
+                    CreateChunkTexture(xCursor, yCursor)
+                );
 
                 // Initialize the terrain chunk
-                gridSegmentScript.Initialize(terrainChunkData);
+                chunkScript.Initialize(chunkData);
             }
         }
 
         // Align the grid with the heightmap mask object
-        gridParentObject.transform.position = new Vector3(
-            -textureWidth / 2 / pixelsPerUnit + terrainGridCellSize / 2 / pixelsPerUnit,
-            -textureHeight / 2 / pixelsPerUnit + terrainGridCellSize / 2 / pixelsPerUnit,
-            0);
+        collidersGroupTransform.position = new Vector3(
+            -textureWidth / 2 / pixelsPerUnit + chunkSize / 2 / pixelsPerUnit,
+            -textureHeight / 2 / pixelsPerUnit + chunkSize / 2 / pixelsPerUnit,
+            0
+        );
     }
 
-    bool[,] CreateChunkHeightmap(int xCursor, int yCursor)
+    // Create a grid of booleans referring to empty or solid pixels
+    bool[,] CreateChunkBoolHeightmap(int xCursor, int yCursor)
     {
-        bool[,] chunkHeightmap = new bool[terrainGridCellSize, terrainGridCellSize];
+        bool[,] chunkHeightmap = new bool[chunkSize, chunkSize];
 
-        int startX = xCursor * terrainGridCellSize;
-        int startY = yCursor * terrainGridCellSize;
+        int startX = xCursor * chunkSize;
+        int startY = yCursor * chunkSize;
 
-        for (int x = 0; x < terrainGridCellSize; x++)
+        for (int x = 0; x < chunkSize; x++)
         {
             int worldX = startX + x;
             if (worldX >= textureWidth) continue;
 
             float heightAtX = heightmap[worldX];
 
-            for (int y = 0; y < terrainGridCellSize; y++)
+            for (int y = 0; y < chunkSize; y++)
             {
                 int worldY = startY + y;
                 chunkHeightmap[x, y] = worldY < heightAtX;
@@ -188,25 +186,26 @@ public class TerrainTextureGenerator : MonoBehaviour
         return chunkHeightmap;
     }
 
-    Texture2D CreateTextureForSegment(int xCursor, int yCursor)
+    // Create a slice of the heightmap texture for a single chunk
+    Texture2D CreateChunkTexture(int xCursor, int yCursor)
     {
-        Texture2D gridSegmentTexture = new Texture2D(terrainGridCellSize, terrainGridCellSize, TextureFormat.RGBA32, false);
+        Texture2D gridSegmentTexture = new Texture2D(chunkSize, chunkSize, TextureFormat.RGBA32, false);
         gridSegmentTexture.filterMode = FilterMode.Point; // Ensure pixel-perfect sampling
 
         // Calculate the actual heightmap values for this segment
-        Color[] pixels = new Color[terrainGridCellSize * terrainGridCellSize];
+        Color[] pixels = new Color[chunkSize * chunkSize];
 
-        int startX = xCursor * terrainGridCellSize;
-        int startY = yCursor * terrainGridCellSize;
+        int startX = xCursor * chunkSize;
+        int startY = yCursor * chunkSize;
 
-        for (int x = 0; x < terrainGridCellSize; x++)
+        for (int x = 0; x < chunkSize; x++)
         {
             int worldX = startX + x;
             if (worldX >= textureWidth) continue;
 
             float heightAtX = heightmap[worldX];
 
-            for (int y = 0; y < terrainGridCellSize; y++)
+            for (int y = 0; y < chunkSize; y++)
             {
                 int worldY = startY + y;
 
@@ -214,15 +213,15 @@ public class TerrainTextureGenerator : MonoBehaviour
                 bool isSolid = worldY < heightAtX;
 
                 // Edge detection - are we on a segment border?
-                bool isOnXBorder = x == 0 || x == terrainGridCellSize - 1;
-                bool isOnYBorder = y == 0 || y == terrainGridCellSize - 1;
+                bool isOnXBorder = x == 0 || x == chunkSize - 1;
+                bool isOnYBorder = y == 0 || y == chunkSize - 1;
 
                 if (isSolid)
                 {
                     // If we're not on a border, it's definitely solid
                     if (!isOnXBorder && !isOnYBorder)
                     {
-                        pixels[y * terrainGridCellSize + x] = Color.white;
+                        pixels[y * chunkSize + x] = Color.white;
                     }
                     // If we're on a border, check neighboring cells
                     else
@@ -244,17 +243,17 @@ public class TerrainTextureGenerator : MonoBehaviour
                         // If we're still solid after checks, set the pixel
                         if (shouldBeSolid)
                         {
-                            pixels[y * terrainGridCellSize + x] = Color.white;
+                            pixels[y * chunkSize + x] = Color.white;
                         }
                         else
                         {
-                            pixels[y * terrainGridCellSize + x] = Color.clear;
+                            pixels[y * chunkSize + x] = Color.clear;
                         }
                     }
                 }
                 else
                 {
-                    pixels[y * terrainGridCellSize + x] = Color.clear;
+                    pixels[y * chunkSize + x] = Color.clear;
                 }
             }
         }
