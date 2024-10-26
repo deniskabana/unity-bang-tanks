@@ -5,7 +5,7 @@ public class PlayerTank : MonoBehaviour
     [Header("Movement Settings")]
     [SerializeField] private float speed = 1f;  // Tank's horizontal speed
     [SerializeField] private float groundRaycastDistance = 0.15f;  // Small distance for ground detection
-    [SerializeField] private float maxSlopeAngle = 60f;  // Maximum distance between jumps
+    [SerializeField] private float maxSlopeAngle = 70f;  // Maximum distance between jumps
     [SerializeField] private LayerMask groundLayer;  // Layer to detect ground
 
     [Header("Physics Settings")]
@@ -71,7 +71,8 @@ public class PlayerTank : MonoBehaviour
         // Snap to ground and move
         float y = groundHit.point.y + (raycastOrigin.position.y - groundCheck.position.y);
         transform.position = new Vector2(transform.position.x, y);
-        transform.Translate(inputX * speed * Time.deltaTime * Vector3.right);
+        float speedOnSlope = isGoingUphill ? speed : speed * downhillSpeedMultiplier;
+        transform.Translate(inputX * speedOnSlope * Time.deltaTime * Vector3.right);
     }
 
     private void ApplyGravity()

@@ -129,32 +129,31 @@ public class TerrainTextureGenerator : MonoBehaviour
                         break;
                     }
                 }
-
                 // Skip this iteration if the segment is not part of the terrain
                 if (!isTerrain) continue;
 
                 Vector3 terrainGridPosition = gridParentObject.transform.position;
                 float gridWorldSize = terrainGridCellSize / pixelsPerUnit;
 
-                // For each grid segment, set its position in world space relative to the gridParentObject
+                // For each grid segment, set its position in world space relative to the TerrainGridGroup object
                 Vector3 position = new Vector3(
                     terrainGridPosition.x + xCursor * gridWorldSize,
                     terrainGridPosition.y + yCursor * gridWorldSize,
                     0);
 
                 // Instantiate the grid segment prefab
-                GameObject gridSegment = Instantiate(terrainGridPrefab, position, Quaternion.identity, gridParentObject.transform);
-                gridSegment.transform.localScale = new Vector3(1, 1, 1);
-                TerrainGridSegment gridSegmentScript = gridSegment.GetComponent<TerrainGridSegment>();
-                gridSegmentScript.pixelsPerUnit = pixelsPerUnit;
-                gridSegmentScript.terrainGridCellSize = terrainGridCellSize;
+                TerrainGridSegment gridSegmentScript = Instantiate(terrainGridPrefab, position, Quaternion.identity, gridParentObject.transform)
+                    .GetComponent<TerrainGridSegment>();
+                TerrainChunkData terrainChunkData = new TerrainChunkData
+                {
+                    PixelsPerUnit = pixelsPerUnit,
+                    ChunkHeightmapGrid = CreateChunkHeightmap(xCursor, yCursor),
+                    TerrainGridCellSize = terrainGridCellSize,
+                    ChunkHeightmapTexture = CreateTextureForSegment(xCursor, yCursor)
+                };
 
-                // Create texture for the current segment and assign it
-                Texture2D textureForCurrentSegment = CreateTextureForSegment(xCursor, yCursor);
-
-                // spriteForCurrentSegment.filterMode = FilterMode.Point;
-                Sprite segmentSprite = Sprite.Create(textureForCurrentSegment, new Rect(0, 0, terrainGridCellSize, terrainGridCellSize), new Vector2(0.5f, 0.5f), pixelsPerUnit);
-                gridSegment.GetComponent<TerrainGridSegment>().UpdateCollider(segmentSprite);
+                // Initialize the terrain chunk
+                gridSegmentScript.Initialize(terrainChunkData);
             }
         }
 
@@ -165,17 +164,100 @@ public class TerrainTextureGenerator : MonoBehaviour
             0);
     }
 
+    bool[,] CreateChunkHeightmap(int xCursor, int yCursor)
+    {
+        bool[,] chunkHeightmap = new bool[terrainGridCellSize, terrainGridCellSize];
+
+        int startX = xCursor * terrainGridCellSize;
+        int startY = yCursor * terrainGridCellSize;
+
+        for (int x = 0; x < terrainGridCellSize; x++)
+        {
+            int worldX = startX + x;
+            if (worldX >= textureWidth) continue;
+
+            float heightAtX = heightmap[worldX];
+
+            for (int y = 0; y < terrainGridCellSize; y++)
+            {
+                int worldY = startY + y;
+                chunkHeightmap[x, y] = worldY < heightAtX;
+            }
+        }
+
+        return chunkHeightmap;
+    }
+
     Texture2D CreateTextureForSegment(int xCursor, int yCursor)
     {
         Texture2D gridSegmentTexture = new Texture2D(terrainGridCellSize, terrainGridCellSize, TextureFormat.RGBA32, false);
+        gridSegmentTexture.filterMode = FilterMode.Point; // Ensure pixel-perfect sampling
 
-        // Copy the pixels from the heightmapTexture to the grid segment texture
-        Color[] pixels = heightmapTexture.GetPixels(
-            xCursor * terrainGridCellSize,
-            yCursor * terrainGridCellSize,
-            terrainGridCellSize,
-            terrainGridCellSize
-        );
+        // Calculate the actual heightmap values for this segment
+        Color[] pixels = new Color[terrainGridCellSize * terrainGridCellSize];
+
+        int startX = xCursor * terrainGridCellSize;
+        int startY = yCursor * terrainGridCellSize;
+
+        for (int x = 0; x < terrainGridCellSize; x++)
+        {
+            int worldX = startX + x;
+            if (worldX >= textureWidth) continue;
+
+            float heightAtX = heightmap[worldX];
+
+            for (int y = 0; y < terrainGridCellSize; y++)
+            {
+                int worldY = startY + y;
+
+                // Basic fill
+                bool isSolid = worldY < heightAtX;
+
+                // Edge detection - are we on a segment border?
+                bool isOnXBorder = x == 0 || x == terrainGridCellSize - 1;
+                bool isOnYBorder = y == 0 || y == terrainGridCellSize - 1;
+
+                if (isSolid)
+                {
+                    // If we're not on a border, it's definitely solid
+                    if (!isOnXBorder && !isOnYBorder)
+                    {
+                        pixels[y * terrainGridCellSize + x] = Color.white;
+                    }
+                    // If we're on a border, check neighboring cells
+                    else
+                    {
+                        bool shouldBeSolid = true;
+
+                        // Check neighboring heightmap values if we're on X border
+                        if (isOnXBorder)
+                        {
+                            int neighborX = worldX + (x == 0 ? -1 : 1);
+                            if (neighborX >= 0 && neighborX < textureWidth)
+                            {
+                                float neighborHeight = heightmap[neighborX];
+                                // Only be solid if the neighbor would also be solid at this height
+                                shouldBeSolid = worldY < neighborHeight;
+                            }
+                        }
+
+                        // If we're still solid after checks, set the pixel
+                        if (shouldBeSolid)
+                        {
+                            pixels[y * terrainGridCellSize + x] = Color.white;
+                        }
+                        else
+                        {
+                            pixels[y * terrainGridCellSize + x] = Color.clear;
+                        }
+                    }
+                }
+                else
+                {
+                    pixels[y * terrainGridCellSize + x] = Color.clear;
+                }
+            }
+        }
 
         gridSegmentTexture.SetPixels(pixels);
         gridSegmentTexture.Apply();

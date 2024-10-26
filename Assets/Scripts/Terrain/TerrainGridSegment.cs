@@ -1,28 +1,42 @@
+using System.Collections.Generic;
+using System.Data.Common;
 using UnityEngine;
 
 [@RequireComponent(typeof(SpriteRenderer))]
 public class TerrainGridSegment : MonoBehaviour
 {
-    [SerializeField] private float minPixelThreshold = 0.005f;
+    [SerializeField] private float minSolidChunkThreshold = 0.005f;
+
+    // Private fields
+    // --------------------------------------------------
+
+    private bool wasInitialized = false;
+    private TerrainChunkData data;
     private PolygonCollider2D terrainCollider;
     private SpriteRenderer spriteRenderer;
 
-    // Filled upon creation
-    public float pixelsPerUnit = 100f;
-    public int terrainGridCellSize = 32;
-
-    void Start()
-    {
-        UpdateCollider();
-    }
+    // Built-in methods
+    // --------------------------------------------------
 
     void OnDestroy()
     {
         DestroyCollider();
     }
 
-    public void UpdateCollider(Sprite newSprite = null)
+    // Custom methods
+    // --------------------------------------------------
+
+    public void Initialize(TerrainChunkData newData)
     {
+        if (wasInitialized) return;
+        data = newData;
+        UpdateCollider();
+        wasInitialized = true;
+    }
+
+    void UpdateCollider()
+    {
+        if (!terrainCollider) terrainCollider = GetComponent<PolygonCollider2D>();
         if (!spriteRenderer) spriteRenderer = GetComponent<SpriteRenderer>();
 
         if (terrainCollider != null)
@@ -32,17 +46,13 @@ public class TerrainGridSegment : MonoBehaviour
         }
 
         spriteRenderer.enabled = true;
-        if (newSprite != null) spriteRenderer.sprite = newSprite;
-
-        if (HasEnoughNonTransparentPixels())
-        {
-            terrainCollider = gameObject.AddComponent<PolygonCollider2D>();
-        }
-
+        if (!spriteRenderer.sprite) spriteRenderer.sprite = Sprite.Create(data.ChunkHeightmapTexture, new Rect(0, 0, data.TerrainGridCellSize, data.TerrainGridCellSize), new Vector2(0.5f, 0.5f), data.PixelsPerUnit);
+        if (IsSolidEnough()) terrainCollider = gameObject.AddComponent<PolygonCollider2D>();
         spriteRenderer.enabled = false;
     }
 
-    private bool HasEnoughNonTransparentPixels(Color[] pixels = null)
+    // Pixel checking on the texture to determine if the sprite has enough non-transparent pixels
+    private bool IsSolidEnough(Color[] pixels = null)
     {
         if (spriteRenderer.sprite == null) return false;
 
@@ -62,9 +72,10 @@ public class TerrainGridSegment : MonoBehaviour
         }
 
         float nonTransparentRatio = (float)nonTransparentCount / pixels.Length;
-        return nonTransparentRatio >= minPixelThreshold;
+        return nonTransparentRatio >= minSolidChunkThreshold;
     }
 
+    // Handling explosions by updating the sprite's texture and updating collider
     public void HandleExplosion(Vector2 explosionCenter, float explosionRadius)
     {
         if (spriteRenderer == null || terrainCollider == null) return;
@@ -88,8 +99,8 @@ public class TerrainGridSegment : MonoBehaviour
             {
                 // Calculate the pixel's world position
                 Vector2 pixelWorldPos = new Vector2(
-                    spritePosition.x + ((x - spritePivot.x * spriteRect.width) / pixelsPerUnit) * spriteScale.x,
-                    spritePosition.y + ((y - spritePivot.y * spriteRect.height) / pixelsPerUnit) * spriteScale.y
+                    spritePosition.x + ((x - spritePivot.x * spriteRect.width) / data.PixelsPerUnit) * spriteScale.x,
+                    spritePosition.y + ((y - spritePivot.y * spriteRect.height) / data.PixelsPerUnit) * spriteScale.y
                 );
 
                 // Check if this pixel is within the explosion's radius
@@ -111,27 +122,18 @@ public class TerrainGridSegment : MonoBehaviour
                           pixels);
         texture.Apply();
 
-        if (!HasEnoughNonTransparentPixels(pixels)) Destroy(gameObject);
+        if (!IsSolidEnough(pixels)) Destroy(gameObject);
 
         // Update the collider to reflect the changes
         UpdateCollider();
     }
 
-    public void DestroyCollider()
+    void DestroyCollider()
     {
         if (terrainCollider != null)
         {
             Destroy(terrainCollider);
             terrainCollider = null;
-        }
-    }
-
-    public void DisableCollider()
-    {
-        if (terrainCollider != null)
-        {
-            terrainCollider.enabled = false;
-            DestroyCollider();
         }
     }
 }
