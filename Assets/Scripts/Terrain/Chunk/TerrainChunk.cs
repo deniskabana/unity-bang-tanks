@@ -58,6 +58,7 @@ public class TerrainChunk : MonoBehaviour
         if (!IsSolidEnough()) Destroy(gameObject);
         terrainCollider = gameObject.AddComponent<PolygonCollider2D>();
         terrainCollider.useDelaunayMesh = true;
+        terrainCollider.usedByComposite = true;
         spriteRenderer.enabled = false;
     }
 
