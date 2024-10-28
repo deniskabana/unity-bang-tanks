@@ -40,6 +40,8 @@ public class TankHealth : MonoBehaviour
 
     if (foregroundSpriteObject == null) foregroundSpriteObject = new GameObject("TankForegroundSprite");
     if (backgroundSpriteObject == null) backgroundSpriteObject = new GameObject("TankBackgroundSprite");
+    foregroundSpriteObject.transform.SetParent(transform);
+    backgroundSpriteObject.transform.SetParent(transform);
 
     foregroundSpriteRenderer = foregroundSpriteObject.AddComponent<SpriteRenderer>();
     backgroundSpriteRenderer = backgroundSpriteObject.AddComponent<SpriteRenderer>();

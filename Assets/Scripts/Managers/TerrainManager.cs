@@ -1,8 +1,9 @@
 using UnityEngine;
-using UnityEngine.Events;
 
 public class TerrainManager : MonoBehaviour
 {
+    public static TerrainManager Instance;
+
     [SerializeField] bool debug = false;
 
     [Header("Terrain Settings")]
@@ -26,12 +27,10 @@ public class TerrainManager : MonoBehaviour
     // Runtime variables
     // --------------------------------------------------
 
-    public static TerrainManager Instance;
     private bool initialized = false;
     private float[] heightmap;
     private Texture2D heightmapTexture;
     public TerrainData terrainData;
-    public static UnityEvent OnTerrainInitialized = new UnityEvent();
 
     // Built-in methods
     // --------------------------------------------------
@@ -43,7 +42,7 @@ public class TerrainManager : MonoBehaviour
 
     void Start()
     {
-        Instance = this;
+        if (!Instance) Instance = this;
     }
 
     // Custom methods
@@ -63,7 +62,6 @@ public class TerrainManager : MonoBehaviour
         initialized = true;
         SetTerrainData();
 
-        OnTerrainInitialized.Invoke();
         if (debug) Debug.Log("Terrain initialized.");
     }
 
@@ -78,7 +76,8 @@ public class TerrainManager : MonoBehaviour
             ChunkSize = chunkSize,
             PixelsPerUnit = pixelsPerUnit,
             Heightmap = heightmap,
-            HeightmapTexture = heightmapTexture
+            HeightmapTexture = heightmapTexture,
+            TextureRenderObject = terrainTextureObject
         };
     }
 

@@ -18,4 +18,5 @@ public struct TerrainData
 	// Generated at run-time
 	public float[] Heightmap;
 	public Texture2D HeightmapTexture;
+	public GameObject TextureRenderObject;
 }

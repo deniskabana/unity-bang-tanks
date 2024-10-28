@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class PlayersManager : MonoBehaviour
 {
+  public static PlayersManager Instance;
+
   [SerializeField] bool debug = false;
 
   [Header("Level Settings")]
@@ -19,10 +20,9 @@ public class PlayersManager : MonoBehaviour
   // Runtime variables
   // --------------------------------------------------
 
-  public static PlayersManager Instance;
+  private bool initialized = false;
   private List<GameObject> players = new List<GameObject>();
   private int currentPlayerIndex = 0;
-  public static UnityEvent OnPlayersInitialized = new UnityEvent();
 
   // Built-in methods
   // --------------------------------------------------
@@ -34,7 +34,7 @@ public class PlayersManager : MonoBehaviour
 
   void Start()
   {
-    Instance = this;
+    if (!Instance) Instance = this;
   }
 
   // Custom methods
@@ -42,24 +42,33 @@ public class PlayersManager : MonoBehaviour
 
   public void Initialize()
   {
+    if (debug) Debug.Log("Creating players...");
+
+    if (initialized) return;
     CreatePlayers();
+    initialized = true;
+
+    if (debug) Debug.Log("Players created!");
   }
 
   void CreatePlayers()
   {
-    if (debug) Debug.Log("Creating players...");
+    TerrainData terrainData = TerrainManager.Instance.GetTerrainData();
 
-    if (!TerrainManager.Instance.GetTerrainData().Initialized)
+    if (!terrainData.Initialized)
       throw new System.Exception("PlayersManager: Terrain data must be initialized before creating players!");
 
     float[] playerPositions = new float[amountOfPlayers];
-    float textureWidth = TerrainManager.Instance.GetTerrainData().TextureWidth;
+    float worldWidth = terrainData.TextureRenderObject.GetComponent<SpriteRenderer>().bounds.size.x;
+    Transform textureRenderTransform = terrainData.TextureRenderObject.transform;
+    float playerY = textureRenderTransform.position.y; // Fair enough for now
 
     for (int i = 0; i < amountOfPlayers; i++)
     {
-      float terrainPartSize = textureWidth / (amountOfPlayers + 2);
-      playerPositions[i] = terrainPartSize * (i + 1);
-      GameObject player = Instantiate(playerPrefab, new Vector3(playerPositions[i], 0, 0), Quaternion.identity);
+      float terrainPartSize = worldWidth / (amountOfPlayers + 1);
+      playerPositions[i] = terrainPartSize + terrainPartSize * i;
+      float playerX = textureRenderTransform.position.x - worldWidth / 2 + playerPositions[i];
+      GameObject player = Instantiate(playerPrefab, new Vector3(playerX, playerY, 0), Quaternion.identity);
       players.Add(player);
     }
 
@@ -68,8 +77,6 @@ public class PlayersManager : MonoBehaviour
     {
       // player.GetComponent<Player>().Initialize(limitedFuel, maxFuel, enableRoundTimer, maxRoundDuration);
     }
-
-    if (debug) Debug.Log("Players created!");
   }
 
   public int GetCurrentPlayerIndex()

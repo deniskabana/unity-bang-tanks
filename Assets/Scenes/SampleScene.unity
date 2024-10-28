@@ -392,6 +392,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e4175c8bad1f4afc85122916aedb449, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debug: 0
+  GAME_STATE: 0
 --- !u!4 &624826800
 Transform:
   m_ObjectHideFlags: 0
@@ -419,6 +421,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0b73fc92ae0e403ab6a07314d6623b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debug: 0
   amountOfPlayers: 2
   limitedFuel: 1
   fuelPerRound: 100
@@ -435,6 +438,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 695130b0c923b45aca2fa55d810214a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debug: 0
   textureWidth: 2600
   textureHeight: 1200
   noiseScale: 0.0018
@@ -447,6 +451,16 @@ MonoBehaviour:
   minRandomOffset: 0
   maxRandomOffset: 1000
   chunkSize: 128
+  terrainData:
+    Initialized: 0
+    TextureWidth: 0
+    TextureHeight: 0
+    EnableTerrainChunking: 0
+    ChunkSize: 0
+    PixelsPerUnit: 0
+    Heightmap: []
+    HeightmapTexture: {fileID: 0}
+    TextureRenderObject: {fileID: 0}
 --- !u!1 &1659254434
 GameObject:
   m_ObjectHideFlags: 0
