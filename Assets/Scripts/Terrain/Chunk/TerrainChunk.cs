@@ -11,7 +11,7 @@ public class TerrainChunk : MonoBehaviour
     // --------------------------------------------------
 
     private bool wasInitialized = false;
-    private TerrainChunkData data;
+    private TerrainChunkData chunkData;
     private PolygonCollider2D terrainCollider;
     private SpriteRenderer spriteRenderer;
 
@@ -41,7 +41,7 @@ public class TerrainChunk : MonoBehaviour
     public void Initialize(TerrainChunkData newData)
     {
         if (wasInitialized) return;
-        data = newData;
+        chunkData = newData;
         GenerateColliderFromHeightMap();
         wasInitialized = true;
     }
@@ -54,7 +54,7 @@ public class TerrainChunk : MonoBehaviour
         if (terrainCollider != null) Destroy(terrainCollider);
 
         spriteRenderer.enabled = true;
-        if (!spriteRenderer.sprite) spriteRenderer.sprite = Sprite.Create(data.HeightmapTexture, new Rect(0, 0, data.HeightmapTexture.width, data.HeightmapTexture.height), new Vector2(0.5f, 0.5f), data.PixelsPerUnit);
+        if (!spriteRenderer.sprite) spriteRenderer.sprite = Sprite.Create(chunkData.HeightmapTexture, new Rect(0, 0, chunkData.HeightmapTexture.width, chunkData.HeightmapTexture.height), new Vector2(0.5f, 0.5f), chunkData.PixelsPerUnit);
         if (!IsSolidEnough()) Destroy(gameObject);
         terrainCollider = gameObject.AddComponent<PolygonCollider2D>();
         terrainCollider.useDelaunayMesh = true;
@@ -114,8 +114,8 @@ public class TerrainChunk : MonoBehaviour
             {
                 // Calculate the pixel's world position
                 Vector2 pixelWorldPos = new Vector2(
-                    spritePosition.x + ((x - spritePivot.x * spriteRect.width) / data.PixelsPerUnit) * spriteScale.x,
-                    spritePosition.y + ((y - spritePivot.y * spriteRect.height) / data.PixelsPerUnit) * spriteScale.y
+                    spritePosition.x + ((x - spritePivot.x * spriteRect.width) / chunkData.PixelsPerUnit) * spriteScale.x,
+                    spritePosition.y + ((y - spritePivot.y * spriteRect.height) / chunkData.PixelsPerUnit) * spriteScale.y
                 );
 
                 // Check if this pixel is within the explosion's radius

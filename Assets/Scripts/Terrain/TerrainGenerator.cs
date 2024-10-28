@@ -23,6 +23,7 @@ public class TerrainGenerator : MonoBehaviour
     // Private variables
     // --------------------------------------------------
 
+    private bool initialized = false;
     private float[] heightmap;
     private Texture2D heightmapTexture;
 
@@ -39,15 +40,13 @@ public class TerrainGenerator : MonoBehaviour
 
     void Initialize()
     {
-        // Step 1: Generate the Perlin noise-based float[] heightmap
+        if (initialized) return;
         GenerateHeightmapData();
-
-        // Step 2: Generate and apply the texture
         GenerateHeightmapTexture();
 
-        // Step 3: Split terrain into chunks (for collision detection)
         if (enableTerrainChunking) CreateTerrainChunks();
         else CreateTerrainSingleChunk();
+        initialized = true;
     }
 
     void GenerateHeightmapData()

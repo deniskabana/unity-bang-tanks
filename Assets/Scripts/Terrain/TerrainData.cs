@@ -2,10 +2,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public struct TerrainChunkData
+public struct TerrainData
 {
 	public float PixelsPerUnit;
-	public int ChunkSize;
 	public Texture2D HeightmapTexture;
+	public int TextureWidth;
+	public int TextureHeight;
 	public float[] Heightmap;
+	public bool EnableTerrainChunking;
+	public int ChunkSize;
+	public bool Initialized;
 }

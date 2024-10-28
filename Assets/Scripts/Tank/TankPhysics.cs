@@ -1,22 +1,22 @@
 using UnityEngine;
 
-public class PlayerTank : MonoBehaviour
+public class TankPhysics : MonoBehaviour
 {
     [Header("Movement Settings")]
-    [SerializeField] private float speed = 1f;  // Tank's horizontal speed
-    [SerializeField] private float groundRaycastDistance = 0.15f;  // Small distance for ground detection
-    [SerializeField] private float maxSlopeAngle = 70f;  // Maximum distance between jumps
-    [SerializeField] private LayerMask groundLayer;  // Layer to detect ground
+    [SerializeField] float speed = 1f;  // Tank's horizontal speed
+    [SerializeField] float groundRaycastDistance = 0.15f;  // Small distance for ground detection
+    [SerializeField] float maxSlopeAngle = 70f;  // Maximum distance between jumps
+    [SerializeField] LayerMask groundLayer;  // Layer to detect ground
 
     [Header("Physics Settings")]
-    [SerializeField] private float gravityForce = 9.8f;  // Custom gravity force
-    [SerializeField] private float downhillSpeedMultiplier = 1.5f; // Speed multiplier when going downhill
+    [SerializeField] float gravityForce = 9.8f;  // Custom gravity force
+    [SerializeField] float downhillSpeedMultiplier = 1.5f; // Speed multiplier when going downhill
 
 
     [Header("References")]
-    [SerializeField] private Transform groundCheck;  // Empty GameObject at the bottom of the tank for ground detection
-    [SerializeField] private Transform raycastOrigin;  // Empty GameObject at the bottom of the tank for ground detection
-    [SerializeField] private BoxCollider2D boxCollider;  // The tank's BoxCollider2D
+    [SerializeField] Transform groundCheck;  // Empty GameObject at the bottom of the tank for ground detection
+    [SerializeField] Transform raycastOrigin;  // Empty GameObject at the bottom of the tank for ground detection
+    [SerializeField] BoxCollider2D boxCollider;  // The tank's BoxCollider2D
 
     // Private variables
     // --------------------------------------------------

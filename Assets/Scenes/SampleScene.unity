@@ -268,7 +268,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1936932083}
+  m_Father: {fileID: 1173090455}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &399212688
 SpriteRenderer:
@@ -506,6 +506,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e4175c8bad1f4afc85122916aedb449, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  amountOfPlayers: 2
+  playerPrefab: {fileID: 0}
+  players: []
 --- !u!4 &624826800
 Transform:
   m_ObjectHideFlags: 0
@@ -582,7 +585,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   textureWidth: 2600
   textureHeight: 1200
-  noiseScale: 0.0016
+  noiseScale: 0.0018
   heightMultiplier: 1300
   collidersGroupTransform: {fileID: 472513522}
   terrainTextureObject: {fileID: 54272526}
@@ -591,7 +594,7 @@ MonoBehaviour:
   pixelsPerUnit: 100
   minRandomOffset: 0
   maxRandomOffset: 1000
-  chunkSize: 200
+  chunkSize: 128
 --- !u!1 &1093926518
 GameObject:
   m_ObjectHideFlags: 0
@@ -622,7 +625,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1936932083}
+  m_Father: {fileID: 1173090455}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1093926520
 SpriteRenderer:
@@ -676,6 +679,40 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1173090454
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1173090455}
+  m_Layer: 0
+  m_Name: TankHitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1173090455
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1173090454}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 399212687}
+  - {fileID: 1093926519}
+  - {fileID: 1321088963}
+  m_Father: {fileID: 1936932083}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1321088962
 GameObject:
   m_ObjectHideFlags: 0
@@ -701,12 +738,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1321088962}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.0028976751}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.0028977394}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1936932083}
+  m_Father: {fileID: 1173090455}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1321088964
 SpriteRenderer:
@@ -836,6 +873,7 @@ GameObject:
   - component: {fileID: 1936932083}
   - component: {fileID: 1936932087}
   - component: {fileID: 1936932085}
+  - component: {fileID: 1936932088}
   m_Layer: 0
   m_Name: Tank
   m_TagString: Untagged
@@ -856,9 +894,7 @@ Transform:
   m_LocalScale: {x: 0.15, y: 0.15, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 399212687}
-  - {fileID: 1093926519}
-  - {fileID: 1321088963}
+  - {fileID: 1173090455}
   - {fileID: 1648225731}
   - {fileID: 16957855}
   m_Father: {fileID: 0}
@@ -931,6 +967,24 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 3.66, y: 2.56}
   m_EdgeRadius: 0
+--- !u!114 &1936932088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1936932081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2d2e4fd1c1fc4eba9e20bcc0ead7ae7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  backgroundColor: {r: 1, g: 0, b: 0, a: 1}
+  foregroundColor: {r: 0, g: 1, b: 0, a: 1}
+  width: 64
+  height: 8
+  healthbarPrefab: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
