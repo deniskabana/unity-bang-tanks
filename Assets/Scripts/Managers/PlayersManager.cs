@@ -5,6 +5,8 @@ using UnityEngine.Events;
 
 public class PlayersManager : MonoBehaviour
 {
+  [SerializeField] bool debug = false;
+
   [Header("Level Settings")]
   [SerializeField, Range(1, 8)] int amountOfPlayers = 2;
 
@@ -15,18 +17,25 @@ public class PlayersManager : MonoBehaviour
   [Header("References")]
   [SerializeField] GameObject playerPrefab;
 
-  // Private variables
+  // Runtime variables
   // --------------------------------------------------
 
+  public static PlayersManager Instance;
   private List<GameObject> players = new List<GameObject>();
   private int currentPlayerIndex = 0;
+  public static UnityEvent OnPlayersInitialized = new UnityEvent();
 
   // Built-in methods
   // --------------------------------------------------
 
+  void Awake()
+  {
+    Instance = this;
+  }
+
   void Start()
   {
-    Initialize();
+    Instance = this;
   }
 
   // Custom methods
@@ -34,16 +43,18 @@ public class PlayersManager : MonoBehaviour
 
   public void Initialize()
   {
-    // This function should either retrieve or receive terrain data !!!
     CreatePlayers();
   }
 
   void CreatePlayers()
   {
-    float[] playerPositions = new float[amountOfPlayers];
+    if (debug) Debug.Log("Creating players...");
 
-    // TODO: replace with actual value
-    float textureWidth = 1920f;
+    if (!TerrainManager.Instance.GetTerrainData().Initialized)
+      throw new Exception("PlayersManager: Terrain data must be initialized before creating players!");
+
+    float[] playerPositions = new float[amountOfPlayers];
+    float textureWidth = TerrainManager.Instance.GetTerrainData().TextureWidth;
 
     for (int i = 0; i < amountOfPlayers; i++)
     {
@@ -58,6 +69,8 @@ public class PlayersManager : MonoBehaviour
     {
       // player.GetComponent<Player>().Initialize(limitedFuel, maxFuel, enableRoundTimer, maxRoundDuration);
     }
+
+    if (debug) Debug.Log("Players created!");
   }
 
   public int GetCurrentPlayerIndex()

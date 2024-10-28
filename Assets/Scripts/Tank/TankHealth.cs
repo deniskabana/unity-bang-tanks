@@ -12,14 +12,18 @@ public class TankHealth : MonoBehaviour
   [SerializeField] int width = 64;
   [SerializeField] int height = 8;
 
-  [Header("References")]
-  [SerializeField] GameObject healthbarPrefab;
+  // Runtime variables
+  // --------------------------------------------------
 
   private bool initialized = false;
   private int currentHealth;
-  private GameObject healthbarObject;
+  private GameObject foregroundSpriteObject;
+  private GameObject backgroundSpriteObject;
   private SpriteRenderer foregroundSpriteRenderer;
   private SpriteRenderer backgroundSpriteRenderer;
+
+  // Built-in methods
+  // --------------------------------------------------
 
   void Start()
   {
@@ -27,13 +31,18 @@ public class TankHealth : MonoBehaviour
     Initialize();
   }
 
+  // Built-in methods
+  // --------------------------------------------------
+
   void Initialize()
   {
     if (initialized) return;
 
-    healthbarObject = Instantiate(healthbarPrefab, transform.position, Quaternion.identity, gameObject.transform);
-    foregroundSpriteRenderer = healthbarObject.AddComponent<SpriteRenderer>();
-    backgroundSpriteRenderer = healthbarObject.AddComponent<SpriteRenderer>();
+    if (foregroundSpriteObject == null) foregroundSpriteObject = new GameObject("TankForegroundSprite");
+    if (backgroundSpriteObject == null) backgroundSpriteObject = new GameObject("TankBackgroundSprite");
+
+    foregroundSpriteRenderer = foregroundSpriteObject.AddComponent<SpriteRenderer>();
+    backgroundSpriteRenderer = backgroundSpriteObject.AddComponent<SpriteRenderer>();
 
     foregroundSpriteRenderer.sprite = Sprite.Create(new Texture2D(1, 1), new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f));
     foregroundSpriteRenderer.color = foregroundColor;

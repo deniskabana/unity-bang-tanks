@@ -7,7 +7,7 @@ public class TerrainChunk : MonoBehaviour
 {
     [SerializeField] private float minSolidChunkThreshold = 0.005f;
 
-    // Private fields
+    // Runtime variables
     // --------------------------------------------------
 
     private bool wasInitialized = false;

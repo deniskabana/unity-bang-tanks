@@ -18,7 +18,7 @@ public class TankPhysics : MonoBehaviour
     [SerializeField] Transform raycastOrigin;  // Empty GameObject at the bottom of the tank for ground detection
     [SerializeField] BoxCollider2D boxCollider;  // The tank's BoxCollider2D
 
-    // Private variables
+    // Runtime variables
     // --------------------------------------------------
 
     private Vector2 velocity;  // Store velocity for movement

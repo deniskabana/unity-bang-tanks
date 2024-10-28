@@ -10,7 +10,7 @@ public class TankShooting : MonoBehaviour
     [Header("References")]
     [SerializeField] Transform cannonTransform;  // Reference to the cannon's transform
 
-    // Private variables
+    // Runtime variables
     // --------------------------------------------------
 
     private float shotForce;  // Force to apply to the bullet
