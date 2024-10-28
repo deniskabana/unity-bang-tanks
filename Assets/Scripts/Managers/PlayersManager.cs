@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -51,7 +50,7 @@ public class PlayersManager : MonoBehaviour
     if (debug) Debug.Log("Creating players...");
 
     if (!TerrainManager.Instance.GetTerrainData().Initialized)
-      throw new Exception("PlayersManager: Terrain data must be initialized before creating players!");
+      throw new System.Exception("PlayersManager: Terrain data must be initialized before creating players!");
 
     float[] playerPositions = new float[amountOfPlayers];
     float textureWidth = TerrainManager.Instance.GetTerrainData().TextureWidth;

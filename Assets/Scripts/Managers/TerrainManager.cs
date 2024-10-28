@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -152,7 +151,7 @@ public class TerrainManager : MonoBehaviour
     {
         if (debug) Debug.Log("Creating single terrain chunk...");
         if (terrainChunkPrefab == null || heightmap == null || collidersGroupTransform == null)
-            throw new Exception("TerrainManager: Missing required references for terrain chunk generation.");
+            throw new System.Exception("TerrainManager: Missing required references for terrain chunk generation.");
 
         // Instantiate the grid segment prefab
         GameObject chunkObject = Instantiate(terrainChunkPrefab, collidersGroupTransform.position, Quaternion.identity, collidersGroupTransform);
