@@ -486,7 +486,7 @@ GameObject:
   m_Component:
   - component: {fileID: 624826800}
   - component: {fileID: 624826799}
-  - component: {fileID: 624826801}
+  - component: {fileID: 624826802}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -506,9 +506,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e4175c8bad1f4afc85122916aedb449, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amountOfPlayers: 2
-  playerPrefab: {fileID: 0}
-  players: []
 --- !u!4 &624826800
 Transform:
   m_ObjectHideFlags: 0
@@ -524,7 +521,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &624826801
+--- !u!114 &624826802
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -533,12 +530,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 624826798}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf7dd60f65ff14b86949b48bc1620bca, type: 3}
+  m_Script: {fileID: 11500000, guid: c0b73fc92ae0e403ab6a07314d6623b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpriteLifetime: 0.2
-  explosionParent: {fileID: 476266739}
-  explosionPrefab: {fileID: 7781946742746118445, guid: a6ee80721016a43cab1eb217bee1d384, type: 3}
+  amountOfPlayers: 2
+  limitedFuel: 1
+  fuelPerRound: 100
+  playerPrefab: {fileID: 0}
 --- !u!1 &1025358063
 GameObject:
   m_ObjectHideFlags: 0

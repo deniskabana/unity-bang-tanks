@@ -23,9 +23,12 @@ public class TerrainGenerator : MonoBehaviour
     // Private variables
     // --------------------------------------------------
 
+    public static TerrainGenerator _this;
+
     private bool initialized = false;
     private float[] heightmap;
     private Texture2D heightmapTexture;
+    private TerrainData terrainData;
 
     // Built-in methods
     // --------------------------------------------------
@@ -33,6 +36,7 @@ public class TerrainGenerator : MonoBehaviour
     void Start()
     {
         Initialize();
+        _this = this;
     }
 
     // Custom methods
@@ -41,12 +45,34 @@ public class TerrainGenerator : MonoBehaviour
     void Initialize()
     {
         if (initialized) return;
+        SetTerrainData(); // Fill out the data even before first finishing
         GenerateHeightmapData();
         GenerateHeightmapTexture();
 
         if (enableTerrainChunking) CreateTerrainChunks();
         else CreateTerrainSingleChunk();
         initialized = true;
+        SetTerrainData();
+    }
+
+    void SetTerrainData()
+    {
+        terrainData = new TerrainData
+        {
+            Initialized = initialized,
+            TextureWidth = textureWidth,
+            TextureHeight = textureHeight,
+            EnableTerrainChunking = enableTerrainChunking,
+            ChunkSize = chunkSize,
+            PixelsPerUnit = pixelsPerUnit,
+            Heightmap = heightmap,
+            HeightmapTexture = heightmapTexture
+        };
+    }
+
+    public static TerrainData GetTerrainData()
+    {
+        return _this.terrainData;
     }
 
     void GenerateHeightmapData()
@@ -60,6 +86,7 @@ public class TerrainGenerator : MonoBehaviour
             float yHeight = Mathf.PerlinNoise(x * noiseScale + randomOffset, 0) * heightMultiplier;
             heightmap[x] = yHeight;
         }
+        SetTerrainData(); // Add currently generated data
     }
 
     void GenerateHeightmapTexture()
