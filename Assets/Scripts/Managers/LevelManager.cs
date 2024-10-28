@@ -34,7 +34,7 @@ public class LevelManager : MonoBehaviour
 
     public void Initialize()
     {
-        // This function should either retrieve or receive terrain data
+        // This function should either retrieve or receive terrain data !!!
         CreatePlayers();
     }
 
@@ -59,4 +59,13 @@ public class LevelManager : MonoBehaviour
             // player.GetComponent<Player>().Initialize(limitedFuel, maxFuel, enableRoundTimer, maxRoundDuration);
         }
     }
+
+    public void StartTurn()
+    { }
+
+    public void EndTurn()
+    { }
+
+    public void GetCurrentPlayerTank()
+    { }
 }
