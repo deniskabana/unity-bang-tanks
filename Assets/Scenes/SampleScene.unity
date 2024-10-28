@@ -422,7 +422,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debug: 0
-  amountOfPlayers: 2
+  amountOfPlayers: 5
   limitedFuel: 1
   fuelPerRound: 100
   playerPrefab: {fileID: 4071609277291850834, guid: 9178c773621c243bfb7545aba668c061, type: 3}

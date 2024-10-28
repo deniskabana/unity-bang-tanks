@@ -35,13 +35,13 @@ public class TankPhysics : MonoBehaviour
 
     void Update()
     {
-        HandleMovement();
         CheckGround();
         ApplyGravity();
     }
 
     void OnDrawGizmos()
     {
+        if (PlayersManager.Instance.debug == false) return;
         Gizmos.color = Color.green;
         Gizmos.DrawLine(groundCheck.position, raycastOrigin.position + Vector3.down * groundRaycastDistance);
         Gizmos.DrawWireSphere(groundCheck.position, 0.05f);
@@ -50,10 +50,8 @@ public class TankPhysics : MonoBehaviour
     // Custom methods
     // --------------------------------------------------
 
-    private void HandleMovement()
+    public void HandleMovement(float inputX)
     {
-        // Read horizontal input (A/D or arrow keys)
-        float inputX = Input.GetAxisRaw("Horizontal");
         isMoving = inputX != 0;
         if (!isMoving || !isGrounded) return;
 
@@ -75,7 +73,7 @@ public class TankPhysics : MonoBehaviour
         transform.Translate(inputX * speedOnSlope * Time.deltaTime * Vector3.right);
     }
 
-    private void ApplyGravity()
+    void ApplyGravity()
     {
         if (!isGrounded) // Apply custom gravity when not grounded
         {
@@ -84,12 +82,12 @@ public class TankPhysics : MonoBehaviour
         }
     }
 
-    private void CounterGravity()
+    void CounterGravity()
     {
         velocity.y = 0;
     }
 
-    private void CheckGround()
+    void CheckGround()
     {
         // Raycast downward from the GroundCheck to check if the tank is grounded
         RaycastHit2D groundHit = Physics2D.Raycast(groundCheck.position, Vector2.down, groundRaycastDistance, groundLayer);
@@ -106,7 +104,7 @@ public class TankPhysics : MonoBehaviour
         }
     }
 
-    private void ResetGroundPosition()
+    void ResetGroundPosition()
     {
         // Raycast downward from the GroundCheck to check if the tank is grounded
         RaycastHit2D groundHit = Physics2D.Raycast(raycastOrigin.position, Vector2.down, groundRaycastDistance * 100f, groundLayer); // Super long raycast

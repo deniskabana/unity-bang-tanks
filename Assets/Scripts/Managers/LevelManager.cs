@@ -17,11 +17,12 @@ public enum GameState
 public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance;
-
-    [SerializeField] bool debug = false;
+    public bool debug = false;
 
     // Runtime variables
     // --------------------------------------------------
+
+    private GameState GAME_STATE = GameState.Loading;
 
     // Events
     public static UnityEvent OnGameReady = new UnityEvent(); // Called when the game is ready to start
@@ -32,8 +33,6 @@ public class LevelManager : MonoBehaviour
     public static UnityEvent OnPlayerTurnConsequencesStart = new UnityEvent(); // Called when player's turn ends and their consequences start
     public static UnityEvent OnPlayerTurnConsequencesEnd = new UnityEvent(); // Called when player's consequences end
     public static UnityEvent OnGameOver = new UnityEvent(); // Called when the game is over
-
-    public GameState GAME_STATE = GameState.Loading;
 
     // Built-in methods
     // --------------------------------------------------
@@ -66,6 +65,19 @@ public class LevelManager : MonoBehaviour
         OnGameReady.Invoke();
     }
 
+    public static GameState GetState()
+    {
+        return Instance.GAME_STATE;
+    }
+
+    void SetState(GameState state)
+    {
+        GAME_STATE = state;
+    }
+
+    // State methods
+    // --------------------------------------------------
+
     public void StartGame()
     {
         if (GAME_STATE != GameState.Ready) return;
@@ -76,7 +88,7 @@ public class LevelManager : MonoBehaviour
 
     public void PreparePlayerTurn()
     {
-        GAME_STATE = GameState.TurnPrepared;
+        SetState(GameState.TurnPrepared);
         if (debug) Debug.Log("GAME_STATE: TurnPrepared");
         OnPlayerTurnPrepared.Invoke();
 
@@ -85,7 +97,7 @@ public class LevelManager : MonoBehaviour
 
     public void StartPlayerTurn()
     {
-        GAME_STATE = GameState.Turn;
+        SetState(GameState.Turn);
         if (debug) Debug.Log("GAME_STATE: Turn");
         OnPlayerTurnStart.Invoke();
     }
@@ -94,7 +106,7 @@ public class LevelManager : MonoBehaviour
     {
         if (GAME_STATE != GameState.Turn) return;
 
-        GAME_STATE = GameState.TurnOutcome;
+        SetState(GameState.TurnOutcome);
         if (debug) Debug.Log("GAME_STATE: TurnOutcome");
         OnPlayerTurnEnd.Invoke();
         OnPlayerTurnConsequencesStart.Invoke();
@@ -104,7 +116,7 @@ public class LevelManager : MonoBehaviour
     {
         if (GAME_STATE != GameState.TurnOutcome) return;
 
-        GAME_STATE = GameState.TurnPrepared;
+        SetState(GameState.TurnPrepared);
         if (debug) Debug.Log("GAME_STATE: TurnPrepared");
         OnPlayerTurnConsequencesEnd.Invoke();
 
@@ -113,7 +125,7 @@ public class LevelManager : MonoBehaviour
 
     public void EndGame()
     {
-        GAME_STATE = GameState.GameOver;
+        SetState(GameState.GameOver);
         if (debug) Debug.Log("GAME_STATE: GameOver");
         OnGameOver.Invoke();
     }

@@ -3,8 +3,7 @@ using UnityEngine;
 public class TerrainManager : MonoBehaviour
 {
     public static TerrainManager Instance;
-
-    [SerializeField] bool debug = false;
+    public bool debug = false;
 
     [Header("Terrain Settings")]
     [SerializeField] int textureWidth = 1920;  // The width of the terrain (in pixels)

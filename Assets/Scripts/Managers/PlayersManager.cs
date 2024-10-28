@@ -4,18 +4,16 @@ using UnityEngine;
 public class PlayersManager : MonoBehaviour
 {
   public static PlayersManager Instance;
-
-  [SerializeField] bool debug = false;
-
-  [Header("Level Settings")]
-  [SerializeField, Range(1, 8)] int amountOfPlayers = 2;
+  public bool debug = false;
 
   [Header("Gameplay Customization Settings")]
+  [SerializeField, Range(1, 8)] int amountOfPlayers = 2;
   [SerializeField] bool limitedFuel = true;
   [SerializeField] float fuelPerRound = 100f;
 
   [Header("References")]
   [SerializeField] GameObject playerPrefab;
+  [SerializeField] Transform tankTurnIndicator;
 
   // Runtime variables
   // --------------------------------------------------
@@ -37,14 +35,32 @@ public class PlayersManager : MonoBehaviour
     if (!Instance) Instance = this;
   }
 
+  void Update()
+  {
+    if (!initialized) return;
+
+    switch (LevelManager.GetState())
+    {
+      case GameState.Turn:
+        HandleTurn();
+        break;
+      case GameState.TurnOutcome:
+        // HandleTurnOutcome();
+        break;
+    }
+  }
+
   // Custom methods
   // --------------------------------------------------
 
   public void Initialize()
   {
-    if (debug) Debug.Log("Creating players...");
-
     if (initialized) return;
+
+    if (debug) Debug.Log("Attaching listeners");
+    LevelManager.OnPlayerTurnStart.AddListener(OnPlayerTurnStart);
+
+    if (debug) Debug.Log("Creating players...");
     CreatePlayers();
     initialized = true;
 
@@ -71,21 +87,20 @@ public class PlayersManager : MonoBehaviour
       GameObject player = Instantiate(playerPrefab, new Vector3(playerX, playerY, 0), Quaternion.identity);
       players.Add(player);
     }
-
-    // Perform player initialization
-    foreach (GameObject player in players)
-    {
-      // player.GetComponent<Player>().Initialize(limitedFuel, maxFuel, enableRoundTimer, maxRoundDuration);
-    }
   }
 
-  public int GetCurrentPlayerIndex()
+  void HandleTurn()
   {
-    return currentPlayerIndex;
+    GameObject currentPlayer = players[currentPlayerIndex];
+    // TODO: Refactor this to a static variable to prevent slow GetComponent calls
+    TankPhysics tankPhysics = currentPlayer.GetComponent<TankPhysics>();
+
+    float inputX = Input.GetAxis("Horizontal");
+    tankPhysics.HandleMovement(inputX);
   }
 
-  public GameObject GetCurrentPlayerObject()
-  {
-    return players[currentPlayerIndex];
-  }
+  // Event handlers
+  // --------------------------------------------------
+
+  void OnPlayerTurnStart() { }
 }
