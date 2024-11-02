@@ -5,7 +5,6 @@ public enum GameState
 {
     Loading,
     Ready,
-    TurnPrepared,
     Turn,
     TurnOutcome,
     GameOver
@@ -17,6 +16,7 @@ public class LevelManager : MonoBehaviour
     public bool debug = false;
 
     [SerializeField] GameplaySettings gameplaySettings;
+    [SerializeField] TerrainSettings terrainSettings;
 
     // Runtime variables
     // --------------------------------------------------
@@ -54,7 +54,7 @@ public class LevelManager : MonoBehaviour
     {
         SetState(GameState.Loading);
 
-        TerrainManager.Instance.Initialize();
+        TerrainManager.Instance.Initialize(terrainSettings);
         PlayersTurnManager.Instance.Initialize(gameplaySettings);
 
         SetState(GameState.Ready);
@@ -89,22 +89,20 @@ public class LevelManager : MonoBehaviour
         OnPlayerTurnStart.Invoke();
     }
 
-    public void EndPlayerTurn()
+    public void EndPlayerTurn() // Also acts as StartPlayerOutcome
     {
         if (GAME_STATE != GameState.Turn) return;
-
-        SetState(GameState.TurnOutcome);
         OnPlayerTurnEnd.Invoke();
+        // Start player outcome
         OnPlayerTurnOutcomeStart.Invoke();
+        SetState(GameState.TurnOutcome);
     }
 
-    public void EndPlayerConsequences()
+    public void EndPlayerOutcome()
     {
         if (GAME_STATE != GameState.TurnOutcome) return;
-
-        SetState(GameState.TurnPrepared);
         OnPlayerTurnOutcomeEnd.Invoke();
-
+        // Start next turn
         StartPlayerTurn();
     }
 
