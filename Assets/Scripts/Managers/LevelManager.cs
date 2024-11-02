@@ -15,8 +15,8 @@ public class LevelManager : MonoBehaviour
     public static LevelManager Instance;
     public bool debug = false;
 
-    [SerializeField] GameplaySettings gameplaySettings;
-    [SerializeField] TerrainSettings terrainSettings;
+    [SerializeField] public GameplaySettings gameplaySettings;
+    [SerializeField] public TerrainSettings terrainSettings;
 
     // Runtime variables
     // --------------------------------------------------

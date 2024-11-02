@@ -75,11 +75,13 @@ public class PlayersTurnManager : MonoBehaviour
   void OnPlayerTurnStart()
   {
     if (debug) Debug.Log("Player turn started!");
+    players[currentPlayerIndex].HandleTurnStart();
   }
 
   void OnPlayerTurnEnd()
   {
     if (debug) Debug.Log("Player turn ended!");
+    players[currentPlayerIndex].HandleTurnEnd();
     currentPlayerIndex = (currentPlayerIndex + 1) % players.Count;
   }
 }

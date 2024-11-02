@@ -2,26 +2,8 @@ using System;
 using UnityEngine;
 
 [System.Serializable]
-public struct PlayerAttributes
-{
-  [Header("Movement Settings")]
-  public float speed;
-  public float downhillSpeedMultiplier;
-  public float gravityForce;
-  public float maxSlopeAngle;
-
-  [Header("Gameplay Round Settings")]
-  public int maxHealth;
-  public int maxFuel;
-
-  // Shooting, weapon choice, etc.
-  // TODO: prepare for multiple weapons
-}
-
-[System.Serializable]
 public struct PlayerState
 {
-  [Header("Runtime Variables")]
   public bool isPlayingTurn;
   public int health;
   public int fuel;
@@ -31,12 +13,14 @@ public struct PlayerState
   // TODO: prepare for multiple weapons
 }
 
+[@RequireComponent(typeof(TankPhysics))]
+[@RequireComponent(typeof(TankShooting))]
+[@RequireComponent(typeof(TankHealth))]
 public class PlayerTank : MonoBehaviour
 {
   // Runtime variables
   // --------------------------------------------------
 
-  private PlayerAttributes attributes;
   private PlayerState state;
 
   // Built-in methods
@@ -44,43 +28,38 @@ public class PlayerTank : MonoBehaviour
 
   void Update()
   {
+    if (!state.isPlayingTurn) return;
   }
 
   // Custom methods
   // --------------------------------------------------
 
-  public void Initialize(PlayerAttributes _attributes)
+  public void Initialize()
   {
-    attributes = _attributes;
     SetInitialState();
-
-    // Event listeners
-    LevelManager.OnPlayerTurnStart.AddListener(SetStateBeforeTurn);
-    LevelManager.OnPlayerTurnEnd.AddListener(SetStateAfterTurn);
   }
 
   void SetInitialState()
   {
+    GameplaySettings gs = LevelManager.Instance.gameplaySettings;
     state = new PlayerState
     {
       isPlayingTurn = false,
-      health = attributes.maxHealth,
-      fuel = attributes.maxFuel,
+      health = gs.maxPlayerHealth,
+      fuel = gs.maxFuelPerRound,
       cannonAngle = 0f
     };
   }
 
-  void SetStateBeforeTurn()
+  public void HandleTurnStart()
   {
+    GameplaySettings gs = LevelManager.Instance.gameplaySettings;
     state.isPlayingTurn = true;
-    state.fuel = attributes.maxFuel;
+    state.fuel = gs.maxFuelPerRound;
   }
 
-  void SetStateAfterTurn()
+  public void HandleTurnEnd()
   {
     state.isPlayingTurn = false;
   }
-
-  // Events
-  // --------------------------------------------------
 }
