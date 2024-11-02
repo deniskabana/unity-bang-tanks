@@ -6,11 +6,6 @@ public class PlayersTurnManager : MonoBehaviour
   public static PlayersTurnManager Instance;
   public bool debug = false;
 
-  [Header("Gameplay Customization Settings")]
-  [SerializeField, Range(1, 8)] int amountOfPlayers = 2;
-  [SerializeField] bool limitedFuel = true;
-  [SerializeField] float fuelPerRound = 100f;
-
   [Header("References")]
   [SerializeField] GameObject playerPrefab;
 
@@ -20,8 +15,7 @@ public class PlayersTurnManager : MonoBehaviour
   private bool initialized = false;
   private readonly List<PlayerTank> players = new List<PlayerTank>();
   private int currentPlayerIndex = 0;
-
-  private TankPhysics currentPlayerTankPhysics;
+  private GameplaySettings gameplaySettings;
 
   // Built-in methods
   // --------------------------------------------------
@@ -36,27 +30,13 @@ public class PlayersTurnManager : MonoBehaviour
     if (!Instance) Instance = this;
   }
 
-  void Update()
-  {
-    if (!initialized) return;
-
-    switch (LevelManager.GetState())
-    {
-      case GameState.Turn:
-        HandlePlayerTurn();
-        break;
-      case GameState.TurnOutcome:
-        // HandleTurnOutcome();
-        break;
-    }
-  }
-
   // Custom methods
   // --------------------------------------------------
 
-  public void Initialize()
+  public void Initialize(GameplaySettings _gameplaySettings)
   {
     if (initialized) return;
+    gameplaySettings = _gameplaySettings;
 
     if (debug) Debug.Log("Attaching listeners");
     LevelManager.OnPlayerTurnStart.AddListener(OnPlayerTurnStart);
@@ -76,14 +56,14 @@ public class PlayersTurnManager : MonoBehaviour
     if (!terrainData.Initialized)
       throw new System.Exception("PlayersManager: Terrain data must be initialized before creating players!");
 
-    float[] playerPositions = new float[amountOfPlayers];
+    float[] playerPositions = new float[gameplaySettings.amountOfPlayers];
     float worldWidth = terrainData.TextureRenderObject.GetComponent<SpriteRenderer>().bounds.size.x;
     Transform textureRenderTransform = terrainData.TextureRenderObject.transform;
     float playerY = textureRenderTransform.position.y; // Fair enough for now
 
-    for (int i = 0; i < amountOfPlayers; i++)
+    for (int i = 0; i < gameplaySettings.amountOfPlayers; i++)
     {
-      float terrainPartSize = worldWidth / (amountOfPlayers + 1);
+      float terrainPartSize = worldWidth / (gameplaySettings.amountOfPlayers + 1);
       playerPositions[i] = terrainPartSize + terrainPartSize * i;
       float playerX = textureRenderTransform.position.x - worldWidth / 2 + playerPositions[i];
       GameObject player = Instantiate(playerPrefab, new Vector3(playerX, playerY, 0), Quaternion.identity);
@@ -92,19 +72,12 @@ public class PlayersTurnManager : MonoBehaviour
     }
   }
 
-  void HandlePlayerTurn()
-  {
-    float inputX = Input.GetAxis("Horizontal");
-    if (inputX != 0) currentPlayerTankPhysics?.HandleMovement(inputX);
-  }
-
   // Event handlers
   // --------------------------------------------------
 
   void OnPlayerTurnStart()
   {
     if (debug) Debug.Log("Player turn started!");
-    currentPlayerTankPhysics = players[currentPlayerIndex].GetComponent<TankPhysics>();
   }
 
   void OnPlayerTurnEnd()

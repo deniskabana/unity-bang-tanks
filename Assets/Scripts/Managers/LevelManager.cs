@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -19,20 +16,21 @@ public class LevelManager : MonoBehaviour
     public static LevelManager Instance;
     public bool debug = false;
 
+    [SerializeField] GameplaySettings gameplaySettings;
+
     // Runtime variables
     // --------------------------------------------------
 
     private GameState GAME_STATE = GameState.Loading;
 
     // Events
-    public static UnityEvent OnGameReady = new UnityEvent(); // Called when the game is ready to start
-    public static UnityEvent OnGameStart = new UnityEvent(); // Called when the game starts
-    public static UnityEvent OnPlayerTurnPrepared = new UnityEvent(); // Called when the player's turn is prepared to start
-    public static UnityEvent OnPlayerTurnStart = new UnityEvent(); // Called when the player's turn to play starts
-    public static UnityEvent OnPlayerTurnEnd = new UnityEvent(); // Called when the player's turn to play ends
-    public static UnityEvent OnPlayerTurnConsequencesStart = new UnityEvent(); // Called when player's turn ends and their consequences start
-    public static UnityEvent OnPlayerTurnConsequencesEnd = new UnityEvent(); // Called when player's consequences end
-    public static UnityEvent OnGameOver = new UnityEvent(); // Called when the game is over
+    public static UnityEvent OnGameReady = new UnityEvent();
+    public static UnityEvent OnGameStart = new UnityEvent();
+    public static UnityEvent OnPlayerTurnStart = new UnityEvent();
+    public static UnityEvent OnPlayerTurnEnd = new UnityEvent();
+    public static UnityEvent OnPlayerTurnOutcomeStart = new UnityEvent();
+    public static UnityEvent OnPlayerTurnOutcomeEnd = new UnityEvent();
+    public static UnityEvent OnGameOver = new UnityEvent();
 
     // Built-in methods
     // --------------------------------------------------
@@ -54,14 +52,12 @@ public class LevelManager : MonoBehaviour
 
     public void Initialize()
     {
-        GAME_STATE = GameState.Loading;
-        if (debug) Debug.Log("GAME_STATE: Loading");
+        SetState(GameState.Loading);
 
         TerrainManager.Instance.Initialize();
-        PlayersManager.Instance.Initialize();
+        PlayersTurnManager.Instance.Initialize(gameplaySettings);
 
-        GAME_STATE = GameState.Ready;
-        if (debug) Debug.Log("GAME_STATE: Ready");
+        SetState(GameState.Ready);
         OnGameReady.Invoke();
     }
 
@@ -73,6 +69,7 @@ public class LevelManager : MonoBehaviour
     void SetState(GameState state)
     {
         GAME_STATE = state;
+        if (debug) Debug.Log("GAME_STATE: " + state);
     }
 
     // State methods
@@ -83,22 +80,12 @@ public class LevelManager : MonoBehaviour
         if (GAME_STATE != GameState.Ready) return;
         OnGameStart.Invoke();
 
-        PreparePlayerTurn();
-    }
-
-    public void PreparePlayerTurn()
-    {
-        SetState(GameState.TurnPrepared);
-        if (debug) Debug.Log("GAME_STATE: TurnPrepared");
-        OnPlayerTurnPrepared.Invoke();
-
         StartPlayerTurn();
     }
 
     public void StartPlayerTurn()
     {
         SetState(GameState.Turn);
-        if (debug) Debug.Log("GAME_STATE: Turn");
         OnPlayerTurnStart.Invoke();
     }
 
@@ -107,9 +94,8 @@ public class LevelManager : MonoBehaviour
         if (GAME_STATE != GameState.Turn) return;
 
         SetState(GameState.TurnOutcome);
-        if (debug) Debug.Log("GAME_STATE: TurnOutcome");
         OnPlayerTurnEnd.Invoke();
-        OnPlayerTurnConsequencesStart.Invoke();
+        OnPlayerTurnOutcomeStart.Invoke();
     }
 
     public void EndPlayerConsequences()
@@ -117,16 +103,14 @@ public class LevelManager : MonoBehaviour
         if (GAME_STATE != GameState.TurnOutcome) return;
 
         SetState(GameState.TurnPrepared);
-        if (debug) Debug.Log("GAME_STATE: TurnPrepared");
-        OnPlayerTurnConsequencesEnd.Invoke();
+        OnPlayerTurnOutcomeEnd.Invoke();
 
-        PreparePlayerTurn();
+        StartPlayerTurn();
     }
 
     public void EndGame()
     {
         SetState(GameState.GameOver);
-        if (debug) Debug.Log("GAME_STATE: GameOver");
         OnGameOver.Invoke();
     }
 }

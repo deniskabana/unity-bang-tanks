@@ -41,7 +41,6 @@ public class TankPhysics : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        if (PlayersManager.Instance.debug == false) return;
         Gizmos.color = Color.green;
         Gizmos.DrawLine(groundCheck.position, raycastOrigin.position + Vector3.down * groundRaycastDistance);
         Gizmos.DrawWireSphere(groundCheck.position, 0.05f);
