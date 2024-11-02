@@ -15,7 +15,7 @@ public class PlayersTurnManager : MonoBehaviour
   private bool initialized = false;
   private readonly List<PlayerTank> players = new List<PlayerTank>();
   private int currentPlayerIndex = 0;
-  private GameplaySettings gameplaySettings;
+  private GameplaySettings gs;
 
   // Built-in methods
   // --------------------------------------------------
@@ -36,7 +36,7 @@ public class PlayersTurnManager : MonoBehaviour
   public void Initialize(GameplaySettings _gameplaySettings)
   {
     if (initialized) return;
-    gameplaySettings = _gameplaySettings;
+    gs = _gameplaySettings;
 
     if (debug) Debug.Log("Attaching listeners");
     LevelManager.OnPlayerTurnStart.AddListener(OnPlayerTurnStart);
@@ -51,15 +51,15 @@ public class PlayersTurnManager : MonoBehaviour
 
   void CreatePlayers()
   {
-    float[] playerPositions = new float[gameplaySettings.amountOfPlayers];
+    float[] playerPositions = new float[gs.amountOfPlayers];
     Bounds terrainBounds = TerrainManager.Instance.GetTerrainRendererBounds();
 
     float worldWidth = terrainBounds.size.x;
     float playerY = terrainBounds.min.y + 1;
 
-    for (int i = 0; i < gameplaySettings.amountOfPlayers; i++)
+    for (int i = 0; i < gs.amountOfPlayers; i++)
     {
-      float terrainPartSize = worldWidth / (gameplaySettings.amountOfPlayers + 1);
+      float terrainPartSize = worldWidth / (gs.amountOfPlayers + 1);
       playerPositions[i] = terrainPartSize + terrainPartSize * i;
 
       float playerX = terrainBounds.min.x + playerPositions[i];
