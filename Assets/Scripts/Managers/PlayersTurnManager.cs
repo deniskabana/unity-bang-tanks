@@ -18,7 +18,7 @@ public class PlayersTurnManager : MonoBehaviour
   // --------------------------------------------------
 
   private bool initialized = false;
-  private List<GameObject> players = new List<GameObject>();
+  private readonly List<PlayerTank> players = new List<PlayerTank>();
   private int currentPlayerIndex = 0;
 
   private TankPhysics currentPlayerTankPhysics;
@@ -60,6 +60,7 @@ public class PlayersTurnManager : MonoBehaviour
 
     if (debug) Debug.Log("Attaching listeners");
     LevelManager.OnPlayerTurnStart.AddListener(OnPlayerTurnStart);
+    LevelManager.OnPlayerTurnEnd.AddListener(OnPlayerTurnEnd);
 
     if (debug) Debug.Log("Creating players...");
     CreatePlayers();
@@ -86,7 +87,8 @@ public class PlayersTurnManager : MonoBehaviour
       playerPositions[i] = terrainPartSize + terrainPartSize * i;
       float playerX = textureRenderTransform.position.x - worldWidth / 2 + playerPositions[i];
       GameObject player = Instantiate(playerPrefab, new Vector3(playerX, playerY, 0), Quaternion.identity);
-      players.Add(player);
+      PlayerTank playerTank = player.GetComponent<PlayerTank>();
+      players.Add(playerTank);
     }
   }
 
@@ -103,5 +105,11 @@ public class PlayersTurnManager : MonoBehaviour
   {
     if (debug) Debug.Log("Player turn started!");
     currentPlayerTankPhysics = players[currentPlayerIndex].GetComponent<TankPhysics>();
+  }
+
+  void OnPlayerTurnEnd()
+  {
+    if (debug) Debug.Log("Player turn ended!");
+    currentPlayerIndex = (currentPlayerIndex + 1) % players.Count;
   }
 }
