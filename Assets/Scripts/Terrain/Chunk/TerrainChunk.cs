@@ -11,11 +11,13 @@ public class TerrainChunk : MonoBehaviour
     // --------------------------------------------------
 
     private bool wasInitialized = false;
-    private TerrainChunkData chunkData;
+
+    // Components
     private PolygonCollider2D terrainCollider;
     private SpriteRenderer spriteRenderer;
 
     private readonly List<int> handledExplosionIds = new List<int>();
+    private Texture2D texture;
 
     // Built-in methods
     // --------------------------------------------------
@@ -38,10 +40,11 @@ public class TerrainChunk : MonoBehaviour
     // Custom methods
     // --------------------------------------------------
 
-    public void Initialize(TerrainChunkData newData)
+    public void Initialize(Texture2D _texture)
     {
         if (wasInitialized) return;
-        chunkData = newData;
+        texture = _texture;
+
         GenerateColliderFromHeightMap();
         wasInitialized = true;
     }
@@ -54,7 +57,7 @@ public class TerrainChunk : MonoBehaviour
         if (terrainCollider != null) Destroy(terrainCollider);
 
         spriteRenderer.enabled = true;
-        if (!spriteRenderer.sprite) spriteRenderer.sprite = Sprite.Create(chunkData.HeightmapTexture, new Rect(0, 0, chunkData.HeightmapTexture.width, chunkData.HeightmapTexture.height), new Vector2(0.5f, 0.5f), chunkData.PixelsPerUnit);
+        if (!spriteRenderer.sprite) spriteRenderer.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
         if (!IsSolidEnough()) Destroy(gameObject);
         terrainCollider = gameObject.AddComponent<PolygonCollider2D>();
         terrainCollider.useDelaunayMesh = true;
@@ -72,10 +75,12 @@ public class TerrainChunk : MonoBehaviour
         if (spriteRenderer.sprite == null) return false;
 
         Texture2D texture = spriteRenderer.sprite.texture;
-        if (pixels == null) pixels = texture.GetPixels((int)spriteRenderer.sprite.rect.x,
-                                           (int)spriteRenderer.sprite.rect.y,
-                                           (int)spriteRenderer.sprite.rect.width,
-                                           (int)spriteRenderer.sprite.rect.height);
+        if (pixels == null) pixels = texture.GetPixels(
+            (int)spriteRenderer.sprite.rect.x,
+            (int)spriteRenderer.sprite.rect.y,
+            (int)spriteRenderer.sprite.rect.width,
+            (int)spriteRenderer.sprite.rect.height
+        );
 
         int nonTransparentCount = 0;
         for (int i = 0; i < pixels.Length; i++)
@@ -114,8 +119,8 @@ public class TerrainChunk : MonoBehaviour
             {
                 // Calculate the pixel's world position
                 Vector2 pixelWorldPos = new Vector2(
-                    spritePosition.x + ((x - spritePivot.x * spriteRect.width) / chunkData.PixelsPerUnit) * spriteScale.x,
-                    spritePosition.y + ((y - spritePivot.y * spriteRect.height) / chunkData.PixelsPerUnit) * spriteScale.y
+                    spritePosition.x + (x - spritePivot.x * spriteRect.width) * spriteScale.x,
+                    spritePosition.y + (y - spritePivot.y * spriteRect.height) * spriteScale.y
                 );
 
                 // Check if this pixel is within the explosion's radius

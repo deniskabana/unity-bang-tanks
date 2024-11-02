@@ -16,7 +16,6 @@ public class TerrainManager : MonoBehaviour
     private bool initialized = false;
     private float[] heightmap;
     private Texture2D heightmapTexture;
-    public TerrainData terrainData;
     private TerrainSettings terrainSettings;
 
     // Built-in methods
@@ -41,37 +40,14 @@ public class TerrainManager : MonoBehaviour
         terrainSettings = _terrainSettings;
 
         if (debug) Debug.Log("Initializing terrain...");
-        SetTerrainData(); // Fill out the data even before first finishing
         GenerateHeightmapData();
         GenerateHeightmapTexture();
 
         if (terrainSettings.enableTerrainChunking) CreateTerrainChunks();
         else CreateTerrainSingleChunk();
         initialized = true;
-        SetTerrainData();
 
         if (debug) Debug.Log("Terrain initialized.");
-    }
-
-    void SetTerrainData()
-    {
-        terrainData = new TerrainData
-        {
-            Initialized = initialized,
-            TextureWidth = terrainSettings.textureWidth,
-            TextureHeight = terrainSettings.textureHeight,
-            EnableTerrainChunking = terrainSettings.enableTerrainChunking,
-            ChunkSize = terrainSettings.chunkSize,
-            PixelsPerUnit = terrainSettings.pixelsPerUnit,
-            Heightmap = heightmap,
-            HeightmapTexture = heightmapTexture,
-            TextureRenderObject = terrainTextureObject
-        };
-    }
-
-    public TerrainData GetTerrainData()
-    {
-        return terrainData;
     }
 
     void GenerateHeightmapData()
@@ -86,7 +62,6 @@ public class TerrainManager : MonoBehaviour
             float yHeight = Mathf.PerlinNoise(x * terrainSettings.noiseScale + randomOffset, 0) * terrainSettings.heightMultiplier;
             heightmap[x] = yHeight;
         }
-        SetTerrainData(); // Add currently generated data
         if (debug) Debug.Log("Heightmap data generated.");
     }
 
@@ -130,7 +105,6 @@ public class TerrainManager : MonoBehaviour
         terrainTextureObject.transform.position = collidersGroupTransform.position;
         terrainTextureObject.transform.localScale = new Vector3(1, 1, 1);
 
-        SetTerrainData();
         if (debug) Debug.Log("Heightmap texture generated.");
     }
 
@@ -145,16 +119,9 @@ public class TerrainManager : MonoBehaviour
         chunkObject.name = "TerrainSingleCollider";
 
         TerrainChunk chunkScript = chunkObject.GetComponent<TerrainChunk>();
-        TerrainChunkData chunkData = new TerrainChunkData
-        {
-            PixelsPerUnit = terrainSettings.pixelsPerUnit,
-            ChunkSize = terrainSettings.textureWidth,
-            Heightmap = heightmap,
-            HeightmapTexture = heightmapTexture
-        };
 
         // Initialize the terrain chunk
-        chunkScript.Initialize(chunkData);
+        chunkScript.Initialize(heightmapTexture);
         if (debug) Debug.Log("Single terrain chunk created.");
     }
 
@@ -195,22 +162,11 @@ public class TerrainManager : MonoBehaviour
                     chunkPosition.y + yCursor * chunkWorldSize,
                     0);
 
-                // Instantiate the grid segment prefab
+                // Instantiate the grid segment prefab and initialize it
                 GameObject chunkObject = Instantiate(terrainChunkPrefab, position, Quaternion.identity, collidersGroupTransform);
                 chunkObject.name = $"TerrainChunk_x:{xCursor}_y:{yCursor}";
-
                 TerrainChunk chunkScript = chunkObject.GetComponent<TerrainChunk>();
-                TerrainChunkData chunkData = new TerrainChunkData
-                {
-                    PixelsPerUnit = terrainSettings.pixelsPerUnit,
-                    ChunkSize = terrainSettings.chunkSize,
-                    Heightmap = CreateChunkHeightmap(xCursor, yCursor),
-                    HeightmapTexture = CreateChunkTexture(xCursor, yCursor)
-
-                };
-
-                // Initialize the terrain chunk
-                chunkScript.Initialize(chunkData);
+                chunkScript.Initialize(CreateChunkTexture(xCursor, yCursor));
             }
         }
 
@@ -240,7 +196,6 @@ public class TerrainManager : MonoBehaviour
         return chunkHeightmap;
     }
 
-    // Create a slice of the heightmap texture for a single chunk
     Texture2D CreateChunkTexture(int xCursor, int yCursor)
     {
         Texture2D gridSegmentTexture = new Texture2D(terrainSettings.chunkSize, terrainSettings.chunkSize, TextureFormat.RGBA32, false);
@@ -330,5 +285,11 @@ public class TerrainManager : MonoBehaviour
         // Set the tiling factors in the material (for MainTex only)
         material.SetFloat("_TilingX", tilingX);
         material.SetFloat("_TilingY", tilingY);
+    }
+
+    public Bounds GetTerrainRendererBounds()
+    {
+        if (!initialized) throw new System.Exception("TerrainManager: Terrain not initialized yet.");
+        return terrainTextureObject.GetComponent<SpriteRenderer>().bounds;
     }
 }

@@ -51,23 +51,20 @@ public class PlayersTurnManager : MonoBehaviour
 
   void CreatePlayers()
   {
-    TerrainData terrainData = TerrainManager.Instance.GetTerrainData();
-
-    if (!terrainData.Initialized)
-      throw new System.Exception("PlayersManager: Terrain data must be initialized before creating players!");
-
     float[] playerPositions = new float[gameplaySettings.amountOfPlayers];
-    float worldWidth = terrainData.TextureRenderObject.GetComponent<SpriteRenderer>().bounds.size.x;
-    Transform textureRenderTransform = terrainData.TextureRenderObject.transform;
-    float playerY = textureRenderTransform.position.y; // Fair enough for now
+    Bounds terrainBounds = TerrainManager.Instance.GetTerrainRendererBounds();
+
+    float worldWidth = terrainBounds.size.x;
+    float playerY = terrainBounds.min.y + 1;
 
     for (int i = 0; i < gameplaySettings.amountOfPlayers; i++)
     {
       float terrainPartSize = worldWidth / (gameplaySettings.amountOfPlayers + 1);
       playerPositions[i] = terrainPartSize + terrainPartSize * i;
-      float playerX = textureRenderTransform.position.x - worldWidth / 2 + playerPositions[i];
-      GameObject player = Instantiate(playerPrefab, new Vector3(playerX, playerY, 0), Quaternion.identity);
-      PlayerTank playerTank = player.GetComponent<PlayerTank>();
+
+      float playerX = terrainBounds.min.x + playerPositions[i];
+      GameObject playerObject = Instantiate(playerPrefab, new Vector3(playerX, playerY, 0), Quaternion.identity);
+      PlayerTank playerTank = playerObject.GetComponent<PlayerTank>();
       players.Add(playerTank);
     }
   }
