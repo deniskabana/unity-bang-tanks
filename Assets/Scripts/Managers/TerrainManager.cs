@@ -16,7 +16,7 @@ public class TerrainManager : MonoBehaviour
     private bool initialized = false;
     private float[] heightmap;
     private Texture2D heightmapTexture;
-    private TerrainSettings terrainSettings;
+    private TerrainSettings tSet;
 
     // Built-in methods
     // --------------------------------------------------
@@ -37,13 +37,13 @@ public class TerrainManager : MonoBehaviour
     public void Initialize(TerrainSettings _terrainSettings)
     {
         if (initialized) return;
-        terrainSettings = _terrainSettings;
+        tSet = _terrainSettings;
 
         if (debug) Debug.Log("Initializing terrain...");
         GenerateHeightmapData();
         GenerateHeightmapTexture();
 
-        if (terrainSettings.enableTerrainChunking) CreateTerrainChunks();
+        if (tSet.enableTerrainChunking) CreateTerrainChunks();
         else CreateTerrainSingleChunk();
         initialized = true;
 
@@ -53,13 +53,14 @@ public class TerrainManager : MonoBehaviour
     void GenerateHeightmapData()
     {
         if (debug) Debug.Log("Generating heightmap data...");
-        heightmap = new float[terrainSettings.textureWidth];
-        float randomOffset = Random.Range(terrainSettings.minRandomOffset, terrainSettings.maxRandomOffset); // The range can be adjusted to vary the terrain more or less
+
+        heightmap = new float[tSet.textureWidth];
+        float randomOffset = Random.Range(tSet.minRandomOffset, tSet.maxRandomOffset); // The range can be adjusted to vary the terrain more or less
 
         // Generate Perlin noise for each x position
-        for (int x = 0; x < terrainSettings.textureWidth; x++)
+        for (int x = 0; x < tSet.textureWidth; x++)
         {
-            float yHeight = Mathf.PerlinNoise(x * terrainSettings.noiseScale + randomOffset, 0) * terrainSettings.heightMultiplier;
+            float yHeight = Mathf.PerlinNoise(x * tSet.noiseScale + randomOffset, 0) * tSet.heightMultiplier;
             heightmap[x] = yHeight;
         }
         if (debug) Debug.Log("Heightmap data generated.");
@@ -68,21 +69,21 @@ public class TerrainManager : MonoBehaviour
     void GenerateHeightmapTexture()
     {
         if (debug) Debug.Log("Generating heightmap texture...");
-        heightmapTexture = new Texture2D(terrainSettings.textureWidth, terrainSettings.textureHeight, TextureFormat.RGBA32, false);
-        Color[] pixelColorList = new Color[terrainSettings.textureWidth * terrainSettings.textureHeight];
+        heightmapTexture = new Texture2D(tSet.textureWidth, tSet.textureHeight, TextureFormat.RGBA32, false);
+        Color[] pixelColorList = new Color[tSet.textureWidth * tSet.textureHeight];
 
         // Generate the heightmap texture based on the heightmap data
-        for (int x = 0; x < terrainSettings.textureWidth; x++)
+        for (int x = 0; x < tSet.textureWidth; x++)
         {
-            for (int y = 0; y < terrainSettings.textureHeight; y++)
+            for (int y = 0; y < tSet.textureHeight; y++)
             {
                 if (y < heightmap[x])
                 {
-                    pixelColorList[y * terrainSettings.textureWidth + x] = Color.white;
+                    pixelColorList[y * tSet.textureWidth + x] = Color.white;
                 }
                 else
                 {
-                    pixelColorList[y * terrainSettings.textureWidth + x] = Color.clear;
+                    pixelColorList[y * tSet.textureWidth + x] = Color.clear;
                 }
             }
         }
@@ -97,8 +98,8 @@ public class TerrainManager : MonoBehaviour
         SetMaterialTextureTiling(renderer.material, heightmapTexture, renderer.sprite.texture); // Set the tiling factors
 
         // Set the sprite renderer to the exact same bounds and size as the heightmapTexture
-        renderer.size = new Vector2(terrainSettings.textureWidth / terrainSettings.pixelsPerUnit, terrainSettings.textureHeight / terrainSettings.pixelsPerUnit);
-        renderer.bounds.SetMinMax(Vector3.zero, new Vector3(terrainSettings.textureWidth / terrainSettings.pixelsPerUnit, terrainSettings.textureHeight / terrainSettings.pixelsPerUnit, 0));
+        renderer.size = new Vector2(tSet.textureWidth, tSet.textureHeight);
+        renderer.bounds.SetMinMax(Vector3.zero, new Vector3(tSet.textureWidth, tSet.textureHeight, 0));
         renderer.drawMode = SpriteDrawMode.Sliced;
 
         // Ensure the heightmapMaskObject retains the same size and position as the texture
@@ -132,8 +133,8 @@ public class TerrainManager : MonoBehaviour
             throw new System.Exception("TerrainManager: Missing required references for terrain chunk generation.");
 
         // Calculate the grid width and height based on the terrain grid cell size
-        int gridWidth = Mathf.CeilToInt((float)terrainSettings.textureWidth / terrainSettings.chunkSize);
-        int gridHeight = Mathf.CeilToInt((float)terrainSettings.textureHeight / terrainSettings.chunkSize);
+        int gridWidth = Mathf.CeilToInt((float)tSet.textureWidth / tSet.chunkSize);
+        int gridHeight = Mathf.CeilToInt((float)tSet.textureHeight / tSet.chunkSize);
 
         for (int xCursor = 0; xCursor < gridWidth; xCursor++)
         {
@@ -141,10 +142,10 @@ public class TerrainManager : MonoBehaviour
             {
                 bool isTerrain = false;
 
-                for (int i = 0; i < terrainSettings.chunkSize; i++)
+                for (int i = 0; i < tSet.chunkSize; i++)
                 {
-                    if (xCursor * terrainSettings.chunkSize + i >= heightmap.Length) break;
-                    if (yCursor * terrainSettings.chunkSize <= heightmap[xCursor * terrainSettings.chunkSize + i])
+                    if (xCursor * tSet.chunkSize + i >= heightmap.Length) break;
+                    if (yCursor * tSet.chunkSize <= heightmap[xCursor * tSet.chunkSize + i])
                     {
                         isTerrain = true;
                         break;
@@ -154,7 +155,7 @@ public class TerrainManager : MonoBehaviour
                 if (!isTerrain) continue;
 
                 Vector3 chunkPosition = collidersGroupTransform.position;
-                float chunkWorldSize = terrainSettings.chunkSize / terrainSettings.pixelsPerUnit;
+                float chunkWorldSize = tSet.chunkSize;
 
                 // For each chunk, set its position in world space relative to the parent object
                 Vector3 position = new Vector3(
@@ -172,8 +173,8 @@ public class TerrainManager : MonoBehaviour
 
         // Align the grid with the heightmap mask object
         collidersGroupTransform.position = new Vector3(
-            -terrainSettings.textureWidth / 2 / terrainSettings.pixelsPerUnit + terrainSettings.chunkSize / 2 / terrainSettings.pixelsPerUnit,
-            -terrainSettings.textureHeight / 2 / terrainSettings.pixelsPerUnit + terrainSettings.chunkSize / 2 / terrainSettings.pixelsPerUnit,
+            -tSet.textureWidth / 2 + tSet.chunkSize / 2,
+            -tSet.textureHeight / 2 + tSet.chunkSize / 2,
             0
         );
 
@@ -182,15 +183,15 @@ public class TerrainManager : MonoBehaviour
 
     float[] CreateChunkHeightmap(int xCursor, int yCursor)
     {
-        float[] chunkHeightmap = new float[terrainSettings.chunkSize];
-        int startX = xCursor * terrainSettings.chunkSize;
+        float[] chunkHeightmap = new float[tSet.chunkSize];
+        int startX = xCursor * tSet.chunkSize;
 
-        for (int x = 0; x < terrainSettings.chunkSize; x++)
+        for (int x = 0; x < tSet.chunkSize; x++)
         {
             int worldX = startX + x;
             // If out of bounds, skip
-            if (worldX >= terrainSettings.textureWidth) continue;
-            chunkHeightmap[x] = heightmap[worldX] - yCursor * terrainSettings.chunkSize;
+            if (worldX >= tSet.textureWidth) continue;
+            chunkHeightmap[x] = heightmap[worldX] - yCursor * tSet.chunkSize;
         }
 
         return chunkHeightmap;
@@ -198,23 +199,23 @@ public class TerrainManager : MonoBehaviour
 
     Texture2D CreateChunkTexture(int xCursor, int yCursor)
     {
-        Texture2D gridSegmentTexture = new Texture2D(terrainSettings.chunkSize, terrainSettings.chunkSize, TextureFormat.RGBA32, false);
+        Texture2D gridSegmentTexture = new Texture2D(tSet.chunkSize, tSet.chunkSize, TextureFormat.RGBA32, false);
         gridSegmentTexture.filterMode = FilterMode.Point; // Ensure pixel-perfect sampling
 
         // Calculate the actual heightmap values for this segment
-        Color[] pixels = new Color[terrainSettings.chunkSize * terrainSettings.chunkSize];
+        Color[] pixels = new Color[tSet.chunkSize * tSet.chunkSize];
 
-        int startX = xCursor * terrainSettings.chunkSize;
-        int startY = yCursor * terrainSettings.chunkSize;
+        int startX = xCursor * tSet.chunkSize;
+        int startY = yCursor * tSet.chunkSize;
 
-        for (int x = 0; x < terrainSettings.chunkSize; x++)
+        for (int x = 0; x < tSet.chunkSize; x++)
         {
             int worldX = startX + x;
-            if (worldX >= terrainSettings.textureWidth) continue;
+            if (worldX >= tSet.textureWidth) continue;
 
             float heightAtX = heightmap[worldX];
 
-            for (int y = 0; y < terrainSettings.chunkSize; y++)
+            for (int y = 0; y < tSet.chunkSize; y++)
             {
                 int worldY = startY + y;
 
@@ -222,15 +223,15 @@ public class TerrainManager : MonoBehaviour
                 bool isSolid = worldY < heightAtX;
 
                 // Edge detection - are we on a segment border?
-                bool isOnXBorder = x == 0 || x == terrainSettings.chunkSize - 1;
-                bool isOnYBorder = y == 0 || y == terrainSettings.chunkSize - 1;
+                bool isOnXBorder = x == 0 || x == tSet.chunkSize - 1;
+                bool isOnYBorder = y == 0 || y == tSet.chunkSize - 1;
 
                 if (isSolid)
                 {
                     // If we're not on a border, it's definitely solid
                     if (!isOnXBorder && !isOnYBorder)
                     {
-                        pixels[y * terrainSettings.chunkSize + x] = Color.white;
+                        pixels[y * tSet.chunkSize + x] = Color.white;
                     }
                     // If we're on a border, check neighboring cells
                     else
@@ -241,7 +242,7 @@ public class TerrainManager : MonoBehaviour
                         if (isOnXBorder)
                         {
                             int neighborX = worldX + (x == 0 ? -1 : 1);
-                            if (neighborX >= 0 && neighborX < terrainSettings.textureWidth)
+                            if (neighborX >= 0 && neighborX < tSet.textureWidth)
                             {
                                 float neighborHeight = heightmap[neighborX];
                                 // Only be solid if the neighbor would also be solid at this height
@@ -252,17 +253,17 @@ public class TerrainManager : MonoBehaviour
                         // If we're still solid after checks, set the pixel
                         if (shouldBeSolid)
                         {
-                            pixels[y * terrainSettings.chunkSize + x] = Color.white;
+                            pixels[y * tSet.chunkSize + x] = Color.white;
                         }
                         else
                         {
-                            pixels[y * terrainSettings.chunkSize + x] = Color.clear;
+                            pixels[y * tSet.chunkSize + x] = Color.clear;
                         }
                     }
                 }
                 else
                 {
-                    pixels[y * terrainSettings.chunkSize + x] = Color.clear;
+                    pixels[y * tSet.chunkSize + x] = Color.clear;
                 }
             }
         }
