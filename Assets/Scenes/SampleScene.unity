@@ -392,7 +392,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e4175c8bad1f4afc85122916aedb449, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debug: 1
+  debug: 0
+  gameplaySettings:
+    amountOfPlayers: 2
+    maxPlayerHealth: 100
+    maxFuelPerRound: 100
+  terrainSettings:
+    textureWidth: 1920
+    textureHeight: 1080
+    noiseScale: 0.0022
+    heightMultiplier: 600
+    enableTerrainChunking: 1
+    pixelsPerUnit: 100
+    minRandomOffset: 0
+    maxRandomOffset: 1000
+    chunkSize: 256
 --- !u!4 &624826800
 Transform:
   m_ObjectHideFlags: 0
@@ -421,9 +435,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debug: 0
-  amountOfPlayers: 5
-  limitedFuel: 1
-  fuelPerRound: 100
   playerPrefab: {fileID: 4071609277291850834, guid: 9178c773621c243bfb7545aba668c061, type: 3}
 --- !u!114 &624826803
 MonoBehaviour:
@@ -438,28 +449,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debug: 0
-  textureWidth: 2600
-  textureHeight: 1200
-  noiseScale: 0.0018
-  heightMultiplier: 1300
   collidersGroupTransform: {fileID: 472513522}
   terrainTextureObject: {fileID: 54272526}
   terrainChunkPrefab: {fileID: 8154103436714464343, guid: 492287e959b5c40119724b455def5488, type: 3}
-  enableTerrainChunking: 1
-  pixelsPerUnit: 100
-  minRandomOffset: 0
-  maxRandomOffset: 1000
-  chunkSize: 128
-  terrainData:
-    Initialized: 0
-    TextureWidth: 0
-    TextureHeight: 0
-    EnableTerrainChunking: 0
-    ChunkSize: 0
-    PixelsPerUnit: 0
-    Heightmap: []
-    HeightmapTexture: {fileID: 0}
-    TextureRenderObject: {fileID: 0}
 --- !u!1 &1659254434
 GameObject:
   m_ObjectHideFlags: 0
