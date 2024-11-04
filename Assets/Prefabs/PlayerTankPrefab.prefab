@@ -199,7 +199,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fuelDepletionRate: 20
+  playerColors:
+  - body: {fileID: 21300000, guid: 68ee32d3c3acb427583c6fcf788975d3, type: 3}
+    cannon: {fileID: 21300000, guid: 68f3e988c39c44bf993014b88f3e12a6, type: 3}
+  - body: {fileID: 21300000, guid: 5502e72e8878e434bb94415945d8ae46, type: 3}
+    cannon: {fileID: 21300000, guid: 34775d1a3a4424506adb88ec59c0af5e, type: 3}
+  - body: {fileID: 21300000, guid: 31bcba43f41d244caa39016fae4ee5f6, type: 3}
+    cannon: {fileID: 21300000, guid: 841e3117d4e1f449584775932d7fa6ba, type: 3}
+  - body: {fileID: 21300000, guid: 8749eb35ad86348e08ec43858b03b2aa, type: 3}
+    cannon: {fileID: 21300000, guid: b7fb15d738a1f45fb80fec8920512902, type: 3}
   playerIndicator: {fileID: 1413075836949085060}
+  tankBody: {fileID: 2949163185148583781}
+  tankCannon: {fileID: 1048361916794744562}
 --- !u!114 &4288032169745374018
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -504,7 +515,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1413075836949085060
 Transform:
   m_ObjectHideFlags: 0
@@ -514,8 +525,8 @@ Transform:
   m_GameObject: {fileID: 8924094640121167304}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 5.38, z: 3.4}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 6.03, z: 3.4}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4528783447592262386}
@@ -561,7 +572,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4d2c9898118814f20a2f672f39953d0c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

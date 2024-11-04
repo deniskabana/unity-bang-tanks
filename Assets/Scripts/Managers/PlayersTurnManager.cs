@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public struct PlayerColorSprites { public Sprite body; public Sprite cannon; }
+
 public class PlayersTurnManager : MonoBehaviour
 {
   public static PlayersTurnManager Instance;
@@ -8,6 +11,7 @@ public class PlayersTurnManager : MonoBehaviour
 
   [Header("Settings")]
   [SerializeField] int minOutcomeDurationSeconds = 3;
+  [SerializeField] public PlayerColorSprites[] playerColors;
 
   [Header("References")]
   [SerializeField] Transform playersParent;
@@ -82,6 +86,7 @@ public class PlayersTurnManager : MonoBehaviour
     LevelManager.OnPlayerTurnEnd.AddListener(OnPlayerTurnEnd);
 
     if (debug) Debug.Log("Creating players...");
+    playerColors = ShufflePlayerColors(playerColors);
     CreatePlayers();
     initialized = true;
 
@@ -104,13 +109,10 @@ public class PlayersTurnManager : MonoBehaviour
       float playerX = terrainBounds.min.x + playerPositions[i];
       GameObject playerObject = Instantiate(playerPrefab, new Vector3(playerX, playerY, 0), Quaternion.identity, playersParent);
       PlayerTank playerTank = playerObject.GetComponent<PlayerTank>();
-      playerTank.Initialize();
+      playerTank.Initialize(i);
       players.Add(playerTank);
     }
   }
-
-  // Event handlers
-  // --------------------------------------------------
 
   void OnPlayerTurnStart()
   {
@@ -133,8 +135,20 @@ public class PlayersTurnManager : MonoBehaviour
   {
     outcomeTimer = minOutcomeDurationSeconds;
   }
+
   void ExecuteOutcome()
   {
     LevelManager.Instance.EndPlayerOutcome();
+  }
+  PlayerColorSprites[] ShufflePlayerColors(PlayerColorSprites[] array)
+  {
+    for (int i = array.Length - 1; i > 0; i--)
+    {
+      int j = Random.Range(0, i + 1);
+      PlayerColorSprites temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
+    }
+    return array;
   }
 }

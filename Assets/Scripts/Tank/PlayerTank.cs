@@ -21,6 +21,8 @@ public class PlayerTank : MonoBehaviour
 
   [Header("References")]
   [SerializeField] Transform playerIndicator;
+  [SerializeField] Transform tankBody;
+  [SerializeField] Transform tankCannon;
 
   // Runtime variables
   // --------------------------------------------------
@@ -29,6 +31,8 @@ public class PlayerTank : MonoBehaviour
   private TankPhysics physicsScript;
   private TankShooting shootingScript;
   private TankHealth healthScript;
+
+  private int selfPlayerIndex;
 
   // Built-in methods
   // --------------------------------------------------
@@ -73,9 +77,12 @@ public class PlayerTank : MonoBehaviour
   // Custom methods
   // --------------------------------------------------
 
-  public void Initialize()
+  public void Initialize(int index)
   {
+    selfPlayerIndex = index;
     SetInitialState();
+    SetPlayerColor();
+    playerIndicator.gameObject.SetActive(false);
   }
 
   void SetInitialState()
@@ -101,5 +108,15 @@ public class PlayerTank : MonoBehaviour
   {
     state.isPlayingTurn = false;
     playerIndicator.gameObject.SetActive(false);
+  }
+
+  public void SetPlayerColor()
+  {
+    PlayerColorSprites[] playerColors = PlayersTurnManager.Instance.playerColors;
+    if (playerColors.Length < 2) return;
+    int colorIndex = selfPlayerIndex % playerColors.Length;
+    PlayerColorSprites colorSprites = playerColors[colorIndex];
+    tankBody.GetComponent<SpriteRenderer>().sprite = colorSprites.body;
+    tankCannon.GetComponent<SpriteRenderer>().sprite = colorSprites.cannon;
   }
 }

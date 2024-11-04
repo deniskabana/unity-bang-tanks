@@ -565,13 +565,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debug: 0
   gameplaySettings:
-    amountOfPlayers: 2
+    amountOfPlayers: 4
     maxPlayerHealth: 100
     maxFuelPerRound: 100
   terrainSettings:
     textureWidth: 2300
     textureHeight: 1600
-    noiseScale: 0.0022
+    noiseScale: 0.002
     heightMultiplier: 1000
     enableTerrainChunking: 1
     pixelsPerUnit: 100
@@ -607,6 +607,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debug: 0
   minOutcomeDurationSeconds: 3
+  playerColors:
+  - body: {fileID: 21300000, guid: 31bcba43f41d244caa39016fae4ee5f6, type: 3}
+    cannon: {fileID: 21300000, guid: 841e3117d4e1f449584775932d7fa6ba, type: 3}
+  - body: {fileID: 21300000, guid: 8749eb35ad86348e08ec43858b03b2aa, type: 3}
+    cannon: {fileID: 21300000, guid: b7fb15d738a1f45fb80fec8920512902, type: 3}
+  - body: {fileID: 21300000, guid: 9edad4a56917a4ef7be3d79b2a61ef65, type: 3}
+    cannon: {fileID: 21300000, guid: ca305a9bdff6d4d9a8f303a9b211d1a7, type: 3}
+  - body: {fileID: 21300000, guid: 5502e72e8878e434bb94415945d8ae46, type: 3}
+    cannon: {fileID: 21300000, guid: 34775d1a3a4424506adb88ec59c0af5e, type: 3}
   playersParent: {fileID: 824662456}
   playerPrefab: {fileID: 4071609277291850834, guid: 9178c773621c243bfb7545aba668c061, type: 3}
   mainCamera: {fileID: 519420032}
