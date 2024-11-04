@@ -29,10 +29,8 @@ public class TerrainChunk : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("OnTriggerEnter2D");
         if (other.gameObject.CompareTag("Explosion"))
         {
-            Debug.Log("OnTriggerEnter2D - Explosion");
             if (handledExplosionIds.Contains(other.GetInstanceID())) return;
             HandleExplosionCollision(other.GetComponent<CircleCollider2D>());
             handledExplosionIds.Add(other.GetInstanceID());

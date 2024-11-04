@@ -570,9 +570,9 @@ MonoBehaviour:
     maxPlayerHealth: 100
     maxFuelPerRound: 100
   terrainSettings:
-    textureWidth: 2300
-    textureHeight: 1600
-    noiseScale: 0.002
+    textureWidth: 2400
+    textureHeight: 1200
+    noiseScale: 0.0021
     heightMultiplier: 1000
     enableTerrainChunking: 1
     pixelsPerUnit: 100
