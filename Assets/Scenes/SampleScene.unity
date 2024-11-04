@@ -650,8 +650,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debug: 0
   maxSpriteLifetime: 0.25
-  explosionParent: {fileID: 0}
-  explosionPrefab: {fileID: 0}
+  explosionParent: {fileID: 476266739}
+  explosionPrefab: {fileID: 7781946742746118445, guid: a6ee80721016a43cab1eb217bee1d384, type: 3}
 --- !u!1 &824662455
 GameObject:
   m_ObjectHideFlags: 0

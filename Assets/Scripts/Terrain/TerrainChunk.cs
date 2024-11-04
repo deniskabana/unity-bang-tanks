@@ -29,8 +29,10 @@ public class TerrainChunk : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        Debug.Log("OnTriggerEnter2D");
         if (other.gameObject.CompareTag("Explosion"))
         {
+            Debug.Log("OnTriggerEnter2D - Explosion");
             if (handledExplosionIds.Contains(other.GetInstanceID())) return;
             HandleExplosionCollision(other.GetComponent<CircleCollider2D>());
             handledExplosionIds.Add(other.GetInstanceID());
@@ -95,7 +97,6 @@ public class TerrainChunk : MonoBehaviour
         return nonTransparentRatio >= minSolidChunkThreshold;
     }
 
-    // Handling explosions by updating the sprite's texture and updating collider
     void DrawExplosionToTexture(Vector2 explosionCenter, float explosionRadius)
     {
         if (spriteRenderer == null || terrainCollider == null) return;
@@ -112,6 +113,8 @@ public class TerrainChunk : MonoBehaviour
         Vector2 spritePivot = new Vector2(spriteRenderer.sprite.pivot.x / spriteRect.width, spriteRenderer.sprite.pivot.y / spriteRect.height);
         Vector2 spriteScale = transform.lossyScale;
 
+        float pixelsPerUnit = LevelManager.Instance.terrainSettings.pixelsPerUnit;
+
         // Iterate over each pixel and check if it's within the explosion radius
         for (int y = 0; y < spriteRect.height; y++)
         {
@@ -119,8 +122,8 @@ public class TerrainChunk : MonoBehaviour
             {
                 // Calculate the pixel's world position
                 Vector2 pixelWorldPos = new Vector2(
-                    spritePosition.x + (x - spritePivot.x * spriteRect.width) * spriteScale.x,
-                    spritePosition.y + (y - spritePivot.y * spriteRect.height) * spriteScale.y
+                    spritePosition.x + ((x - spritePivot.x * spriteRect.width) / pixelsPerUnit) * spriteScale.x,
+                    spritePosition.y + ((y - spritePivot.y * spriteRect.height) / pixelsPerUnit) * spriteScale.y
                 );
 
                 // Check if this pixel is within the explosion's radius
