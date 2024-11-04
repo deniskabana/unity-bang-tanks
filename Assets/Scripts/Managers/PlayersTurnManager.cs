@@ -68,7 +68,7 @@ public class PlayersTurnManager : MonoBehaviour
       outcomeTimer -= Time.deltaTime;
       if (outcomeTimer <= 0)
       {
-        ExecuteOutcome();
+        FinishOutcome();
       }
     }
   }
@@ -86,8 +86,9 @@ public class PlayersTurnManager : MonoBehaviour
     LevelManager.OnPlayerTurnEnd.AddListener(OnPlayerTurnEnd);
 
     if (debug) Debug.Log("Creating players...");
-    playerColors = ShufflePlayerColors(playerColors);
+    ShufflePlayerColors();
     CreatePlayers();
+    ShufflePlayers();
     initialized = true;
 
     if (debug) Debug.Log("Players created!");
@@ -136,19 +137,30 @@ public class PlayersTurnManager : MonoBehaviour
     outcomeTimer = minOutcomeDurationSeconds;
   }
 
-  void ExecuteOutcome()
+  void FinishOutcome()
   {
     LevelManager.Instance.EndPlayerOutcome();
   }
-  PlayerColorSprites[] ShufflePlayerColors(PlayerColorSprites[] array)
+
+  void ShufflePlayerColors()
   {
-    for (int i = array.Length - 1; i > 0; i--)
+    for (int i = playerColors.Length - 1; i > 0; i--)
     {
       int j = Random.Range(0, i + 1);
-      PlayerColorSprites temp = array[i];
-      array[i] = array[j];
-      array[j] = temp;
+      PlayerColorSprites temp = playerColors[i];
+      playerColors[i] = playerColors[j];
+      playerColors[j] = temp;
     }
-    return array;
+  }
+
+  void ShufflePlayers()
+  {
+    for (int i = players.Count - 1; i > 0; i--)
+    {
+      int j = Random.Range(0, i + 1);
+      PlayerTank temp = players[i];
+      players[i] = players[j];
+      players[j] = temp;
+    }
   }
 }

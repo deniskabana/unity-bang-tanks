@@ -565,7 +565,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debug: 0
   gameplaySettings:
-    amountOfPlayers: 4
+    amountOfPlayers: 3
     maxPlayerHealth: 100
     maxFuelPerRound: 100
   terrainSettings:
@@ -606,7 +606,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debug: 0
-  minOutcomeDurationSeconds: 3
+  minOutcomeDurationSeconds: 5
   playerColors:
   - body: {fileID: 21300000, guid: 31bcba43f41d244caa39016fae4ee5f6, type: 3}
     cannon: {fileID: 21300000, guid: 841e3117d4e1f449584775932d7fa6ba, type: 3}
