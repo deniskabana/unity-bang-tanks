@@ -198,6 +198,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66c39d68cc9854207bf926a06fe7ecf5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fuelDepletionRate: 20
+  playerIndicator: {fileID: 1413075836949085060}
 --- !u!114 &4288032169745374018
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210,7 +212,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fc6485ff3244489e853f4ab7650927a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1
+  speed: 0.5
   groundRaycastDistance: 0.15
   maxSlopeAngle: 70
   groundLayer:
@@ -245,13 +247,16 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4071609277291850834}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 24a5bad32cbe44202bf61d1bd3af7841, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   cannonMinMaxAngle: 90
-  cannonTransform: {fileID: 0}
+  minBulletForce: 5
+  maxBulletForce: 50
+  cannonAimSpeed: 40
+  cannonTransform: {fileID: 1048361916794744562}
 --- !u!1 &5332441844648166984
 GameObject:
   m_ObjectHideFlags: 0
@@ -501,7 +506,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1413075836949085060
 Transform:
   m_ObjectHideFlags: 0

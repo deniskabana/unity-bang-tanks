@@ -6,7 +6,11 @@ public class PlayersTurnManager : MonoBehaviour
   public static PlayersTurnManager Instance;
   public bool debug = false;
 
+  [Header("Settings")]
+  [SerializeField] int minOutcomeDurationSeconds = 3;
+
   [Header("References")]
+  [SerializeField] Transform playersParent;
   [SerializeField] GameObject playerPrefab;
 
   // Runtime variables
@@ -15,6 +19,8 @@ public class PlayersTurnManager : MonoBehaviour
   private bool initialized = false;
   private readonly List<PlayerTank> players = new List<PlayerTank>();
   private int currentPlayerIndex = 0;
+  private int turnCounter = 0;
+  private float outcomeTimer = 0;
   private GameplaySettings gs;
 
   // Built-in methods
@@ -28,6 +34,20 @@ public class PlayersTurnManager : MonoBehaviour
   void Start()
   {
     if (!Instance) Instance = this;
+  }
+
+  void Update()
+  {
+    if (!initialized) return;
+
+    if (outcomeTimer > 0)
+    {
+      outcomeTimer -= Time.deltaTime;
+      if (outcomeTimer <= 0)
+      {
+        ExecuteOutcome();
+      }
+    }
   }
 
   // Custom methods
@@ -63,8 +83,9 @@ public class PlayersTurnManager : MonoBehaviour
       playerPositions[i] = terrainPartSize + terrainPartSize * i;
 
       float playerX = terrainBounds.min.x + playerPositions[i];
-      GameObject playerObject = Instantiate(playerPrefab, new Vector3(playerX, playerY, 0), Quaternion.identity);
+      GameObject playerObject = Instantiate(playerPrefab, new Vector3(playerX, playerY, 0), Quaternion.identity, playersParent);
       PlayerTank playerTank = playerObject.GetComponent<PlayerTank>();
+      playerTank.Initialize();
       players.Add(playerTank);
     }
   }
@@ -74,14 +95,27 @@ public class PlayersTurnManager : MonoBehaviour
 
   void OnPlayerTurnStart()
   {
-    if (debug) Debug.Log("Player turn started!");
+    if (debug) Debug.Log("Player turn started for player " + currentPlayerIndex);
+    turnCounter += 1;
     players[currentPlayerIndex].HandleTurnStart();
   }
 
   void OnPlayerTurnEnd()
   {
-    if (debug) Debug.Log("Player turn ended!");
+    if (debug) Debug.Log("Player turn ended for player " + currentPlayerIndex);
     players[currentPlayerIndex].HandleTurnEnd();
-    currentPlayerIndex = (currentPlayerIndex + 1) % players.Count;
+
+    currentPlayerIndex += 1;
+    if (currentPlayerIndex >= players.Count) currentPlayerIndex = 0;
+    StartOutcomeTimer();
+  }
+
+  void StartOutcomeTimer()
+  {
+    outcomeTimer = minOutcomeDurationSeconds;
+  }
+  void ExecuteOutcome()
+  {
+    LevelManager.Instance.EndPlayerOutcome();
   }
 }

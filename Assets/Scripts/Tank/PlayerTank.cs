@@ -1,13 +1,12 @@
 using System;
 using UnityEngine;
 
-[System.Serializable]
+[Serializable]
 public struct PlayerState
 {
   public bool isPlayingTurn;
   public int health;
-  public int fuel;
-  public float cannonAngle;
+  public float fuel;
 
   // Shooting, weapon choice, etc.
   // TODO: prepare for multiple weapons
@@ -18,17 +17,57 @@ public struct PlayerState
 [@RequireComponent(typeof(TankHealth))]
 public class PlayerTank : MonoBehaviour
 {
+  [SerializeField] float fuelDepletionRate = 20f;
+
+  [Header("References")]
+  [SerializeField] Transform playerIndicator;
+
   // Runtime variables
   // --------------------------------------------------
 
   private PlayerState state;
+  private TankPhysics physicsScript;
+  private TankShooting shootingScript;
+  private TankHealth healthScript;
 
   // Built-in methods
   // --------------------------------------------------
 
+  void Start()
+  {
+    physicsScript = GetComponent<TankPhysics>();
+    shootingScript = GetComponent<TankShooting>();
+    healthScript = GetComponent<TankHealth>();
+  }
+
   void Update()
   {
     if (!state.isPlayingTurn) return;
+
+    float inputX = Input.GetAxis("Horizontal"); // Horizontal movement
+    float inputY = Input.GetAxis("Vertical"); // Cannon rotation
+
+    // Handling horizontal movement
+    if (inputX != 0 && state.fuel > 0)
+    {
+      if (physicsScript.HandleMovement(inputX) != 0)
+      {
+        state.fuel -= fuelDepletionRate * Time.deltaTime;
+      }
+    }
+
+    // Handling cannon rotation
+    if (inputY != 0)
+    {
+      shootingScript.AimCannon(inputY);
+    }
+
+    bool isHoldingFire = Input.GetKeyUp(KeyCode.Space);
+    if (isHoldingFire)
+    {
+      shootingScript.Shoot(10f);
+      LevelManager.Instance.EndPlayerTurn();
+    }
   }
 
   // Custom methods
@@ -47,7 +86,6 @@ public class PlayerTank : MonoBehaviour
       isPlayingTurn = false,
       health = gs.maxPlayerHealth,
       fuel = gs.maxFuelPerRound,
-      cannonAngle = 0f
     };
   }
 
@@ -56,10 +94,12 @@ public class PlayerTank : MonoBehaviour
     GameplaySettings gs = LevelManager.Instance.gameplaySettings;
     state.isPlayingTurn = true;
     state.fuel = gs.maxFuelPerRound;
+    playerIndicator.gameObject.SetActive(true);
   }
 
   public void HandleTurnEnd()
   {
     state.isPlayingTurn = false;
+    playerIndicator.gameObject.SetActive(false);
   }
 }

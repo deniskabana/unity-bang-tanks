@@ -94,8 +94,8 @@ public class LevelManager : MonoBehaviour
         if (GAME_STATE != GameState.Turn) return;
         OnPlayerTurnEnd.Invoke();
         // Start player outcome
-        OnPlayerTurnOutcomeStart.Invoke();
         SetState(GameState.TurnOutcome);
+        OnPlayerTurnOutcomeStart.Invoke();
     }
 
     public void EndPlayerOutcome()
