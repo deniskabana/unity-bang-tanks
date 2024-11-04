@@ -12,6 +12,7 @@ public class PlayersTurnManager : MonoBehaviour
   [Header("References")]
   [SerializeField] Transform playersParent;
   [SerializeField] GameObject playerPrefab;
+  [SerializeField] Transform mainCamera;
 
   // Runtime variables
   // --------------------------------------------------
@@ -22,6 +23,10 @@ public class PlayersTurnManager : MonoBehaviour
   private int turnCounter = 0;
   private float outcomeTimer = 0;
   private GameplaySettings gs;
+
+  private float cameraSizeInTurn = 4f;
+  private float cameraSizeInOutcome = 8f;
+  private Camera mainCameraComponent;
 
   // Built-in methods
   // --------------------------------------------------
@@ -34,11 +39,25 @@ public class PlayersTurnManager : MonoBehaviour
   void Start()
   {
     if (!Instance) Instance = this;
+    mainCameraComponent = mainCamera.GetComponent<Camera>();
   }
 
   void Update()
   {
     if (!initialized) return;
+
+    // Camera movement and management
+    switch (LevelManager.GetState())
+    {
+      case GameState.Turn:
+        mainCameraComponent.orthographicSize = Mathf.Lerp(mainCameraComponent.orthographicSize, cameraSizeInTurn, Time.deltaTime * 1.75f);
+        Vector3 targetPosition = players[currentPlayerIndex].transform.position + new Vector3(0, 0, -10);
+        mainCamera.position = Vector3.Lerp(mainCamera.position, targetPosition, Time.deltaTime * 5f);
+        break;
+      case GameState.TurnOutcome:
+        mainCameraComponent.orthographicSize = Mathf.Lerp(mainCameraComponent.orthographicSize, cameraSizeInOutcome, Time.deltaTime * 1.75f);
+        break;
+    }
 
     if (outcomeTimer > 0)
     {

@@ -563,15 +563,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e4175c8bad1f4afc85122916aedb449, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debug: 1
+  debug: 0
   gameplaySettings:
     amountOfPlayers: 2
     maxPlayerHealth: 100
     maxFuelPerRound: 100
   terrainSettings:
     textureWidth: 2300
-    textureHeight: 1080
-    noiseScale: 0.002
+    textureHeight: 1600
+    noiseScale: 0.0022
     heightMultiplier: 1000
     enableTerrainChunking: 1
     pixelsPerUnit: 100
@@ -605,10 +605,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0b73fc92ae0e403ab6a07314d6623b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debug: 1
+  debug: 0
   minOutcomeDurationSeconds: 3
   playersParent: {fileID: 824662456}
   playerPrefab: {fileID: 4071609277291850834, guid: 9178c773621c243bfb7545aba668c061, type: 3}
+  mainCamera: {fileID: 519420032}
 --- !u!114 &624826803
 MonoBehaviour:
   m_ObjectHideFlags: 0
