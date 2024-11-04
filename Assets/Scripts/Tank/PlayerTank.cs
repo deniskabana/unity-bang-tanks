@@ -69,7 +69,7 @@ public class PlayerTank : MonoBehaviour
     bool isHoldingFire = Input.GetKeyUp(KeyCode.Space);
     if (isHoldingFire)
     {
-      shootingScript.Shoot(10f);
+      shootingScript.Shoot(UnityEngine.Random.Range(300, 1000));
       LevelManager.Instance.EndPlayerTurn();
     }
   }

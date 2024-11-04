@@ -544,6 +544,7 @@ GameObject:
   - component: {fileID: 624826799}
   - component: {fileID: 624826803}
   - component: {fileID: 624826802}
+  - component: {fileID: 624826804}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -635,6 +636,22 @@ MonoBehaviour:
   collidersGroupTransform: {fileID: 472513522}
   terrainTextureObject: {fileID: 54272526}
   terrainChunkPrefab: {fileID: 8154103436714464343, guid: 492287e959b5c40119724b455def5488, type: 3}
+--- !u!114 &624826804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 624826798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf7dd60f65ff14b86949b48bc1620bca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  debug: 0
+  maxSpriteLifetime: 0.25
+  explosionParent: {fileID: 0}
+  explosionPrefab: {fileID: 0}
 --- !u!1 &824662455
 GameObject:
   m_ObjectHideFlags: 0

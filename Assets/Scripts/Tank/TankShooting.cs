@@ -6,17 +6,19 @@ public class TankShooting : MonoBehaviour
 {
     [Header("Shooting settings")]
     [SerializeField] float cannonMinMaxAngle = 90f;
-    // [SerializeField] float minBulletForce = 5f;
-    // [SerializeField] float maxBulletForce = 50f;
+    [SerializeField] float minBulletForce = 5f;
+    [SerializeField] float maxBulletForce = 50f;
     [SerializeField] float cannonAimSpeed = 40f;
 
     [Header("References")]
+    [SerializeField] GameObject bulletPrefab;
     [SerializeField] Transform cannonTransform;  // Reference to the cannon's transform
+    [SerializeField] Transform firingPoint;  // Reference to the bullet spawn point
 
     // Runtime variables
     // --------------------------------------------------
 
-    private float shotForce;  // Force to apply to the bullet
+    private float shotForce = 20;  // Force to apply to the bullet
     private float shotAngle = 0;  // Force to apply to the bullet
 
     // Built-in methods
@@ -52,6 +54,8 @@ public class TankShooting : MonoBehaviour
     public void Shoot(float force)
     {
         shotForce = force; // This should be retrieved from the UI
-        // Get the current bullet prefab, instantiate, apply forces
+        GameObject bullet = Instantiate(bulletPrefab, firingPoint.position, firingPoint.rotation);
+        Vector3 direction = firingPoint.position - cannonTransform.position;
+        bullet.GetComponent<BasicBullet>().Initialize(direction, shotForce);
     }
 }

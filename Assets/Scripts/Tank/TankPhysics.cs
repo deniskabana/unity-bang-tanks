@@ -16,7 +16,6 @@ public class TankPhysics : MonoBehaviour
     [Header("References")]
     [SerializeField] Transform groundCheck;  // Empty GameObject at the bottom of the tank for ground detection
     [SerializeField] Transform raycastOrigin;  // Empty GameObject at the bottom of the tank for ground detection
-    [SerializeField] BoxCollider2D boxCollider;  // The tank's BoxCollider2D
 
     // Runtime variables
     // --------------------------------------------------

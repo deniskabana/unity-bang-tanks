@@ -62,6 +62,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4528783447592262386}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3782886018729739985
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4236014465213077598}
+  m_Layer: 0
+  m_Name: FiringPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4236014465213077598
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3782886018729739985}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 3.2000005, z: -0.006655693}
+  m_LocalScale: {x: 6.25, y: 6.25, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5007823205480626440}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3989234461197677130
 GameObject:
   m_ObjectHideFlags: 0
@@ -199,15 +230,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fuelDepletionRate: 20
-  playerColors:
-  - body: {fileID: 21300000, guid: 68ee32d3c3acb427583c6fcf788975d3, type: 3}
-    cannon: {fileID: 21300000, guid: 68f3e988c39c44bf993014b88f3e12a6, type: 3}
-  - body: {fileID: 21300000, guid: 5502e72e8878e434bb94415945d8ae46, type: 3}
-    cannon: {fileID: 21300000, guid: 34775d1a3a4424506adb88ec59c0af5e, type: 3}
-  - body: {fileID: 21300000, guid: 31bcba43f41d244caa39016fae4ee5f6, type: 3}
-    cannon: {fileID: 21300000, guid: 841e3117d4e1f449584775932d7fa6ba, type: 3}
-  - body: {fileID: 21300000, guid: 8749eb35ad86348e08ec43858b03b2aa, type: 3}
-    cannon: {fileID: 21300000, guid: b7fb15d738a1f45fb80fec8920512902, type: 3}
   playerIndicator: {fileID: 1413075836949085060}
   tankBody: {fileID: 2949163185148583781}
   tankCannon: {fileID: 1048361916794744562}
@@ -233,7 +255,6 @@ MonoBehaviour:
   downhillSpeedMultiplier: 1.5
   groundCheck: {fileID: 3941609011872209472}
   raycastOrigin: {fileID: 3783484232189371159}
-  boxCollider: {fileID: 0}
 --- !u!114 &6018476128441137262
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -264,8 +285,46 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cannonMinMaxAngle: 90
+  minBulletForce: 5
+  maxBulletForce: 50
   cannonAimSpeed: 40
-  cannonTransform: {fileID: 1048361916794744562}
+  bulletPrefab: {fileID: 5882382787347245810, guid: 367fd9135c1924428a25c8fbb21d038d, type: 3}
+  explosionPrefab: {fileID: 7781946742746118445, guid: a6ee80721016a43cab1eb217bee1d384, type: 3}
+  cannonTransform: {fileID: 5007823205480626440}
+  firingPoint: {fileID: 4236014465213077598}
+--- !u!1 &5128161520278752045
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5007823205480626440}
+  m_Layer: 0
+  m_Name: RotatingCannon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5007823205480626440
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5128161520278752045}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4236014465213077598}
+  - {fileID: 1048361916794744562}
+  m_Father: {fileID: 8919108966548089031}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5332441844648166984
 GameObject:
   m_ObjectHideFlags: 0
@@ -291,12 +350,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5332441844648166984}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -0.0028977394}
-  m_LocalScale: {x: 1.57, y: 1.3, z: 1}
+  m_LocalScale: {x: 1.5699999, y: 1.3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8919108966548089031}
+  m_Father: {fileID: 5007823205480626440}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1245908064248218159
 SpriteRenderer:
@@ -496,7 +555,7 @@ Transform:
   m_Children:
   - {fileID: 772768641860739836}
   - {fileID: 2949163185148583781}
-  - {fileID: 1048361916794744562}
+  - {fileID: 5007823205480626440}
   m_Father: {fileID: 4528783447592262386}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8924094640121167304

@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class ExplosionManager : MonoBehaviour
 {
+    public static ExplosionManager Instance;
+
+    public bool debug = false;
+
     [Header("Explosion Visuals")]
     [SerializeField] float maxSpriteLifetime = 0.25f;
 
@@ -11,16 +15,18 @@ public class ExplosionManager : MonoBehaviour
     [SerializeField] private Transform explosionParent;
     [SerializeField] private GameObject explosionPrefab;
 
-    void Update()
+    void Awake()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mousePosition.z = 0; // Set z to 0 since we are in 2D
-            float radius = Random.Range(0.5f, 1.5f);
-            CreateExplosion(radius, mousePosition);
-        }
+        Instance = this;
     }
+
+    void Start()
+    {
+        if (!Instance) Instance = this;
+    }
+
+    // Custom methods
+    // --------------------------------------------------
 
     public void CreateExplosion(float radius, Vector3 position)
     {
