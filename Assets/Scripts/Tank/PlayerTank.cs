@@ -76,7 +76,7 @@ public class PlayerTank : MonoBehaviour
       // Handling cannon rotation
       if (inputX != 0)
       {
-        shootingScript.AimCannon(inputX * -1 * 0.5f);
+        shootingScript.AimCannon(inputX * -1);
       }
     }
   }
@@ -114,12 +114,14 @@ public class PlayerTank : MonoBehaviour
     state.fuel = gs.maxFuelPerRound;
     state.turnStage = PlayerState.TurnStage.Movement;
     playerIndicator.gameObject.SetActive(true);
+    ControlsManager.ShowAimButton();
   }
 
   public void HandleTurnEnd()
   {
     state.isPlayingTurn = false;
     playerIndicator.gameObject.SetActive(false);
+    ControlsManager.ShowAimButton();
   }
 
   public void SetPlayerColor()
@@ -143,6 +145,7 @@ public class PlayerTank : MonoBehaviour
     {
       case PlayerState.TurnStage.Movement:
         state.turnStage = PlayerState.TurnStage.Shooting;
+        ControlsManager.ShowShootButton();
         break;
       case PlayerState.TurnStage.Shooting:
         shootingScript.Shoot(UnityEngine.Random.Range(300, 1000));

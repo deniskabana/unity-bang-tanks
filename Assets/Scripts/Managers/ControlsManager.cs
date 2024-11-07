@@ -16,10 +16,12 @@ public class ControlsManager : MonoBehaviour
     public static ControlsManager Instance;
     public bool debug = false;
 
-    [SerializeField] bool touchControlsEnabled = true;
+    [SerializeField] bool uiControlsEnabled = true;
 
     [Header("References")]
     [SerializeField] GameObject touchControlsContainer;
+    [SerializeField] Transform touchButtonAim;
+    [SerializeField] Transform touchButtonShoot;
 
     // Runtime variables
     // --------------------------------------------------
@@ -27,6 +29,7 @@ public class ControlsManager : MonoBehaviour
     bool isLeftButtonPressed = false;
     bool isRightButtonPressed = false;
     bool isShootButtonPressed = false;
+    bool isTouchControlsVisible = true;
 
     // Events
     public static UnityEvent<ControlType> OnControlDown = new();
@@ -43,10 +46,24 @@ public class ControlsManager : MonoBehaviour
     void Start()
     {
         if (!Instance) Instance = this;
+        if (uiControlsEnabled) ShowTouchControls();
+
+        LevelManager.OnPlayerTurnStart.AddListener(ShowTouchControls);
+        LevelManager.OnPlayerTurnEnd.AddListener(HideTouchControls);
     }
 
     void Update()
     {
+        // Animate move in-out animation for touch controls
+        if (touchControlsContainer != null && uiControlsEnabled)
+        {
+            RectTransform rt = touchControlsContainer.GetComponent<RectTransform>();
+            float containerDesiredY = isTouchControlsVisible ? 0 : -(Screen.height / 2);
+            float currentY = rt.position.y;
+            float newY = Mathf.Lerp(currentY, containerDesiredY, Time.deltaTime * 6);
+            rt.position = new Vector3(rt.position.x, newY, rt.position.z);
+        }
+
         // Keyboard controls listeners
         // --------------------------------------------------
 
@@ -76,9 +93,14 @@ public class ControlsManager : MonoBehaviour
     // Custom methods
     // --------------------------------------------------
 
-    public static void ShowTouchControls(bool show)
+    public static void ShowTouchControls()
     {
-        Instance.touchControlsContainer.SetActive(show);
+        Instance.isTouchControlsVisible = true;
+    }
+
+    public static void HideTouchControls()
+    {
+        Instance.isTouchControlsVisible = false;
     }
 
     public static void HandleControlDown(ControlType controlType)
@@ -142,5 +164,16 @@ public class ControlsManager : MonoBehaviour
             default:
                 return false;
         }
+    }
+
+    public static void ShowAimButton()
+    {
+        Instance.touchButtonAim.gameObject.SetActive(true);
+        Instance.touchButtonShoot.gameObject.SetActive(false);
+    }
+    public static void ShowShootButton()
+    {
+        Instance.touchButtonAim.gameObject.SetActive(false);
+        Instance.touchButtonShoot.gameObject.SetActive(true);
     }
 }
