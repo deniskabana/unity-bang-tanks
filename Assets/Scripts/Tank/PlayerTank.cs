@@ -7,7 +7,7 @@ public struct PlayerState
   public bool isPlayingTurn;
   public int health;
   public float fuel;
-  public enum TurnStage { Movement, Shooting }
+  public enum TurnStage { Moving, Aiming, Shooting }
   public TurnStage turnStage;
 
   // Shooting, weapon choice, etc.
@@ -59,7 +59,7 @@ public class PlayerTank : MonoBehaviour
     {
     }
 
-    if (state.turnStage == PlayerState.TurnStage.Movement)
+    if (state.turnStage == PlayerState.TurnStage.Moving)
     {
       // Handling horizontal movement
       if (inputX != 0 && state.fuel > 0)
@@ -71,13 +71,10 @@ public class PlayerTank : MonoBehaviour
       }
     }
 
-    if (state.turnStage == PlayerState.TurnStage.Shooting)
+    if (state.turnStage == PlayerState.TurnStage.Aiming)
     {
       // Handling cannon rotation
-      if (inputX != 0)
-      {
-        shootingScript.AimCannon(inputX * -1);
-      }
+      if (inputX != 0) shootingScript.HandleAiming(inputX * -1);
     }
   }
 
@@ -103,7 +100,7 @@ public class PlayerTank : MonoBehaviour
       isPlayingTurn = false,
       health = gs.maxPlayerHealth,
       fuel = gs.maxFuelPerRound,
-      turnStage = PlayerState.TurnStage.Movement
+      turnStage = PlayerState.TurnStage.Moving
     };
   }
 
@@ -112,7 +109,7 @@ public class PlayerTank : MonoBehaviour
     GameplaySettings gs = LevelManager.Instance.gameplaySettings;
     state.isPlayingTurn = true;
     state.fuel = gs.maxFuelPerRound;
-    state.turnStage = PlayerState.TurnStage.Movement;
+    state.turnStage = PlayerState.TurnStage.Moving;
     playerIndicator.gameObject.SetActive(true);
     ControlsManager.ShowAimButton();
   }
@@ -143,8 +140,8 @@ public class PlayerTank : MonoBehaviour
 
     switch (state.turnStage)
     {
-      case PlayerState.TurnStage.Movement:
-        state.turnStage = PlayerState.TurnStage.Shooting;
+      case PlayerState.TurnStage.Moving:
+        state.turnStage = PlayerState.TurnStage.Aiming;
         ControlsManager.ShowShootButton();
         break;
       case PlayerState.TurnStage.Shooting:
@@ -160,8 +157,8 @@ public class PlayerTank : MonoBehaviour
 
     switch (state.turnStage)
     {
-      case PlayerState.TurnStage.Shooting:
-        // TODO: implement strength indicator
+      case PlayerState.TurnStage.Aiming:
+        state.turnStage = PlayerState.TurnStage.Shooting;
         break;
     }
   }

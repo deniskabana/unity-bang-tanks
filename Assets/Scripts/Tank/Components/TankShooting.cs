@@ -45,7 +45,7 @@ public class TankShooting : MonoBehaviour
         cannonTransform.localRotation = Quaternion.Euler(0, 0, shotAngle);
     }
 
-    public void AimCannon(float angleSpeed)
+    public void HandleAiming(float angleSpeed)
     {
         shotAngle = Mathf.Clamp(shotAngle + angleSpeed * cannonAimSpeed * Time.deltaTime, -cannonMinMaxAngle, cannonMinMaxAngle);
         cannonTransform.localRotation = Quaternion.Euler(0, 0, shotAngle);
