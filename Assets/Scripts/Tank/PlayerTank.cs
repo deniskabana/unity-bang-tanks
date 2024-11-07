@@ -7,6 +7,8 @@ public struct PlayerState
   public bool isPlayingTurn;
   public int health;
   public float fuel;
+  public enum TurnStage { Movement, Shooting }
+  public TurnStage turnStage;
 
   // Shooting, weapon choice, etc.
   // TODO: prepare for multiple weapons
@@ -48,29 +50,34 @@ public class PlayerTank : MonoBehaviour
   {
     if (!state.isPlayingTurn) return;
 
-    float inputX = Input.GetAxis("Horizontal"); // Horizontal movement
-    float inputY = Input.GetAxis("Vertical"); // Cannon rotation
+    float inputX = 0;
 
-    // Handling horizontal movement
-    if (inputX != 0 && state.fuel > 0)
+    if (ControlsManager.GetInput(ControlType.Left)) inputX = -1;
+    if (ControlsManager.GetInput(ControlType.Right)) inputX = 1;
+
+    if (ControlsManager.GetInput(ControlType.Shoot))
     {
-      if (physicsScript.HandleMovement(inputX) != 0)
+    }
+
+    if (state.turnStage == PlayerState.TurnStage.Movement)
+    {
+      // Handling horizontal movement
+      if (inputX != 0 && state.fuel > 0)
       {
-        state.fuel -= fuelDepletionRate * Time.deltaTime;
+        if (physicsScript.HandleMovement(inputX) != 0)
+        {
+          state.fuel -= fuelDepletionRate * Time.deltaTime;
+        }
       }
     }
 
-    // Handling cannon rotation
-    if (inputY != 0)
+    if (state.turnStage == PlayerState.TurnStage.Shooting)
     {
-      shootingScript.AimCannon(inputY);
-    }
-
-    bool isHoldingFire = Input.GetKeyUp(KeyCode.Space);
-    if (isHoldingFire)
-    {
-      shootingScript.Shoot(UnityEngine.Random.Range(300, 1000));
-      LevelManager.Instance.EndPlayerTurn();
+      // Handling cannon rotation
+      if (inputX != 0)
+      {
+        shootingScript.AimCannon(inputX * -1 * 0.5f);
+      }
     }
   }
 
@@ -83,6 +90,9 @@ public class PlayerTank : MonoBehaviour
     SetInitialState();
     SetPlayerColor();
     playerIndicator.gameObject.SetActive(false);
+
+    ControlsManager.OnControlDown.AddListener(OnShootButtonPressed);
+    ControlsManager.OnControlUp.AddListener(OnShootButtonReleased);
   }
 
   void SetInitialState()
@@ -93,6 +103,7 @@ public class PlayerTank : MonoBehaviour
       isPlayingTurn = false,
       health = gs.maxPlayerHealth,
       fuel = gs.maxFuelPerRound,
+      turnStage = PlayerState.TurnStage.Movement
     };
   }
 
@@ -101,6 +112,7 @@ public class PlayerTank : MonoBehaviour
     GameplaySettings gs = LevelManager.Instance.gameplaySettings;
     state.isPlayingTurn = true;
     state.fuel = gs.maxFuelPerRound;
+    state.turnStage = PlayerState.TurnStage.Movement;
     playerIndicator.gameObject.SetActive(true);
   }
 
@@ -118,5 +130,36 @@ public class PlayerTank : MonoBehaviour
     PlayerColorSprites colorSprites = playerColors[colorIndex];
     tankBody.GetComponent<SpriteRenderer>().sprite = colorSprites.body;
     tankCannon.GetComponent<SpriteRenderer>().sprite = colorSprites.cannon;
+  }
+
+  // Event handlers
+  // --------------------------------------------------
+
+  void OnShootButtonReleased(ControlType controlType)
+  {
+    if (controlType != ControlType.Shoot || !state.isPlayingTurn) return;
+
+    switch (state.turnStage)
+    {
+      case PlayerState.TurnStage.Movement:
+        state.turnStage = PlayerState.TurnStage.Shooting;
+        break;
+      case PlayerState.TurnStage.Shooting:
+        shootingScript.Shoot(UnityEngine.Random.Range(300, 1000));
+        LevelManager.Instance.EndPlayerTurn();
+        break;
+    }
+  }
+
+  void OnShootButtonPressed(ControlType controlType)
+  {
+    if (controlType != ControlType.Shoot || !state.isPlayingTurn) return;
+
+    switch (state.turnStage)
+    {
+      case PlayerState.TurnStage.Shooting:
+        // TODO: implement strength indicator
+        break;
+    }
   }
 }
