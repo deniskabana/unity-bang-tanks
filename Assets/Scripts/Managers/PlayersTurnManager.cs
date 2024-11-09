@@ -43,7 +43,6 @@ public class PlayersTurnManager : MonoBehaviour
   {
     if (!Instance) Instance = this;
     mainCameraComponent = mainCamera.GetComponent<Camera>();
-    activePlayerIndicator.SetActive(false);
   }
 
   void Update()
