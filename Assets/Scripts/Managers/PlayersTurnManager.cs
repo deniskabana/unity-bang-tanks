@@ -26,6 +26,7 @@ public class PlayersTurnManager : MonoBehaviour
   private float outcomeTimer = 0;
   private GameplaySettings gs;
   private PlayerSkinSettings pss;
+  PlayerSkin[] shuffledSkins;
 
   private float cameraSizeInTurn = 5f;
   private float cameraSizeInOutcome = 8f;
@@ -87,8 +88,8 @@ public class PlayersTurnManager : MonoBehaviour
     LevelManager.OnPlayerTurnEnd.AddListener(OnPlayerTurnEnd);
 
     if (debug) Debug.Log("Creating players...");
-    CreatePlayers();
     ShuffleSkins();
+    CreatePlayers();
     ShufflePlayers();
     initialized = true;
 
@@ -112,7 +113,7 @@ public class PlayersTurnManager : MonoBehaviour
       GameObject playerObject = Instantiate(playerPrefab, new Vector3(playerX, playerY, 0), Quaternion.identity, playersParent);
       playerObject.transform.localScale = new Vector3(gs.playerScale, gs.playerScale, 1);
       PlayerTank playerTank = playerObject.GetComponent<PlayerTank>();
-      playerTank.Initialize(i, pss.playerSkins[i % pss.playerSkins.Count]);
+      playerTank.Initialize(i, shuffledSkins[i % shuffledSkins.Length]);
       players.Add(playerTank);
     }
   }
@@ -163,12 +164,16 @@ public class PlayersTurnManager : MonoBehaviour
 
   void ShuffleSkins()
   {
-    for (int i = pss.playerSkins.Count - 1; i > 0; i--)
+    PlayerSkin[] newShuffledSkins = pss.playerSkins.ToArray();
+
+    for (int i = newShuffledSkins.Length - 1; i > 0; i--)
     {
       int j = Random.Range(0, i + 1);
-      PlayerSkin temp = pss.playerSkins[i];
-      pss.playerSkins[i] = pss.playerSkins[j];
-      pss.playerSkins[j] = temp;
+      PlayerSkin temp = newShuffledSkins[i];
+      newShuffledSkins[i] = newShuffledSkins[j];
+      newShuffledSkins[j] = temp;
     }
+
+    shuffledSkins = newShuffledSkins;
   }
 }

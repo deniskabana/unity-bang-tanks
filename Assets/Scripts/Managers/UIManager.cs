@@ -80,8 +80,8 @@ public class UIManager : MonoBehaviour
         references.touchControlsRt.gameObject.SetActive(touchControlsEnabled);
         references.hudContainer.gameObject.SetActive(true);
         // Default Y positions
-        touchControlsYDefault = references.touchControlsRt.position.y;
-        hudYDefault = references.hudContainer.position.y;
+        touchControlsYDefault = references.touchControlsRt.localPosition.y;
+        hudYDefault = references.hudContainer.localPosition.y;
         // Default bar width (all bars are same width)
         barDefaultWidth = references.emptyBarReference.sizeDelta.x;
         ResetBars();
@@ -110,10 +110,11 @@ public class UIManager : MonoBehaviour
 
     void HandleUIRectPosition(RectTransform rt, float desiredY)
     {
-        float currentY = rt.position.y;
+        float currentY = rt.localPosition.y;
         if (currentY == desiredY) return;
         float newY = animationsEnabled ? Mathf.Lerp(currentY, desiredY, Time.deltaTime * uiMoveSpeed) : desiredY;
-        rt.position = new Vector3(rt.position.x, newY, rt.position.z);
+        // rt.position = new Vector3(rt.position.x, newY, rt.position.z);
+        rt.localPosition = new Vector3(rt.localPosition.x, newY, rt.localPosition.z);
     }
 
     public static void ShowTouchControls()
