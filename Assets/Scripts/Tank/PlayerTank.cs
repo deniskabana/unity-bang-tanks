@@ -20,6 +20,9 @@ public struct PlayerState
 [@RequireComponent(typeof(TankShooting))]
 public class PlayerTank : MonoBehaviour
 {
+  [SerializeField] Transform body1;
+  [SerializeField] Transform body2;
+
   // Runtime variables
   // --------------------------------------------------
 
@@ -78,10 +81,11 @@ public class PlayerTank : MonoBehaviour
   // Custom methods
   // --------------------------------------------------
 
-  public void Initialize(int index)
+  public void Initialize(int index, PlayerSkin skin)
   {
     selfPlayerIndex = index;
     SetInitialState();
+    SetSkin(skin);
 
     ControlsManager.OnControlDown.AddListener(OnShootButtonPressed);
     ControlsManager.OnControlUp.AddListener(OnShootButtonReleased);
@@ -153,5 +157,11 @@ public class PlayerTank : MonoBehaviour
         state.turnStage = PlayerState.TurnStage.Shooting;
         break;
     }
+  }
+
+  public void SetSkin(PlayerSkin skin)
+  {
+    body1.GetComponent<SpriteRenderer>().sprite = skin.body1;
+    body2.GetComponent<SpriteRenderer>().sprite = skin.body2;
   }
 }

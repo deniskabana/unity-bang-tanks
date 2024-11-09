@@ -244,7 +244,7 @@ GameObject:
   m_Layer: 0
   m_Name: Ground Check
   m_TagString: Untagged
-  m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -257,7 +257,7 @@ Transform:
   m_GameObject: {fileID: 2022653847401551614}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.624, z: 1.7621875}
+  m_LocalPosition: {x: 0, y: -0.56, z: 1.7621875}
   m_LocalScale: {x: 0.16, y: 0.16, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -380,12 +380,12 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1784207158765380615}
+  - {fileID: 1609145595284833550}
   - {fileID: 5996153159992869660}
   - {fileID: 8572336830483861199}
   - {fileID: 8962418319791757141}
   - {fileID: 8246140427333099494}
-  - {fileID: 1609145595284833550}
-  - {fileID: 1784207158765380615}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6000968017689651082
@@ -400,6 +400,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66c39d68cc9854207bf926a06fe7ecf5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  body1: {fileID: 8572336830483861199}
+  body2: {fileID: 8246140427333099494}
 --- !u!114 &2820614482219969670
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -412,8 +414,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fc6485ff3244489e853f4ab7650927a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 0.2
-  groundRaycastDistance: 0.87
+  speed: 0.5
+  groundRaycastDistance: 0.1
   maxSlopeAngle: 70
   groundLayer:
     serializedVersion: 2
@@ -483,7 +485,7 @@ Transform:
   m_GameObject: {fileID: 4976036649242112596}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 0.01, y: -0.23, z: 5.7621875}
+  m_LocalPosition: {x: 0.01, y: -0.22, z: 1}
   m_LocalScale: {x: 0.15999998, y: 0.15999998, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

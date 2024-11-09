@@ -17,6 +17,7 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] public GameplaySettings gameplaySettings;
     [SerializeField] public TerrainSettings terrainSettings;
+    [SerializeField] public PlayerSkinSettings playerSkinSettings;
 
     // Runtime variables
     // --------------------------------------------------
@@ -55,7 +56,7 @@ public class LevelManager : MonoBehaviour
         SetState(GameState.Loading);
 
         TerrainManager.Instance.Initialize(terrainSettings);
-        PlayersTurnManager.Instance.Initialize(gameplaySettings);
+        PlayersTurnManager.Instance.Initialize(gameplaySettings, playerSkinSettings);
 
         SetState(GameState.Ready);
         OnGameReady.Invoke();

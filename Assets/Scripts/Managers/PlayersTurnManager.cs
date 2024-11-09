@@ -25,8 +25,9 @@ public class PlayersTurnManager : MonoBehaviour
   private int turnCounter = 0;
   private float outcomeTimer = 0;
   private GameplaySettings gs;
+  private PlayerSkinSettings pss;
 
-  private float cameraSizeInTurn = 4f;
+  private float cameraSizeInTurn = 5f;
   private float cameraSizeInOutcome = 8f;
   private Camera mainCameraComponent;
 
@@ -76,10 +77,11 @@ public class PlayersTurnManager : MonoBehaviour
   // Custom methods
   // --------------------------------------------------
 
-  public void Initialize(GameplaySettings _gameplaySettings)
+  public void Initialize(GameplaySettings _gameplaySettings, PlayerSkinSettings _playerSkinSettings)
   {
     if (initialized) return;
     gs = _gameplaySettings;
+    pss = _playerSkinSettings;
 
     if (debug) Debug.Log("Attaching listeners");
     LevelManager.OnPlayerTurnStart.AddListener(OnPlayerTurnStart);
@@ -87,6 +89,7 @@ public class PlayersTurnManager : MonoBehaviour
 
     if (debug) Debug.Log("Creating players...");
     CreatePlayers();
+    ShuffleSkins();
     ShufflePlayers();
     initialized = true;
 
@@ -110,7 +113,7 @@ public class PlayersTurnManager : MonoBehaviour
       GameObject playerObject = Instantiate(playerPrefab, new Vector3(playerX, playerY, 0), Quaternion.identity, playersParent);
       playerObject.transform.localScale = new Vector3(gs.playerScale, gs.playerScale, 1);
       PlayerTank playerTank = playerObject.GetComponent<PlayerTank>();
-      playerTank.Initialize(i);
+      playerTank.Initialize(i, pss.playerSkins[i % pss.playerSkins.Count]);
       players.Add(playerTank);
     }
   }
@@ -153,6 +156,17 @@ public class PlayersTurnManager : MonoBehaviour
       PlayerTank temp = players[i];
       players[i] = players[j];
       players[j] = temp;
+    }
+  }
+
+  void ShuffleSkins()
+  {
+    for (int i = pss.playerSkins.Count - 1; i > 0; i--)
+    {
+      int j = Random.Range(0, i + 1);
+      PlayerSkin temp = pss.playerSkins[i];
+      pss.playerSkins[i] = pss.playerSkins[j];
+      pss.playerSkins[j] = temp;
     }
   }
 }
