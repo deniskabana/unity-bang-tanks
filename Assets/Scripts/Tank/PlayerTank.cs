@@ -16,16 +16,10 @@ public struct PlayerState
 }
 
 [@RequireComponent(typeof(TankPhysics))]
+[@RequireComponent(typeof(TankHealth))]
 [@RequireComponent(typeof(TankShooting))]
 public class PlayerTank : MonoBehaviour
 {
-  [SerializeField] float fuelDepletionRate = 20f;
-
-  [Header("References")]
-  [SerializeField] Transform playerIndicator;
-  [SerializeField] Transform tankBody;
-  [SerializeField] Transform tankCannon;
-
   // Runtime variables
   // --------------------------------------------------
 
@@ -35,13 +29,15 @@ public class PlayerTank : MonoBehaviour
 
   private int selfPlayerIndex;
 
+  readonly float fuelDepletionRate = 20f;
+
   // Built-in methods
   // --------------------------------------------------
 
   void Start()
   {
-    physicsScript = GetComponent<TankPhysics>();
-    shootingScript = GetComponent<TankShooting>();
+    physicsScript = gameObject.GetComponent<TankPhysics>();
+    shootingScript = gameObject.GetComponent<TankShooting>();
   }
 
   void Update()
@@ -86,8 +82,6 @@ public class PlayerTank : MonoBehaviour
   {
     selfPlayerIndex = index;
     SetInitialState();
-    SetPlayerColor();
-    playerIndicator.gameObject.SetActive(false);
 
     ControlsManager.OnControlDown.AddListener(OnShootButtonPressed);
     ControlsManager.OnControlUp.AddListener(OnShootButtonReleased);
@@ -110,7 +104,6 @@ public class PlayerTank : MonoBehaviour
     state.isPlayingTurn = true;
     state.fuel = LevelManager.Instance.gameplaySettings.maxFuelPerRound;
     state.turnStage = PlayerState.TurnStage.Moving;
-    playerIndicator.gameObject.SetActive(true);
     UIManager.ShowTouchAimButton();
     UIManager.UpdateActiveGasBar(1);
     UIManager.UpdateActiveArmorBar(state.health / LevelManager.Instance.gameplaySettings.maxPlayerHealth);
@@ -119,18 +112,7 @@ public class PlayerTank : MonoBehaviour
   public void HandleTurnEnd()
   {
     state.isPlayingTurn = false;
-    playerIndicator.gameObject.SetActive(false);
     UIManager.ShowTouchAimButton();
-  }
-
-  public void SetPlayerColor()
-  {
-    PlayerColorSprites[] playerColors = PlayersTurnManager.Instance.playerColors;
-    if (playerColors.Length < 2) return;
-    int colorIndex = selfPlayerIndex % playerColors.Length;
-    PlayerColorSprites colorSprites = playerColors[colorIndex];
-    tankBody.GetComponent<SpriteRenderer>().sprite = colorSprites.body;
-    tankCannon.GetComponent<SpriteRenderer>().sprite = colorSprites.cannon;
   }
 
   public void TakeDamage(int damage)

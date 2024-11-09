@@ -1,9 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public struct PlayerColorSprites { public Sprite body; public Sprite cannon; }
-
 public class PlayersTurnManager : MonoBehaviour
 {
   public static PlayersTurnManager Instance;
@@ -11,12 +8,13 @@ public class PlayersTurnManager : MonoBehaviour
 
   [Header("Settings")]
   [SerializeField] int minOutcomeDurationSeconds = 3;
-  [SerializeField] public PlayerColorSprites[] playerColors;
+  [SerializeField] float indicatorYOffset = 2.25f;
 
   [Header("References")]
+  [SerializeField] GameObject activePlayerIndicator;
   [SerializeField] Transform playersParent;
-  [SerializeField] GameObject playerPrefab;
   [SerializeField] Transform mainCamera;
+  [SerializeField] GameObject playerPrefab;
 
   // Runtime variables
   // --------------------------------------------------
@@ -44,6 +42,7 @@ public class PlayersTurnManager : MonoBehaviour
   {
     if (!Instance) Instance = this;
     mainCameraComponent = mainCamera.GetComponent<Camera>();
+    activePlayerIndicator.SetActive(false);
   }
 
   void Update()
@@ -57,6 +56,7 @@ public class PlayersTurnManager : MonoBehaviour
         mainCameraComponent.orthographicSize = Mathf.Lerp(mainCameraComponent.orthographicSize, cameraSizeInTurn, Time.deltaTime * 1.75f);
         Vector3 targetPosition = players[currentPlayerIndex].transform.position + new Vector3(0, 0, -10);
         mainCamera.position = Vector3.Lerp(mainCamera.position, targetPosition, Time.deltaTime * 5f);
+        activePlayerIndicator.transform.position = players[currentPlayerIndex].transform.position + new Vector3(0, indicatorYOffset, 0);
         break;
       case GameState.TurnOutcome:
         mainCameraComponent.orthographicSize = Mathf.Lerp(mainCameraComponent.orthographicSize, cameraSizeInOutcome, Time.deltaTime * 1.75f);
@@ -86,7 +86,6 @@ public class PlayersTurnManager : MonoBehaviour
     LevelManager.OnPlayerTurnEnd.AddListener(OnPlayerTurnEnd);
 
     if (debug) Debug.Log("Creating players...");
-    ShufflePlayerColors();
     CreatePlayers();
     ShufflePlayers();
     initialized = true;
@@ -100,7 +99,7 @@ public class PlayersTurnManager : MonoBehaviour
     Bounds terrainBounds = TerrainManager.Instance.GetTerrainRendererBounds();
 
     float worldWidth = terrainBounds.size.x;
-    float playerY = terrainBounds.min.y + 1;
+    float playerY = terrainBounds.min.y + 10;
 
     for (int i = 0; i < gs.amountOfPlayers; i++)
     {
@@ -109,6 +108,7 @@ public class PlayersTurnManager : MonoBehaviour
 
       float playerX = terrainBounds.min.x + playerPositions[i];
       GameObject playerObject = Instantiate(playerPrefab, new Vector3(playerX, playerY, 0), Quaternion.identity, playersParent);
+      playerObject.transform.localScale = new Vector3(gs.playerScale, gs.playerScale, 1);
       PlayerTank playerTank = playerObject.GetComponent<PlayerTank>();
       playerTank.Initialize(i);
       players.Add(playerTank);
@@ -118,6 +118,7 @@ public class PlayersTurnManager : MonoBehaviour
   void OnPlayerTurnStart()
   {
     if (debug) Debug.Log("Player turn started for player " + currentPlayerIndex);
+    activePlayerIndicator.SetActive(true);
 
     turnCounter += 1;
     players[currentPlayerIndex].HandleTurnStart();
@@ -126,6 +127,7 @@ public class PlayersTurnManager : MonoBehaviour
   void OnPlayerTurnEnd()
   {
     if (debug) Debug.Log("Player turn ended for player " + currentPlayerIndex);
+    activePlayerIndicator.SetActive(false);
     players[currentPlayerIndex].HandleTurnEnd();
 
     currentPlayerIndex += 1;
@@ -141,17 +143,6 @@ public class PlayersTurnManager : MonoBehaviour
   void FinishOutcome()
   {
     LevelManager.Instance.EndPlayerOutcome();
-  }
-
-  void ShufflePlayerColors()
-  {
-    for (int i = playerColors.Length - 1; i > 0; i--)
-    {
-      int j = Random.Range(0, i + 1);
-      PlayerColorSprites temp = playerColors[i];
-      playerColors[i] = playerColors[j];
-      playerColors[j] = temp;
-    }
   }
 
   void ShufflePlayers()
