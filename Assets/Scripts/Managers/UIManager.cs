@@ -1,40 +1,54 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.XR;
+
+[System.Serializable]
+public struct UIManagerReferences
+{
+    [Header("Touch Controls")]
+    public RectTransform touchControlsRt;
+    public RectTransform touchButtonAim;
+    public RectTransform touchButtonShoot;
+
+    [Header("HUD")]
+    public RectTransform hudContainer;
+    public RectTransform hudGasBarMask;
+    public RectTransform emptyBarReference;
+    public RectTransform hudArmorBarMask;
+
+    [Header("HUD / TankInfo")]
+    public RectTransform hudTankImage;
+    public RectTransform hudTankName;
+}
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
     public bool debug = false;
 
-    [Header("Touch Controls")]
-    [SerializeField] bool uiControlsEnabled = true;
-    [SerializeField] RectTransform touchControlsRt;
-    [SerializeField] RectTransform touchButtonAim;
-    [SerializeField] RectTransform touchButtonShoot;
-
-    [Header("HUD")]
-    [SerializeField] RectTransform hudContainer;
-    [SerializeField] RectTransform hudGasBarMask; // Scaling this will mask the bar, revealing background
-    [SerializeField] RectTransform hudArmorBarMask; // Scaling this will mask the bar, revealing background
-
-    [Header("HUD Tank")]
-    [SerializeField] RectTransform hudTankImage;
-    [SerializeField] RectTransform hudTankName;
-
-    [Header("Animation")]
+    [Header("Settings")]
+    [SerializeField] bool touchControlsEnabled = true;
+    [SerializeField] bool animationsEnabled = true;
     [SerializeField] float uiMoveSpeed = 6;
+
+    [Header("Advanced")]
+    [SerializeField] UIManagerReferences references;
 
     // Runtime variables
     // --------------------------------------------------
 
+    bool isHUDVisible = true;
     bool isTouchControlsVisible = true;
-    float touchControlsYDefault = 0;
     float touchControlsYOff = -(Screen.height / 2);
+    float hudYOff = Screen.height / 2;
 
+    float touchControlsYDefault;
+    float hudYDefault;
     float barDefaultWidth;
 
     // Build-in methods
@@ -48,13 +62,13 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         if (!Instance) Instance = this;
-
         Initialize();
     }
 
     void Update()
     {
         HandleTouchControlsPosition();
+        HandleHUDPosition();
     }
 
     // Custom methods
@@ -62,78 +76,117 @@ public class UIManager : MonoBehaviour
 
     void Initialize()
     {
-        touchControlsRt.gameObject.SetActive(uiControlsEnabled);
-
-        barDefaultWidth = hudGasBarMask.sizeDelta.x;
-
+        // Activate / deactivate UI elements
+        references.touchControlsRt.gameObject.SetActive(touchControlsEnabled);
+        references.hudContainer.gameObject.SetActive(true);
+        // Default Y positions
+        touchControlsYDefault = references.touchControlsRt.position.y;
+        hudYDefault = references.hudContainer.position.y;
+        // Default bar width (all bars are same width)
+        barDefaultWidth = references.emptyBarReference.sizeDelta.x;
+        ResetBars();
+        // Touch controls listeners
         LevelManager.OnPlayerTurnStart.AddListener(ShowTouchControls);
         LevelManager.OnPlayerTurnEnd.AddListener(HideTouchControls);
+        // HUD listeners
+        LevelManager.OnPlayerTurnStart.AddListener(ShowHUD);
+        LevelManager.OnPlayerTurnEnd.AddListener(HideHUD);
     }
 
     void HandleTouchControlsPosition()
     {
-        if (!uiControlsEnabled) return;
-        if (touchControlsRt == null) return;
-        RectTransform rt = touchControlsRt;
-        HandleUIRectPosition(rt, isTouchControlsVisible ? touchControlsYDefault : touchControlsYOff);
+        if (!touchControlsEnabled) return;
+        RectTransform rt = references.touchControlsRt;
+        if (!rt) return;
+        HandleUIRectPosition(rt, isTouchControlsVisible ? touchControlsYDefault : touchControlsYDefault + touchControlsYOff);
+    }
+
+    void HandleHUDPosition()
+    {
+        RectTransform rt = references.hudContainer;
+        if (!rt) return;
+        HandleUIRectPosition(rt, isHUDVisible ? hudYDefault : hudYDefault + hudYOff);
     }
 
     void HandleUIRectPosition(RectTransform rt, float desiredY)
     {
         float currentY = rt.position.y;
         if (currentY == desiredY) return;
-        float newY = Mathf.Lerp(currentY, desiredY, Time.deltaTime * uiMoveSpeed);
+        float newY = animationsEnabled ? Mathf.Lerp(currentY, desiredY, Time.deltaTime * uiMoveSpeed) : desiredY;
         rt.position = new Vector3(rt.position.x, newY, rt.position.z);
     }
 
     public static void ShowTouchControls()
     {
-        if (!Instance.uiControlsEnabled) return;
+        if (!Instance.touchControlsEnabled) return;
         if (Instance.debug) Debug.Log("ShowTouchControls");
         Instance.isTouchControlsVisible = true;
     }
 
     public static void HideTouchControls()
     {
-        if (!Instance.uiControlsEnabled) return;
+        if (!Instance.touchControlsEnabled) return;
         if (Instance.debug) Debug.Log("HideTouchControls");
         Instance.isTouchControlsVisible = false;
+    }
+
+    public static void ShowHUD()
+    {
+        if (Instance.debug) Debug.Log("ShowHUD");
+        Instance.isHUDVisible = true;
+    }
+
+    public static void HideHUD()
+    {
+        if (Instance.debug) Debug.Log("HideHUD");
+        Instance.isHUDVisible = false;
     }
 
     public static void ShowTouchAimButton()
     {
         if (Instance.debug) Debug.Log("ShowAimButton");
-        Instance.touchButtonAim.gameObject.SetActive(true);
-        Instance.touchButtonShoot.gameObject.SetActive(false);
+        Instance.references.touchButtonAim.gameObject.SetActive(true);
+        Instance.references.touchButtonShoot.gameObject.SetActive(false);
     }
     public static void ShowTouchShootButton()
     {
         if (Instance.debug) Debug.Log("ShowShootButton");
-        Instance.touchButtonAim.gameObject.SetActive(false);
-        Instance.touchButtonShoot.gameObject.SetActive(true);
+        Instance.references.touchButtonAim.gameObject.SetActive(false);
+        Instance.references.touchButtonShoot.gameObject.SetActive(true);
     }
 
     public static void UpdateActiveGasBar(float value)
     {
         if (Instance.debug) Debug.Log("UpdateActiveGasBar: " + value);
-        Instance.hudGasBarMask.sizeDelta = new Vector2(value * Instance.barDefaultWidth, Instance.hudGasBarMask.sizeDelta.y);
+        if (value < 0) return;
+        Instance.references.hudGasBarMask.sizeDelta =
+            new Vector2(value * Instance.barDefaultWidth, Instance.references.hudGasBarMask.sizeDelta.y);
     }
 
     public static void UpdateActiveArmorBar(float value)
     {
         if (Instance.debug) Debug.Log("UpdateActiveArmorBar: " + value);
-        Instance.hudArmorBarMask.sizeDelta = new Vector2(value * Instance.barDefaultWidth, Instance.hudArmorBarMask.sizeDelta.y);
+        if (value < 0) return;
+        Instance.references.hudArmorBarMask.sizeDelta =
+            new Vector2(value * Instance.barDefaultWidth, Instance.references.hudArmorBarMask.sizeDelta.y);
+    }
+
+    public static void ResetBars()
+    {
+        if (Instance.debug) Debug.Log("ResetBars");
+        UpdateActiveArmorBar(1);
+        UpdateActiveGasBar(1);
     }
 
     public static void SetActiveTankHUDImage(Sprite sprite)
     {
         if (Instance.debug) Debug.Log("SetActiveTankHUDImage: " + sprite.name);
-        Instance.hudTankImage.GetComponent<UnityEngine.UI.Image>().sprite = sprite;
+        Instance.references.hudTankImage.GetComponent<UnityEngine.UI.Image>().sprite = sprite;
     }
 
     public static void SetActiveTankHUDName(string name)
     {
         if (Instance.debug) Debug.Log("SetActiveTankHUDName: " + name);
-        Instance.hudTankName.GetComponent<TextMeshProUGUI>().text = name;
+        Instance.references.hudTankName.GetComponent<TextMeshProUGUI>().text = name;
     }
 }

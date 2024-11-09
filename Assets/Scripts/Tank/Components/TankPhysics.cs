@@ -12,7 +12,6 @@ public class TankPhysics : MonoBehaviour
     [SerializeField] float gravityForce = 9.8f;  // Custom gravity force
     [SerializeField] float downhillSpeedMultiplier = 1.4f; // Speed multiplier when going downhill
 
-
     [Header("References")]
     [SerializeField] Transform groundCheck;  // Empty GameObject at the bottom of the tank for ground detection
     [SerializeField] Transform raycastOrigin;  // Empty GameObject at the bottom of the tank for ground detection
@@ -21,7 +20,7 @@ public class TankPhysics : MonoBehaviour
     // --------------------------------------------------
 
     private Vector2 velocity;  // Store velocity for movement
-    private bool isGrounded = false;  // Whether the tank is grounded
+    public bool isGrounded = false;  // Whether the tank is grounded
     private bool isMoving = false;  // Whether the tank is moving
     private bool initialized = false;
 
@@ -46,7 +45,8 @@ public class TankPhysics : MonoBehaviour
         if (!initialized) return;
         Gizmos.color = Color.green;
         Gizmos.DrawLine(groundCheck.position, raycastOrigin.position + Vector3.down * groundRaycastDistance);
-        Gizmos.DrawWireSphere(groundCheck.position, 0.05f);
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(raycastOrigin.position, groundRaycastDistance);
     }
 
     // Custom methods

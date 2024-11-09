@@ -410,7 +410,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 768, y: 432}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 100
   m_DefaultSpriteDPI: 100
@@ -659,7 +659,7 @@ GameObject:
   - component: {fileID: 450133188}
   - component: {fileID: 450133187}
   m_Layer: 5
-  m_Name: Tank
+  m_Name: TankImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1073,15 +1073,14 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1023998995}
-  - {fileID: 948316965}
+  - {fileID: 1644570014}
   m_Father: {fileID: 299959821}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 147.3996}
-  m_Pivot: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0.000061035156, y: -215.43524}
+  m_SizeDelta: {x: 0, y: 147.39941}
+  m_Pivot: {x: 0.5235158, y: -0.46157452}
 --- !u!1 &588912763
 GameObject:
   m_ObjectHideFlags: 0
@@ -1202,7 +1201,7 @@ GameObject:
   - component: {fileID: 597930584}
   - component: {fileID: 597930585}
   m_Layer: 5
-  m_Name: MeterFullContainer
+  m_Name: MeterMask
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1254,7 +1253,7 @@ GameObject:
   - component: {fileID: 602051304}
   - component: {fileID: 602051303}
   m_Layer: 5
-  m_Name: Background
+  m_Name: TankHUDBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1490,17 +1489,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17128f1559cfd4c2c95b237414e2d7fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debug: 0
-  uiControlsEnabled: 1
-  touchControlsRt: {fileID: 1250378169}
-  touchButtonAim: {fileID: 1848777203}
-  touchButtonShoot: {fileID: 1339737597}
-  hudContainer: {fileID: 579732309}
-  hudGasBarMask: {fileID: 1959688603}
-  hudArmorBarMask: {fileID: 597930584}
-  hudTankImage: {fileID: 450133186}
-  hudTankName: {fileID: 901347749}
+  debug: 1
+  touchControlsEnabled: 1
+  animationsEnabled: 1
   uiMoveSpeed: 5
+  references:
+    touchControlsRt: {fileID: 1250378169}
+    touchButtonAim: {fileID: 1848777203}
+    touchButtonShoot: {fileID: 1339737597}
+    hudContainer: {fileID: 579732309}
+    hudGasBarMask: {fileID: 1959688603}
+    emptyBarReference: {fileID: 413235862}
+    hudArmorBarMask: {fileID: 597930584}
+    hudTankImage: {fileID: 450133186}
+    hudTankName: {fileID: 901347749}
 --- !u!1 &679550186
 GameObject:
   m_ObjectHideFlags: 0
@@ -1876,7 +1878,7 @@ GameObject:
   - component: {fileID: 901347751}
   - component: {fileID: 901347750}
   m_Layer: 5
-  m_Name: Name
+  m_Name: TankName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2096,7 +2098,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 948316964}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2104,11 +2106,11 @@ RectTransform:
   - {fileID: 602051302}
   - {fileID: 901347749}
   - {fileID: 450133186}
-  m_Father: {fileID: 579732309}
+  m_Father: {fileID: 1644570014}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 2.0091705, y: -1.739254}
   m_SizeDelta: {x: 128, y: 128}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &950403056
@@ -2366,12 +2368,12 @@ RectTransform:
   m_Children:
   - {fileID: 778985113}
   - {fileID: 1051012255}
-  m_Father: {fileID: 579732309}
+  m_Father: {fileID: 1644570014}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 64.474655, y: -59.8}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: 123, y: -60}
+  m_SizeDelta: {x: 213.0376, y: 96.9225}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1051012254
 GameObject:
@@ -2523,7 +2525,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: -241}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -0.0001, y: 106.2176}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!1 &1254185887
@@ -2822,6 +2824,43 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1339737596}
   m_CullTransparentMesh: 1
+--- !u!1 &1644570013
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1644570014}
+  m_Layer: 5
+  m_Name: HUDTankInfo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1644570014
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1644570013}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1023998995}
+  - {fileID: 948316965}
+  m_Father: {fileID: 579732309}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 113.55997, y: 0}
+  m_SizeDelta: {x: 227.12, y: 107.02}
+  m_Pivot: {x: 0.49999994, y: 1}
 --- !u!1 &1659254434
 GameObject:
   m_ObjectHideFlags: 0
@@ -3051,7 +3090,7 @@ GameObject:
   - component: {fileID: 1959688603}
   - component: {fileID: 1959688604}
   m_Layer: 5
-  m_Name: MeterFullContainer
+  m_Name: MeterMask
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3074,7 +3113,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0.422966, y: -3.9999924}
+  m_AnchoredPosition: {x: 0.62319183, y: -4.0563}
   m_SizeDelta: {x: 88.06, y: 8.1127}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1959688604

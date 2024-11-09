@@ -54,12 +54,13 @@ public class PlayerTank : MonoBehaviour
     if (state.turnStage == PlayerState.TurnStage.Moving)
     {
       // Handling horizontal movement
-      if (inputX != 0 && state.fuel > 0)
+      if (inputX != 0 && state.fuel > 0 && physicsScript.isGrounded)
       {
+        // Deplete fuel even if the tank can not move
+        state.fuel -= fuelDepletionRate * Time.deltaTime;
+
         if (physicsScript.HandleMovement(inputX) != 0)
         {
-          state.fuel -= fuelDepletionRate * Time.deltaTime;
-
           GameplaySettings gs = LevelManager.Instance.gameplaySettings;
           UIManager.UpdateActiveGasBar(state.fuel / gs.maxFuelPerRound);
         }
