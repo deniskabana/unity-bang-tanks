@@ -106,7 +106,7 @@ public class LevelManager : MonoBehaviour
         StartPlayerTurn();
     }
 
-    public void EndGame()
+    public void GameOver()
     {
         SetState(GameState.GameOver);
         OnGameOver.Invoke();

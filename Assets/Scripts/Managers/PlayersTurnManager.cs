@@ -120,10 +120,6 @@ public class PlayersTurnManager : MonoBehaviour
     if (debug) Debug.Log("Player turn started for player " + currentPlayerIndex);
 
     turnCounter += 1;
-
-    UIManager.UpdateActiveGasBar(1);
-    UIManager.UpdateActiveArmorBar(1);
-
     players[currentPlayerIndex].HandleTurnStart();
   }
 

@@ -17,7 +17,6 @@ public struct PlayerState
 
 [@RequireComponent(typeof(TankPhysics))]
 [@RequireComponent(typeof(TankShooting))]
-[@RequireComponent(typeof(TankHealth))]
 public class PlayerTank : MonoBehaviour
 {
   [SerializeField] float fuelDepletionRate = 20f;
@@ -33,7 +32,6 @@ public class PlayerTank : MonoBehaviour
   private PlayerState state;
   private TankPhysics physicsScript;
   private TankShooting shootingScript;
-  private TankHealth healthScript;
 
   private int selfPlayerIndex;
 
@@ -44,7 +42,6 @@ public class PlayerTank : MonoBehaviour
   {
     physicsScript = GetComponent<TankPhysics>();
     shootingScript = GetComponent<TankShooting>();
-    healthScript = GetComponent<TankHealth>();
   }
 
   void Update()
@@ -110,12 +107,13 @@ public class PlayerTank : MonoBehaviour
 
   public void HandleTurnStart()
   {
-    GameplaySettings gs = LevelManager.Instance.gameplaySettings;
     state.isPlayingTurn = true;
-    state.fuel = gs.maxFuelPerRound;
+    state.fuel = LevelManager.Instance.gameplaySettings.maxFuelPerRound;
     state.turnStage = PlayerState.TurnStage.Moving;
     playerIndicator.gameObject.SetActive(true);
     UIManager.ShowTouchAimButton();
+    UIManager.UpdateActiveGasBar(1);
+    UIManager.UpdateActiveArmorBar(state.health / LevelManager.Instance.gameplaySettings.maxPlayerHealth);
   }
 
   public void HandleTurnEnd()
@@ -133,6 +131,14 @@ public class PlayerTank : MonoBehaviour
     PlayerColorSprites colorSprites = playerColors[colorIndex];
     tankBody.GetComponent<SpriteRenderer>().sprite = colorSprites.body;
     tankCannon.GetComponent<SpriteRenderer>().sprite = colorSprites.cannon;
+  }
+
+  public void TakeDamage(int damage)
+  {
+    state.health -= damage;
+    UIManager.UpdateActiveArmorBar(state.health / LevelManager.Instance.gameplaySettings.maxPlayerHealth);
+
+    if (state.health <= 0) LevelManager.Instance.GameOver();
   }
 
   // Event handlers
