@@ -122,6 +122,9 @@ public class PlayersTurnManager : MonoBehaviour
     if (debug) Debug.Log("Player turn started for player " + currentPlayerIndex);
     activePlayerIndicator.SetActive(true);
 
+    UIManager.SetActiveTankHUDImage(players[currentPlayerIndex].GetSkin().preview);
+    UIManager.SetActiveTankHUDName("Play " + (currentPlayerIndex + 1));
+
     turnCounter += 1;
     players[currentPlayerIndex].HandleTurnStart();
   }

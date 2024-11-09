@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -19,6 +20,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] RectTransform hudContainer;
     [SerializeField] RectTransform hudGasBarMask; // Scaling this will mask the bar, revealing background
     [SerializeField] RectTransform hudArmorBarMask; // Scaling this will mask the bar, revealing background
+
+    [Header("HUD Tank")]
+    [SerializeField] RectTransform hudTankImage;
+    [SerializeField] RectTransform hudTankName;
 
     [Header("Animation")]
     [SerializeField] float uiMoveSpeed = 6;
@@ -118,5 +123,17 @@ public class UIManager : MonoBehaviour
     {
         if (Instance.debug) Debug.Log("UpdateActiveArmorBar: " + value);
         Instance.hudArmorBarMask.sizeDelta = new Vector2(value * Instance.barDefaultWidth, Instance.hudArmorBarMask.sizeDelta.y);
+    }
+
+    public static void SetActiveTankHUDImage(Sprite sprite)
+    {
+        if (Instance.debug) Debug.Log("SetActiveTankHUDImage: " + sprite.name);
+        Instance.hudTankImage.GetComponent<UnityEngine.UI.Image>().sprite = sprite;
+    }
+
+    public static void SetActiveTankHUDName(string name)
+    {
+        if (Instance.debug) Debug.Log("SetActiveTankHUDName: " + name);
+        Instance.hudTankName.GetComponent<TextMeshProUGUI>().text = name;
     }
 }

@@ -21,18 +21,17 @@ public class TankShooting : MonoBehaviour
     private float shotForce = 20;  // Force to apply to the bullet
     private float shotAngle = 0;  // Force to apply to the bullet
 
-    // Built-in methods
+    // Custom methods
     // --------------------------------------------------
 
     void Start()
     {
-        Initializa();
+        // For preview purposes
+        shotAngle = 30f;
+        AimCannonInstantly(shotAngle);
     }
 
-    // Custom methods
-    // --------------------------------------------------
-
-    void Initializa()
+    public void Initialize()
     {
         shotAngle = Random.Range(-cannonMinMaxAngle / 2, cannonMinMaxAngle / 2);
         AimCannonInstantly(shotAngle);

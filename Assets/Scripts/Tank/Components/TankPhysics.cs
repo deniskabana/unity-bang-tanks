@@ -23,23 +23,27 @@ public class TankPhysics : MonoBehaviour
     private Vector2 velocity;  // Store velocity for movement
     private bool isGrounded = false;  // Whether the tank is grounded
     private bool isMoving = false;  // Whether the tank is moving
+    private bool initialized = false;
 
     // Built-in methods
     // --------------------------------------------------
 
-    void Start()
+    public void Initialize()
     {
+        initialized = true;
         ResetGroundPosition();
     }
 
     void Update()
     {
+        if (!initialized) return;
         CheckGround();
         ApplyGravity();
     }
 
     void OnDrawGizmos()
     {
+        if (!initialized) return;
         Gizmos.color = Color.green;
         Gizmos.DrawLine(groundCheck.position, raycastOrigin.position + Vector3.down * groundRaycastDistance);
         Gizmos.DrawWireSphere(groundCheck.position, 0.05f);

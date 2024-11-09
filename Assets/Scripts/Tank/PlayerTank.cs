@@ -29,6 +29,7 @@ public class PlayerTank : MonoBehaviour
   private PlayerState state;
   private TankPhysics physicsScript;
   private TankShooting shootingScript;
+  PlayerSkin skin;
 
   private int selfPlayerIndex;
 
@@ -36,12 +37,6 @@ public class PlayerTank : MonoBehaviour
 
   // Built-in methods
   // --------------------------------------------------
-
-  void Start()
-  {
-    physicsScript = gameObject.GetComponent<TankPhysics>();
-    shootingScript = gameObject.GetComponent<TankShooting>();
-  }
 
   void Update()
   {
@@ -83,9 +78,15 @@ public class PlayerTank : MonoBehaviour
 
   public void Initialize(int index, PlayerSkin skin)
   {
+    physicsScript = gameObject.GetComponent<TankPhysics>();
+    shootingScript = gameObject.GetComponent<TankShooting>();
+
     selfPlayerIndex = index;
     SetInitialState();
     SetSkin(skin);
+
+    shootingScript.Initialize();
+    physicsScript.Initialize();
 
     ControlsManager.OnControlDown.AddListener(OnShootButtonPressed);
     ControlsManager.OnControlUp.AddListener(OnShootButtonReleased);
@@ -159,9 +160,15 @@ public class PlayerTank : MonoBehaviour
     }
   }
 
-  public void SetSkin(PlayerSkin skin)
+  public void SetSkin(PlayerSkin _skin)
   {
+    skin = _skin;
     body1.GetComponent<SpriteRenderer>().sprite = skin.body1;
     body2.GetComponent<SpriteRenderer>().sprite = skin.body2;
+  }
+
+  public PlayerSkin GetSkin()
+  {
+    return skin;
   }
 }
