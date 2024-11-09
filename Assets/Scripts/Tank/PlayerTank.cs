@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [Serializable]
@@ -67,6 +68,9 @@ public class PlayerTank : MonoBehaviour
         if (physicsScript.HandleMovement(inputX) != 0)
         {
           state.fuel -= fuelDepletionRate * Time.deltaTime;
+
+          GameplaySettings gs = LevelManager.Instance.gameplaySettings;
+          UIManager.UpdateActiveGasBar(state.fuel / gs.maxFuelPerRound);
         }
       }
     }
@@ -111,14 +115,14 @@ public class PlayerTank : MonoBehaviour
     state.fuel = gs.maxFuelPerRound;
     state.turnStage = PlayerState.TurnStage.Moving;
     playerIndicator.gameObject.SetActive(true);
-    ControlsManager.ShowAimButton();
+    UIManager.ShowTouchAimButton();
   }
 
   public void HandleTurnEnd()
   {
     state.isPlayingTurn = false;
     playerIndicator.gameObject.SetActive(false);
-    ControlsManager.ShowAimButton();
+    UIManager.ShowTouchAimButton();
   }
 
   public void SetPlayerColor()
@@ -142,7 +146,7 @@ public class PlayerTank : MonoBehaviour
     {
       case PlayerState.TurnStage.Moving:
         state.turnStage = PlayerState.TurnStage.Aiming;
-        ControlsManager.ShowShootButton();
+        UIManager.ShowTouchShootButton();
         break;
       case PlayerState.TurnStage.Shooting:
         shootingScript.Shoot(UnityEngine.Random.Range(300, 1000));

@@ -14,11 +14,6 @@ public class UITouchControlButton : MonoBehaviour, IPointerDownHandler, IPointer
     [SerializeField] Sprite spriteDefault;
     [SerializeField] Sprite spriteActive;
 
-    // Runtime variables
-    // --------------------------------------------------
-
-    bool isPressed = false;
-
     // Built-in methods
     // --------------------------------------------------
 
@@ -29,18 +24,13 @@ public class UITouchControlButton : MonoBehaviour, IPointerDownHandler, IPointer
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        isPressed = true;
         buttonBackground.GetComponent<Image>().sprite = spriteActive;
         ControlsManager.HandleControlDown(controlButtonType);
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        isPressed = false;
         buttonBackground.GetComponent<Image>().sprite = spriteDefault;
         ControlsManager.HandleControlUp(controlButtonType);
     }
-
-    // Custom methods
-    // --------------------------------------------------
 }
