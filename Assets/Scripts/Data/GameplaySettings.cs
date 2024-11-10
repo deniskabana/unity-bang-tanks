@@ -7,4 +7,6 @@ public class GameplaySettings
   [SerializeField] public int maxPlayerHealth = 100;
   [SerializeField] public int maxFuelPerRound = 100;
   [SerializeField] public float playerScale = 0.6f;
+  [SerializeField] public bool enableActiveIndicator = true;
+  [SerializeField] public bool animateActiveIndicator = true;
 }

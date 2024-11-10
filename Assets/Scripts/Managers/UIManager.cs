@@ -93,6 +93,7 @@ public class UIManager : MonoBehaviour
         LevelManager.OnPlayerTurnEnd.AddListener(HideHUD);
     }
 
+    // TODO: Problematic performance with this method in Update, should be called only when necessary and cancel early if not needed
     void HandleTouchControlsPosition()
     {
         if (!touchControlsEnabled) return;
@@ -101,6 +102,7 @@ public class UIManager : MonoBehaviour
         HandleUIRectPosition(rt, isTouchControlsVisible ? touchControlsYDefault : touchControlsYDefault + touchControlsYOff);
     }
 
+    // TODO: Problematic performance with this method in Update, should be called only when necessary and cancel early if not needed
     void HandleHUDPosition()
     {
         RectTransform rt = references.hudContainer;

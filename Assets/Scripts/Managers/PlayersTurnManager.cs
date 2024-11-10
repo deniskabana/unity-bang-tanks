@@ -47,7 +47,7 @@ public class PlayersTurnManager : MonoBehaviour
   {
     if (!initialized) return;
 
-    if (LevelManager.GetState() == GameState.Turn)
+    if (gs.enableActiveIndicator && LevelManager.GetState() == GameState.Turn)
     {
       activePlayerIndicator.transform.position = players[currentPlayerIndex].transform.position + new Vector3(0, indicatorYOffset, 0);
     }
@@ -70,6 +70,14 @@ public class PlayersTurnManager : MonoBehaviour
     if (initialized) return;
     gs = _gameplaySettings;
     pss = _playerSkinSettings;
+
+    if (debug) Debug.Log("Initializing PlayerTurnIndicator");
+    activePlayerIndicator.SetActive(gs.enableActiveIndicator);
+    if (!gs.animateActiveIndicator)
+    {
+      GameObject indicatorChild = activePlayerIndicator.transform.GetChild(0).gameObject;
+      indicatorChild.GetComponent<Animation>().enabled = false;
+    }
 
     if (debug) Debug.Log("Attaching listeners");
     LevelManager.OnPlayerTurnStart.AddListener(OnPlayerTurnStart);
@@ -109,7 +117,7 @@ public class PlayersTurnManager : MonoBehaviour
   void OnPlayerTurnStart()
   {
     if (debug) Debug.Log("Player turn started for player " + currentPlayerIndex);
-    activePlayerIndicator.SetActive(true);
+    if (gs.enableActiveIndicator) activePlayerIndicator.SetActive(true);
 
     UIManager.SetActiveTankHUDImage(players[currentPlayerIndex].GetSkin().preview);
     UIManager.SetActiveTankHUDName("Play " + (currentPlayerIndex + 1));
@@ -122,7 +130,7 @@ public class PlayersTurnManager : MonoBehaviour
   void OnPlayerTurnEnd()
   {
     if (debug) Debug.Log("Player turn ended for player " + currentPlayerIndex);
-    activePlayerIndicator.SetActive(false);
+    if (gs.enableActiveIndicator) activePlayerIndicator.SetActive(false);
     players[currentPlayerIndex].HandleTurnEnd();
     CameraManager.StopTracking();
 

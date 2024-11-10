@@ -38,7 +38,7 @@ public class PlayerTank : MonoBehaviour
   // Built-in methods
   // --------------------------------------------------
 
-  void Update()
+  void FixedUpdate()
   {
     if (!state.isPlayingTurn) return;
 
@@ -58,12 +58,9 @@ public class PlayerTank : MonoBehaviour
       {
         // Deplete fuel even if the tank can not move
         state.fuel -= fuelDepletionRate * Time.deltaTime;
-
-        if (physicsScript.HandleMovement(inputX) != 0)
-        {
-          GameplaySettings gs = LevelManager.Instance.gameplaySettings;
-          UIManager.UpdateActiveGasBar(state.fuel / gs.maxFuelPerRound);
-        }
+        GameplaySettings gs = LevelManager.Instance.gameplaySettings;
+        UIManager.UpdateActiveGasBar(state.fuel / gs.maxFuelPerRound);
+        physicsScript.HandleMovement(inputX);
       }
     }
 

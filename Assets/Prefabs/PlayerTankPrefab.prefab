@@ -440,7 +440,7 @@ MonoBehaviour:
   cannonMinMaxAngle: 90
   minBulletForce: 5
   maxBulletForce: 50
-  cannonAimSpeed: 40
+  cannonAimSpeed: 60
   bulletPrefab: {fileID: 5882382787347245810, guid: 367fd9135c1924428a25c8fbb21d038d, type: 3}
   cannonTransform: {fileID: 8962418319791757141}
   firingPoint: {fileID: 6347218629788349332}

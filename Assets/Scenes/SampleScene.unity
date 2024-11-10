@@ -1280,18 +1280,20 @@ MonoBehaviour:
   gameplaySettings:
     amountOfPlayers: 3
     maxPlayerHealth: 100
-    maxFuelPerRound: 100
-    playerScale: 0.4
+    maxFuelPerRound: 150
+    playerScale: 0.3
+    enableActiveIndicator: 1
+    animateActiveIndicator: 1
   terrainSettings:
     textureWidth: 3000
     textureHeight: 1500
-    noiseScale: 0.0014
-    heightMultiplier: 1000
+    noiseScale: 0.00145
+    heightMultiplier: 1200
     enableTerrainChunking: 1
     pixelsPerUnit: 100
     minRandomOffset: 0
     maxRandomOffset: 1000
-    chunkSize: 256
+    chunkSize: 160
   playerSkinSettings:
     playerSkins:
     - name: Blue
@@ -1416,7 +1418,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debug: 0
   touchControlsEnabled: 1
-  animationsEnabled: 1
+  animationsEnabled: 0
   uiMoveSpeed: 5
   references:
     touchControlsRt: {fileID: 1250378169}
@@ -1441,10 +1443,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debug: 0
-  cameraSpeedZoom: 1.75
-  cameraSpeedMove: 5
+  enableCameraAnimation: 0
   cameraZoomedInSize: 4.75
   cameraZoomedOutSize: 7.4
+  cameraSpeedZoom: 1.75
+  cameraSpeedMove: 5
+  checkBoundaries: 0
   mainCamera: {fileID: 519420032}
 --- !u!1 &679550186
 GameObject:

@@ -9,10 +9,12 @@ public class CameraManager : MonoBehaviour
     public bool debug = false;
 
     [Header("Settings")]
-    [SerializeField] private float cameraSpeedZoom = 1.75f;
-    [SerializeField] private float cameraSpeedMove = 5f;
+    [SerializeField] private bool enableCameraAnimation = true;
     [SerializeField] private float cameraZoomedInSize = 4.75f; // Zoom in on player
     [SerializeField] private float cameraZoomedOutSize = 7.4f; // Default state
+    [SerializeField] private float cameraSpeedZoom = 1.75f;
+    [SerializeField] private float cameraSpeedMove = 5f;
+    [SerializeField] private bool checkBoundaries = true;
     [SerializeField] private Transform mainCamera;
 
     // Runtime variables
@@ -23,6 +25,7 @@ public class CameraManager : MonoBehaviour
     Camera mainCameraComponent;
     float cameraSize;
     float cameraZ;
+    Vector3 centerPoint = new Vector3(0, 0, 0);
 
     // Built-in methods
     // --------------------------------------------------
@@ -40,7 +43,7 @@ public class CameraManager : MonoBehaviour
         cameraZ = mainCamera.transform.position.z;
     }
 
-    void Update()
+    void LateUpdate()
     {
         if (!initialized) return;
         HandleCameraMovement();
@@ -57,23 +60,40 @@ public class CameraManager : MonoBehaviour
 
     void HandleCameraZoom()
     {
-        mainCameraComponent.orthographicSize = Mathf.Lerp(mainCameraComponent.orthographicSize, cameraSize, Time.deltaTime * cameraSpeedZoom);
+        mainCameraComponent.orthographicSize = enableCameraAnimation ? Mathf.Lerp(mainCameraComponent.orthographicSize, cameraSize, Time.deltaTime * cameraSpeedZoom) : cameraSize;
     }
 
+    // TODO: Problematic to have this method in Update, should be called only when necessary and cancel early if not needed
     void HandleCameraMovement()
     {
-        if (trackedObject)
-        {
-            Vector3 targetPosition = trackedObject.transform.position;
-            targetPosition.z = cameraZ; // Make sure we don't change the Z position
-            mainCamera.position = Vector3.Lerp(mainCamera.position, targetPosition, Time.deltaTime * cameraSpeedMove);
-        }
+        Vector3 targetPosition = trackedObject ? trackedObject.transform.position : centerPoint;
+        targetPosition.z = cameraZ; // Make sure we don't change the Z position
+
+        // TODO: Lerping here is slow, needs a threshold to stop lerping close-enough to spare calculations
+        if (enableCameraAnimation) mainCamera.position = Vector3.Lerp(mainCamera.position, targetPosition, Time.deltaTime * cameraSpeedMove);
+        else mainCamera.position = targetPosition;
+
+        if (!checkBoundaries) return;
+        // TODO: This works but is super slow; perform calculations minimum viable amount of times
+        // Camera boundaries based on terrain size and orthographic size
+        float cameraHalfWidth = mainCameraComponent.orthographicSize * mainCameraComponent.aspect;
+        float cameraHalfHeight = mainCameraComponent.orthographicSize;
+        Bounds terrainBounds = TerrainManager.Instance.GetTerrainRendererBounds();
+        float minX = terrainBounds.min.x + cameraHalfWidth;
+        float maxX = terrainBounds.max.x - cameraHalfWidth;
+        float minY = terrainBounds.min.y + cameraHalfHeight;
+        float maxY = terrainBounds.max.y - cameraHalfHeight;
+        mainCamera.position = new Vector3(
+            Mathf.Clamp(mainCamera.position.x, minX, maxX),
+            Mathf.Clamp(mainCamera.position.y, minY, maxY),
+            mainCamera.position.z
+        );
     }
 
     public static void SetSceneCenter(Vector3 center)
     {
         if (Instance.debug) Debug.Log("Set scene center to " + center);
-        Instance.mainCamera.transform.position = new Vector3(center.x, center.y, -10);
+        Instance.centerPoint = center;
     }
 
     public static void TrackObject(GameObject obj, bool zoomIn = true)
