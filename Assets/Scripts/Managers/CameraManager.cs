@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -12,9 +13,9 @@ public class CameraManager : MonoBehaviour
     [SerializeField] private bool enableCameraAnimation = true;
     [SerializeField] private float cameraZoomedInSize = 4.75f; // Zoom in on player
     [SerializeField] private float cameraZoomedOutSize = 7.4f; // Default state
-    [SerializeField] private float cameraSpeedZoom = 1.75f;
+    [SerializeField] private float cameraSpeedZoom = 2.2f;
     [SerializeField] private float cameraSpeedMove = 5f;
-    [SerializeField] private bool checkBoundaries = true;
+    [SerializeField] private bool constrainCameraBoundaries = true;
     [SerializeField] private Transform mainCamera;
 
     // Runtime variables
@@ -60,20 +61,42 @@ public class CameraManager : MonoBehaviour
 
     void HandleCameraZoom()
     {
-        mainCameraComponent.orthographicSize = enableCameraAnimation ? Mathf.Lerp(mainCameraComponent.orthographicSize, cameraSize, Time.deltaTime * cameraSpeedZoom) : cameraSize;
+        float currentSize = mainCameraComponent.orthographicSize;
+        float newSize = cameraSize;
+
+        // Cancel early if we're already at the desired size
+        if (currentSize == cameraSize) return;
+
+        // If the distance between the camera and the target is greater than the threshold, zoom the camera
+        float threshold = 1 / 100f;
+        if (Math.Abs(currentSize - cameraSize) > threshold && enableCameraAnimation)
+        {
+            newSize = Mathf.Lerp(currentSize, cameraSize, Time.deltaTime * cameraSpeedZoom);
+        }
+
+        mainCameraComponent.orthographicSize = Mathf.Round(newSize * 1000f) / 1000f;
     }
 
-    // TODO: Problematic to have this method in Update, should be called only when necessary and cancel early if not needed
     void HandleCameraMovement()
     {
         Vector3 targetPosition = trackedObject ? trackedObject.transform.position : centerPoint;
-        targetPosition.z = cameraZ; // Make sure we don't change the Z position
+        targetPosition.z = cameraZ;
 
-        // TODO: Lerping here is slow, needs a threshold to stop lerping close-enough to spare calculations
-        if (enableCameraAnimation) mainCamera.position = Vector3.Lerp(mainCamera.position, targetPosition, Time.deltaTime * cameraSpeedMove);
-        else mainCamera.position = targetPosition;
+        // Cancel early if we're already at the desired position
+        if (mainCamera.position == targetPosition) return;
+        Vector3 newPosition = mainCamera.position;
 
-        if (!checkBoundaries) return;
+        // If the distance between the camera and the target is greater than the threshold, move the camera
+        float threshold = 1 / 1000f;
+        if (Math.Abs(mainCamera.position.x - targetPosition.x) > threshold && Math.Abs(mainCamera.position.y - targetPosition.y) > threshold)
+        {
+            if (enableCameraAnimation) newPosition = Vector3.Lerp(mainCamera.position, targetPosition, Time.deltaTime * cameraSpeedMove);
+        }
+
+        mainCamera.position = newPosition;
+
+        if (!constrainCameraBoundaries) return;
+
         // TODO: This works but is super slow; perform calculations minimum viable amount of times
         // Camera boundaries based on terrain size and orthographic size
         float cameraHalfWidth = mainCameraComponent.orthographicSize * mainCameraComponent.aspect;

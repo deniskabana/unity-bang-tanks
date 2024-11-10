@@ -419,7 +419,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -57.2, y: 197.66948}
+  m_AnchoredPosition: {x: -57.19995, y: 197.66948}
   m_SizeDelta: {x: 48.9981, y: 161.7389}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &401623043
@@ -1054,7 +1054,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000061035156, y: -127.42}
+  m_AnchoredPosition: {x: 0, y: -127.41998}
   m_SizeDelta: {x: 0, y: 127.4232}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!1 &588912763
@@ -1443,12 +1443,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debug: 0
-  enableCameraAnimation: 0
+  enableCameraAnimation: 1
   cameraZoomedInSize: 4.75
   cameraZoomedOutSize: 7.4
-  cameraSpeedZoom: 1.75
+  cameraSpeedZoom: 2.2
   cameraSpeedMove: 5
-  checkBoundaries: 0
+  checkBoundaries: 1
   mainCamera: {fileID: 519420032}
 --- !u!1 &679550186
 GameObject:
@@ -3349,7 +3349,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d8b0cbc687e8841f2a99aac6bd5d8e7a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0a49b21cb0e7a4807894cfea2666410c, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3467,7 +3467,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 58.3, y: 54.2}
+  m_AnchoredPosition: {x: 58.30005, y: 54.2}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &3403798403981081601
@@ -3667,9 +3667,9 @@ RectTransform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1820378915}
   - {fileID: 624826800}
   - {fileID: 519420032}
+  - {fileID: 1820378915}
   - {fileID: 1659254435}
   - {fileID: 299959821}
   - {fileID: 464318985}
