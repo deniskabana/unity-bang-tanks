@@ -44,8 +44,8 @@ public class UIManager : MonoBehaviour
 
     bool isHUDVisible = true;
     bool isTouchControlsVisible = true;
-    float touchControlsYOff = -(Screen.height / 2);
-    float hudYOff = Screen.height / 2;
+    float touchControlsYOff = -(Screen.height / 3);
+    float hudYOff = Screen.height / 3;
 
     float touchControlsYDefault;
     float hudYDefault;
@@ -93,7 +93,6 @@ public class UIManager : MonoBehaviour
         LevelManager.OnPlayerTurnEnd.AddListener(HideHUD);
     }
 
-    // TODO: Problematic performance with this method in Update, should be called only when necessary and cancel early if not needed
     void HandleTouchControlsPosition()
     {
         if (!touchControlsEnabled) return;
@@ -102,7 +101,6 @@ public class UIManager : MonoBehaviour
         HandleUIRectPosition(rt, isTouchControlsVisible ? touchControlsYDefault : touchControlsYDefault + touchControlsYOff);
     }
 
-    // TODO: Problematic performance with this method in Update, should be called only when necessary and cancel early if not needed
     void HandleHUDPosition()
     {
         RectTransform rt = references.hudContainer;
@@ -114,8 +112,18 @@ public class UIManager : MonoBehaviour
     {
         float currentY = rt.localPosition.y;
         if (currentY == desiredY) return;
-        float newY = animationsEnabled ? Mathf.Lerp(currentY, desiredY, Time.deltaTime * uiMoveSpeed) : desiredY;
-        rt.localPosition = new Vector3(rt.localPosition.x, newY, rt.localPosition.z);
+
+        // Stop unnecessary Lerp if the two values are close enough
+        if (Mathf.Abs(currentY - desiredY) < 0.01f)
+        {
+            rt.localPosition = new Vector3(rt.localPosition.x, desiredY, rt.localPosition.z);
+            return;
+        }
+        else
+        {
+            float newY = animationsEnabled ? Mathf.Lerp(currentY, desiredY, Time.deltaTime * uiMoveSpeed) : desiredY;
+            rt.localPosition = new Vector3(rt.localPosition.x, newY, rt.localPosition.z);
+        }
     }
 
     public static void ShowTouchControls()
