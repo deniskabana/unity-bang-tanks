@@ -57,6 +57,7 @@ public class LevelManager : MonoBehaviour
 
         TerrainManager.Instance.Initialize(terrainSettings);
         PlayersTurnManager.Instance.Initialize(gameplaySettings, playerSkinSettings);
+        CameraManager.Instance.Initialize();
 
         SetState(GameState.Ready);
         OnGameReady.Invoke();

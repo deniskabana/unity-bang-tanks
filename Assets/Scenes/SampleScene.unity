@@ -1256,6 +1256,7 @@ GameObject:
   - component: {fileID: 624826804}
   - component: {fileID: 624826806}
   - component: {fileID: 624826805}
+  - component: {fileID: 624826807}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1355,7 +1356,6 @@ MonoBehaviour:
   indicatorYOffset: 2.25
   activePlayerIndicator: {fileID: 868401883}
   playersParent: {fileID: 824662456}
-  mainCamera: {fileID: 519420032}
   playerPrefab: {fileID: 2844050272524269711, guid: 745f77733dba245f2bb3352f31043053, type: 3}
 --- !u!114 &624826803
 MonoBehaviour:
@@ -1428,6 +1428,24 @@ MonoBehaviour:
     hudArmorBarMask: {fileID: 1966098653}
     hudTankImage: {fileID: 450133186}
     hudTankName: {fileID: 901347749}
+--- !u!114 &624826807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 624826798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e45d2c0aaa31243439e5b8729ade2422, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  debug: 0
+  cameraSpeedZoom: 1.75
+  cameraSpeedMove: 5
+  cameraZoomedInSize: 4.75
+  cameraZoomedOutSize: 7.4
+  mainCamera: {fileID: 519420032}
 --- !u!1 &679550186
 GameObject:
   m_ObjectHideFlags: 0

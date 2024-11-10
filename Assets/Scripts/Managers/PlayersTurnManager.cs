@@ -13,7 +13,6 @@ public class PlayersTurnManager : MonoBehaviour
   [Header("References")]
   [SerializeField] GameObject activePlayerIndicator;
   [SerializeField] Transform playersParent;
-  [SerializeField] Transform mainCamera;
   [SerializeField] GameObject playerPrefab;
 
   // Runtime variables
@@ -30,7 +29,6 @@ public class PlayersTurnManager : MonoBehaviour
 
   private float cameraSizeInTurn = 5f;
   private float cameraSizeInOutcome = 8f;
-  private Camera mainCameraComponent;
 
   // Built-in methods
   // --------------------------------------------------
@@ -43,25 +41,15 @@ public class PlayersTurnManager : MonoBehaviour
   void Start()
   {
     if (!Instance) Instance = this;
-    mainCameraComponent = mainCamera.GetComponent<Camera>();
   }
 
   void Update()
   {
     if (!initialized) return;
 
-    // Camera movement and management
-    switch (LevelManager.GetState())
+    if (LevelManager.GetState() == GameState.Turn)
     {
-      case GameState.Turn:
-        mainCameraComponent.orthographicSize = Mathf.Lerp(mainCameraComponent.orthographicSize, cameraSizeInTurn, Time.deltaTime * 1.75f);
-        Vector3 targetPosition = players[currentPlayerIndex].transform.position + new Vector3(0, 0, -10);
-        mainCamera.position = Vector3.Lerp(mainCamera.position, targetPosition, Time.deltaTime * 5f);
-        activePlayerIndicator.transform.position = players[currentPlayerIndex].transform.position + new Vector3(0, indicatorYOffset, 0);
-        break;
-      case GameState.TurnOutcome:
-        mainCameraComponent.orthographicSize = Mathf.Lerp(mainCameraComponent.orthographicSize, cameraSizeInOutcome, Time.deltaTime * 1.75f);
-        break;
+      activePlayerIndicator.transform.position = players[currentPlayerIndex].transform.position + new Vector3(0, indicatorYOffset, 0);
     }
 
     if (outcomeTimer > 0)
@@ -125,6 +113,7 @@ public class PlayersTurnManager : MonoBehaviour
 
     UIManager.SetActiveTankHUDImage(players[currentPlayerIndex].GetSkin().preview);
     UIManager.SetActiveTankHUDName("Play " + (currentPlayerIndex + 1));
+    CameraManager.TrackObject(players[currentPlayerIndex].gameObject);
 
     turnCounter += 1;
     players[currentPlayerIndex].HandleTurnStart();
@@ -135,6 +124,7 @@ public class PlayersTurnManager : MonoBehaviour
     if (debug) Debug.Log("Player turn ended for player " + currentPlayerIndex);
     activePlayerIndicator.SetActive(false);
     players[currentPlayerIndex].HandleTurnEnd();
+    CameraManager.StopTracking();
 
     currentPlayerIndex += 1;
     if (currentPlayerIndex >= players.Count) currentPlayerIndex = 0;
