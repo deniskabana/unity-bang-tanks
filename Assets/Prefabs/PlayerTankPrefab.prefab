@@ -415,12 +415,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 0.5
-  groundRaycastDistance: 0.15
+  groundRaycastDistance: 0.18
   maxSlopeAngle: 70
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  gravityForce: 9.8
+  gravityForce: 8.4
   downhillSpeedMultiplier: 1.6
   groundCheck: {fileID: 1609145595284833550}
   raycastOrigin: {fileID: 1784207158765380615}

@@ -113,7 +113,6 @@ public class UIManager : MonoBehaviour
         float currentY = rt.localPosition.y;
         if (currentY == desiredY) return;
         float newY = animationsEnabled ? Mathf.Lerp(currentY, desiredY, Time.deltaTime * uiMoveSpeed) : desiredY;
-        // rt.position = new Vector3(rt.position.x, newY, rt.position.z);
         rt.localPosition = new Vector3(rt.localPosition.x, newY, rt.localPosition.z);
     }
 
