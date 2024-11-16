@@ -140,7 +140,8 @@ public class PlayerTank : MonoBehaviour
         UIManager.ShowTouchShootButton();
         break;
       case PlayerState.TurnStage.Shooting:
-        shootingScript.Shoot(UnityEngine.Random.Range(300, 1000));
+        GameObject bullet = shootingScript.Shoot(UnityEngine.Random.Range(300, 1000));
+        CameraManager.TrackObject(bullet);
         LevelManager.Instance.EndPlayerTurn();
         break;
     }

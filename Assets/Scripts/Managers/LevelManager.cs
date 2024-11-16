@@ -55,7 +55,7 @@ public class LevelManager : MonoBehaviour
     {
         SetState(GameState.Loading);
 
-        TerrainManager.Instance.Initialize(terrainSettings);
+        TerrainManager.Instance.Initialize(terrainSettings); // Needs to be first
         PlayersTurnManager.Instance.Initialize(gameplaySettings, playerSkinSettings);
         CameraManager.Instance.Initialize();
 

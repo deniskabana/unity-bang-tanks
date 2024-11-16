@@ -50,11 +50,12 @@ public class TankShooting : MonoBehaviour
         cannonTransform.localRotation = Quaternion.Euler(0, 0, shotAngle + 90);
     }
 
-    public void Shoot(float force)
+    public GameObject Shoot(float force)
     {
         shotForce = force; // This should be retrieved from the UI
         GameObject bullet = Instantiate(bulletPrefab, firingPoint.position, firingPoint.rotation);
         Vector3 direction = firingPoint.position - cannonTransform.position;
         bullet.GetComponent<BasicBullet>().Initialize(direction, shotForce);
+        return bullet;
     }
 }

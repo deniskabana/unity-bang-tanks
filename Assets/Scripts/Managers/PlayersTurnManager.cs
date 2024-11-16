@@ -132,7 +132,6 @@ public class PlayersTurnManager : MonoBehaviour
     if (debug) Debug.Log("Player turn ended for player " + currentPlayerIndex);
     if (gs.enableActiveIndicator) activePlayerIndicator.SetActive(false);
     players[currentPlayerIndex].HandleTurnEnd();
-    CameraManager.StopTracking();
 
     currentPlayerIndex += 1;
     if (currentPlayerIndex >= players.Count) currentPlayerIndex = 0;
