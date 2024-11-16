@@ -12,7 +12,8 @@ public class CameraManager : MonoBehaviour
     [Header("Settings")]
     [SerializeField] bool enableCameraAnimation = true;
     [SerializeField] float resolutionChangePollTime = 1f;
-    [SerializeField] float cameraZoomRatio = 0.563f;
+    [SerializeField] float cameraZoomedOutRatio = 0.9f; // Manually tested ratios
+    [SerializeField] float cameraZoomedInRatio = 0.563f; // Manually tested ratios
     [SerializeField] float cameraSpeedZoom = 2.2f;
     [SerializeField] float cameraSpeedMove = 5f;
     [SerializeField] bool constrainCameraBoundaries = true;
@@ -140,8 +141,8 @@ public class CameraManager : MonoBehaviour
 
         float aspectRatio = (float)Screen.width / Screen.height;
 
-        actualCamZoomedOutSize = terrainWidth / aspectRatio / 2f;
-        actualCamZoomedInSize = actualCamZoomedOutSize * 0.563f; // Constant ratio
+        actualCamZoomedOutSize = terrainWidth / aspectRatio / 2f * cameraZoomedOutRatio;
+        actualCamZoomedInSize = actualCamZoomedOutSize * cameraZoomedInRatio;
 
         if (debug) Debug.Log("CameraManager: Camera sizes: " + actualCamZoomedInSize + " / " + actualCamZoomedOutSize);
     }
