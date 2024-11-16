@@ -8,7 +8,8 @@ public enum ControlType
     Left,
     Right,
     Shoot,
-    Pause
+    Pause,
+    Fullscreen
 }
 
 public class ControlsManager : MonoBehaviour
@@ -87,6 +88,9 @@ public class ControlsManager : MonoBehaviour
             case ControlType.Pause:
                 Debug.Log("Pause control pressed; not implemented");
                 OnControlDown?.Invoke(ControlType.Pause);
+                break;
+            case ControlType.Fullscreen:
+                Screen.fullScreen = !Screen.fullScreen;
                 break;
         }
     }
