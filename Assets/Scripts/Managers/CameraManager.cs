@@ -12,10 +12,10 @@ public class CameraManager : MonoBehaviour
     [Header("Settings")]
     [SerializeField] bool enableCameraAnimation = true;
     [SerializeField] float resolutionChangePollTime = 1f;
-    [SerializeField] float cameraZoomedOutRatio = 0.9f; // Manually tested ratios
-    [SerializeField] float cameraZoomedInRatio = 0.563f; // Manually tested ratios
-    [SerializeField] float cameraSpeedZoom = 2.2f;
-    [SerializeField] float cameraSpeedMove = 5f;
+    [SerializeField] float cameraZoomedOutRatio = 0.86f; // Manually tested ratios
+    [SerializeField] float cameraZoomedInRatio = 0.613f; // Manually tested ratios
+    [SerializeField] float cameraSpeedZoom = 2f;
+    [SerializeField] float cameraSpeedMove = 2f;
     [SerializeField] bool constrainCameraBoundaries = true;
     [SerializeField] Transform mainCamera;
 
@@ -28,14 +28,23 @@ public class CameraManager : MonoBehaviour
     GameObject trackedObject;
     Camera mainCameraComponent;
 
-    Vector3 centerPoint = new Vector3(0, 0, 0);
-
     // Computed camera values
     float actualCamZoomedInSize; // Computed value for zoomed in on player
     float actualCamZoomedOutSize; // Computed value for zoomed out - default state
     // Resolution change detection
     float lastScreenWidth;
     float lastScreenHeight;
+
+    private struct CameraBounds
+    {
+        public float minYZoomedIn;
+        public float minYZoomedOut;
+        public float minXZoomedIn;
+        public float minXZoomedOut;
+        public float maxXZoomedIn;
+        public float maxXZoomedOut;
+    }
+    CameraBounds cameraBounds;
 
     // Built-in methods
     // --------------------------------------------------
@@ -67,24 +76,13 @@ public class CameraManager : MonoBehaviour
     public void Initialize()
     {
         initialized = true;
+        CalculateCameraSizes(); // Sizes first
+        CalculateCameraBounds(); // Bounds uses new sizes!
+        lastScreenWidth = Screen.width;
+        lastScreenHeight = Screen.height;
+
+        // Start resolution change detection
         StartCoroutine(CheckResolutionChange());
-    }
-
-    IEnumerator CheckResolutionChange()
-    {
-        while (true)
-        {
-            if (Screen.width != lastScreenWidth || Screen.height != lastScreenHeight)
-            {
-                if (debug) Debug.Log("CameraManager: Resolution change detected");
-                // CalculateCameraBounds();
-                CalculateCameraSizes();
-                lastScreenWidth = Screen.width;
-                lastScreenHeight = Screen.height;
-            }
-
-            yield return new WaitForSeconds(resolutionChangePollTime);
-        }
     }
 
     void HandleCameraZoom()
@@ -108,30 +106,64 @@ public class CameraManager : MonoBehaviour
     void HandleCameraMovement()
     {
         if (!trackedObject) return;
-        Vector3 targetPosition = trackedObject ? trackedObject.transform.position : centerPoint;
-        targetPosition.z = cameraZ;
+        Vector3 targetPosition = trackedObject.transform.position;
+
+        if (constrainCameraBoundaries)
+        {
+            // Constrain camera to terrain bounds
+            if (cameraZoomedIn)
+            {
+                targetPosition.x = Mathf.Clamp(targetPosition.x, cameraBounds.minXZoomedIn, cameraBounds.maxXZoomedIn);
+                targetPosition.y = Mathf.Clamp(targetPosition.y, cameraBounds.minYZoomedIn, float.MaxValue);
+            }
+            else
+            {
+                targetPosition.x = Mathf.Clamp(targetPosition.x, cameraBounds.minXZoomedOut, cameraBounds.maxXZoomedOut);
+                targetPosition.y = Mathf.Clamp(targetPosition.y, cameraBounds.minYZoomedOut, float.MaxValue);
+            }
+        }
 
         // Cancel early if we're already at the desired position
         if (mainCamera.position.x == targetPosition.x && mainCamera.position.y == targetPosition.y) return;
-        Vector3 newPosition = mainCamera.position;
 
-        // If the distance between the camera and the target is greater than the threshold, move the camera
-        float threshold = 1 / 400f;
-        if (Math.Abs(mainCamera.position.x - targetPosition.x) > threshold && Math.Abs(mainCamera.position.y - targetPosition.y) > threshold)
+        if (enableCameraAnimation)
         {
-            if (enableCameraAnimation) newPosition = Vector3.Lerp(mainCamera.position, targetPosition, Time.deltaTime * cameraSpeedMove);
+            // If the distance between the camera and the target is greater than the threshold, move the camera
+            float threshold = 1 / 1200f;
+
+            if (Math.Abs(mainCamera.position.x - targetPosition.x) > threshold && Math.Abs(mainCamera.position.y - targetPosition.y) > threshold)
+            {
+                targetPosition = Vector3.Lerp(mainCamera.position, targetPosition, Time.deltaTime * cameraSpeedMove);
+            }
         }
 
-        mainCamera.position = newPosition;
+        targetPosition.z = cameraZ; // Keep the camera Z position constant
+        mainCamera.position = targetPosition;
     }
 
     void CalculateCameraBounds()
     {
-        if (debug) Debug.Log("CameraManager: Calculate camera bounds");
+        if (!constrainCameraBoundaries) return;
         if (mainCameraComponent == null) mainCameraComponent = mainCamera.GetComponent<Camera>();
-        Bounds terrainBounds = TerrainManager.Instance.GetTerrainRendererBounds();
 
-        // TODO: implement
+        Bounds terrainBounds = TerrainManager.Instance.GetTerrainRendererBounds();
+        float threshold = 0.5f;
+        float aspectRatio = mainCameraComponent.aspect;
+        float minX = terrainBounds.min.x + threshold;
+        float maxX = terrainBounds.max.x - threshold;
+        float minY = terrainBounds.min.y + threshold;
+
+        cameraBounds = new CameraBounds
+        {
+            minYZoomedIn = minY + actualCamZoomedInSize,
+            minYZoomedOut = minY + actualCamZoomedOutSize,
+            minXZoomedIn = minX + actualCamZoomedInSize * aspectRatio,
+            minXZoomedOut = minX + actualCamZoomedOutSize * aspectRatio,
+            maxXZoomedIn = maxX - actualCamZoomedInSize * aspectRatio,
+            maxXZoomedOut = maxX - actualCamZoomedOutSize * aspectRatio
+        };
+
+        if (debug) Debug.Log("CameraManager: Calculate camera bounds");
     }
 
     void CalculateCameraSizes()
@@ -144,13 +176,29 @@ public class CameraManager : MonoBehaviour
         actualCamZoomedOutSize = terrainWidth / aspectRatio / 2f * cameraZoomedOutRatio;
         actualCamZoomedInSize = actualCamZoomedOutSize * cameraZoomedInRatio;
 
-        if (debug) Debug.Log("CameraManager: Camera sizes: " + actualCamZoomedInSize + " / " + actualCamZoomedOutSize);
+        if (debug) Debug.Log("CameraManager: New camera sizes: " + actualCamZoomedInSize + "; " + actualCamZoomedOutSize);
     }
-    public static void SetSceneCenter(Vector3 center)
+
+    IEnumerator CheckResolutionChange()
     {
-        if (Instance.debug) Debug.Log("CameraManager: Set scene center to " + center);
-        Instance.centerPoint = center;
+        while (true)
+        {
+            if (Screen.width != lastScreenWidth || Screen.height != lastScreenHeight)
+            {
+                if (debug) Debug.Log("CameraManager: Resolution change detected");
+                lastScreenWidth = Screen.width;
+                lastScreenHeight = Screen.height;
+                CalculateCameraSizes(); // Sizes first
+                CalculateCameraBounds(); // Bounds uses new sizes!
+            }
+
+            yield return new WaitForSeconds(resolutionChangePollTime);
+        }
     }
+
+
+    // Static methods
+    // --------------------------------------------------
 
     public static void TrackObject(GameObject obj, bool zoomIn = true)
     {

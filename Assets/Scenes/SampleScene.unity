@@ -1447,8 +1447,10 @@ MonoBehaviour:
   debug: 1
   enableCameraAnimation: 1
   resolutionChangePollTime: 1
-  cameraSpeedZoom: 2.2
-  cameraSpeedMove: 5
+  cameraZoomedOutRatio: 0.86
+  cameraZoomedInRatio: 0.613
+  cameraSpeedZoom: 2
+  cameraSpeedMove: 2
   constrainCameraBoundaries: 1
   mainCamera: {fileID: 519420032}
 --- !u!1 &679550186
