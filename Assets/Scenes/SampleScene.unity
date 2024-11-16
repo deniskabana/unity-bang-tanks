@@ -420,7 +420,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -57.2, y: 197.66948}
+  m_AnchoredPosition: {x: -57.19995, y: 197.6695}
   m_SizeDelta: {x: 48.9981, y: 161.7389}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &401623043
@@ -991,7 +991,7 @@ Camera:
   far clip plane: 1000
   field of view: 84
   orthographic: 1
-  orthographic size: 6.9
+  orthographic size: 7.28
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1420,6 +1420,7 @@ MonoBehaviour:
   debug: 0
   touchControlsEnabled: 1
   animationsEnabled: 1
+  animationStopThreshold: 0.1
   uiMoveSpeed: 5
   references:
     touchControlsRt: {fileID: 1250378169}
@@ -1445,8 +1446,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debug: 1
   enableCameraAnimation: 1
-  cameraZoomedInSize: 4.75
-  cameraZoomedOutSize: 7.4
+  resolutionChangePollTime: 1
   cameraSpeedZoom: 2.2
   cameraSpeedMove: 5
   constrainCameraBoundaries: 1
