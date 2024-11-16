@@ -71,7 +71,7 @@ public class PlayersTurnManager : MonoBehaviour
     gs = _gameplaySettings;
     pss = _playerSkinSettings;
 
-    if (debug) Debug.Log("Initializing PlayerTurnIndicator");
+    if (debug) Debug.Log("PlayersTurnManager: Initializing PlayerTurnIndicator");
     activePlayerIndicator.SetActive(gs.enableActiveIndicator);
     if (!gs.animateActiveIndicator)
     {
@@ -79,17 +79,17 @@ public class PlayersTurnManager : MonoBehaviour
       indicatorChild.GetComponent<Animation>().enabled = false;
     }
 
-    if (debug) Debug.Log("Attaching listeners");
+    if (debug) Debug.Log("PlayersTurnManager: Attaching listeners");
     LevelManager.OnPlayerTurnStart.AddListener(OnPlayerTurnStart);
     LevelManager.OnPlayerTurnEnd.AddListener(OnPlayerTurnEnd);
 
-    if (debug) Debug.Log("Creating players...");
+    if (debug) Debug.Log("PlayersTurnManager: Creating players...");
     ShuffleSkins();
     CreatePlayers();
     ShufflePlayers();
     initialized = true;
 
-    if (debug) Debug.Log("Players created!");
+    if (debug) Debug.Log("PlayersTurnManager: Players created!");
   }
 
   void CreatePlayers()
@@ -116,12 +116,13 @@ public class PlayersTurnManager : MonoBehaviour
 
   void OnPlayerTurnStart()
   {
-    if (debug) Debug.Log("Player turn started for player " + currentPlayerIndex);
+    if (debug) Debug.Log("PlayersTurnManager: Player turn started for player " + currentPlayerIndex);
     if (gs.enableActiveIndicator) activePlayerIndicator.SetActive(true);
 
     UIManager.SetActiveTankHUDImage(players[currentPlayerIndex].GetSkin().preview);
     UIManager.SetActiveTankHUDName("Play " + (currentPlayerIndex + 1));
-    CameraManager.TrackObject(players[currentPlayerIndex].gameObject);
+    CameraManager.Zoom(true); // Zoom in
+    CameraManager.TrackObject(players[currentPlayerIndex].gameObject); // Track player
 
     turnCounter += 1;
     players[currentPlayerIndex].HandleTurnStart();
@@ -129,7 +130,7 @@ public class PlayersTurnManager : MonoBehaviour
 
   void OnPlayerTurnEnd()
   {
-    if (debug) Debug.Log("Player turn ended for player " + currentPlayerIndex);
+    if (debug) Debug.Log("PlayersTurnManager: Player turn ended for player " + currentPlayerIndex);
     if (gs.enableActiveIndicator) activePlayerIndicator.SetActive(false);
     players[currentPlayerIndex].HandleTurnEnd();
 

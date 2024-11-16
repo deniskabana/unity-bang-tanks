@@ -29,6 +29,7 @@ public class UIManager : MonoBehaviour
     [Header("Settings")]
     [SerializeField] bool touchControlsEnabled = true;
     [SerializeField] bool animationsEnabled = true;
+    [SerializeField] float animationStopThreshold = 0.1f;
     [SerializeField] float uiMoveSpeed = 6;
 
     [Header("Advanced")]
@@ -108,7 +109,7 @@ public class UIManager : MonoBehaviour
         if (currentY == desiredY) return;
 
         // Stop unnecessary Lerp if the two values are close enough
-        if (Mathf.Abs(currentY - desiredY) < 0.01f)
+        if (Mathf.Abs(currentY - desiredY) < animationStopThreshold)
         {
             rt.localPosition = new Vector3(rt.localPosition.x, desiredY, rt.localPosition.z);
             return;

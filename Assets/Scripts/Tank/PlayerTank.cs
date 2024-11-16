@@ -141,7 +141,8 @@ public class PlayerTank : MonoBehaviour
         break;
       case PlayerState.TurnStage.Shooting:
         GameObject bullet = shootingScript.Shoot(UnityEngine.Random.Range(300, 1000));
-        CameraManager.TrackObject(bullet);
+        CameraManager.Zoom(false); // Zoom out
+        CameraManager.TrackObject(bullet); // Track bullet
         LevelManager.Instance.EndPlayerTurn();
         break;
     }
