@@ -35,7 +35,8 @@ public class CameraManager : MonoBehaviour
     float lastScreenWidth;
     float lastScreenHeight;
 
-    private struct CameraBounds
+    [Serializable]
+    public struct CameraBounds
     {
         public float minYZoomedIn;
         public float minYZoomedOut;
