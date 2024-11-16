@@ -6,10 +6,23 @@ using UnityEngine;
 public class BasicBullet : MonoBehaviour
 {
     [SerializeField] Rigidbody2D rb;
+    [SerializeField] float maxLifeTime = 5f;
+
+    // Built-in methods
+    // --------------------------------------------------
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        HandleCollision();
+    }
+
+    // Custom methods
+    // --------------------------------------------------
 
     public void Initialize(Vector3 direction, float shotForce)
     {
         rb.AddForce(direction * shotForce);
+        StartCoroutine(DestroyAfterTime());
     }
 
     void HandleCollision()
@@ -18,8 +31,9 @@ public class BasicBullet : MonoBehaviour
         Destroy(gameObject);
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    IEnumerator DestroyAfterTime()
     {
-        HandleCollision();
+        yield return new WaitForSeconds(maxLifeTime);
+        Destroy(gameObject);
     }
 }
