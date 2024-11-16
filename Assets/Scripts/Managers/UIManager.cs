@@ -1,11 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography;
 using TMPro;
-using Unity.VisualScripting;
+using Unity;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.XR;
 
 [System.Serializable]
 public struct UIManagerReferences
@@ -46,7 +41,6 @@ public class UIManager : MonoBehaviour
     bool isTouchControlsVisible = true;
     float touchControlsYOff = -(Screen.height / 3);
     float hudYOff = Screen.height / 3;
-
     float touchControlsYDefault;
     float hudYDefault;
     float barDefaultWidth;
@@ -129,45 +123,45 @@ public class UIManager : MonoBehaviour
     public static void ShowTouchControls()
     {
         if (!Instance.touchControlsEnabled) return;
-        if (Instance.debug) Debug.Log("ShowTouchControls");
+        if (Instance.debug) Debug.Log("UIManager: ShowTouchControls");
         Instance.isTouchControlsVisible = true;
     }
 
     public static void HideTouchControls()
     {
         if (!Instance.touchControlsEnabled) return;
-        if (Instance.debug) Debug.Log("HideTouchControls");
+        if (Instance.debug) Debug.Log("UIManager: HideTouchControls");
         Instance.isTouchControlsVisible = false;
     }
 
     public static void ShowHUD()
     {
-        if (Instance.debug) Debug.Log("ShowHUD");
+        if (Instance.debug) Debug.Log("UIManager: ShowHUD");
         Instance.isHUDVisible = true;
     }
 
     public static void HideHUD()
     {
-        if (Instance.debug) Debug.Log("HideHUD");
+        if (Instance.debug) Debug.Log("UIManager: HideHUD");
         Instance.isHUDVisible = false;
     }
 
     public static void ShowTouchAimButton()
     {
-        if (Instance.debug) Debug.Log("ShowAimButton");
+        if (Instance.debug) Debug.Log("UIManager: ShowAimButton");
         Instance.references.touchButtonAim.gameObject.SetActive(true);
         Instance.references.touchButtonShoot.gameObject.SetActive(false);
     }
     public static void ShowTouchShootButton()
     {
-        if (Instance.debug) Debug.Log("ShowShootButton");
+        if (Instance.debug) Debug.Log("UIManager: ShowShootButton");
         Instance.references.touchButtonAim.gameObject.SetActive(false);
         Instance.references.touchButtonShoot.gameObject.SetActive(true);
     }
 
     public static void UpdateActiveGasBar(float value)
     {
-        if (Instance.debug) Debug.Log("UpdateActiveGasBar: " + value);
+        if (Instance.debug) Debug.Log("UIManager: UpdateActiveGasBar: " + value);
         if (value < 0) return;
         Instance.references.hudGasBarMask.sizeDelta =
             new Vector2(value * Instance.barDefaultWidth, Instance.references.hudGasBarMask.sizeDelta.y);
@@ -175,7 +169,7 @@ public class UIManager : MonoBehaviour
 
     public static void UpdateActiveArmorBar(float value)
     {
-        if (Instance.debug) Debug.Log("UpdateActiveArmorBar: " + value);
+        if (Instance.debug) Debug.Log("UIManager: UpdateActiveArmorBar: " + value);
         if (value < 0) return;
         Instance.references.hudArmorBarMask.sizeDelta =
             new Vector2(value * Instance.barDefaultWidth, Instance.references.hudArmorBarMask.sizeDelta.y);
@@ -183,20 +177,20 @@ public class UIManager : MonoBehaviour
 
     public static void ResetBars()
     {
-        if (Instance.debug) Debug.Log("ResetBars");
+        if (Instance.debug) Debug.Log("UIManager: ResetBars");
         UpdateActiveArmorBar(1);
         UpdateActiveGasBar(1);
     }
 
     public static void SetActiveTankHUDImage(Sprite sprite)
     {
-        if (Instance.debug) Debug.Log("SetActiveTankHUDImage: " + sprite.name);
+        if (Instance.debug) Debug.Log("UIManager: SetActiveTankHUDImage: " + sprite.name);
         Instance.references.hudTankImage.GetComponent<UnityEngine.UI.Image>().sprite = sprite;
     }
 
     public static void SetActiveTankHUDName(string name)
     {
-        if (Instance.debug) Debug.Log("SetActiveTankHUDName: " + name);
+        if (Instance.debug) Debug.Log("UIManager: SetActiveTankHUDName: " + name);
         Instance.references.hudTankName.GetComponent<TextMeshProUGUI>().text = name;
     }
 }
