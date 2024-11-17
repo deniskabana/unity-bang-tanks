@@ -71,6 +71,20 @@ public class PlayerTank : MonoBehaviour
     }
   }
 
+  void OnCollisionEnter2D(Collision2D collision)
+  {
+    if (collision.gameObject.CompareTag("Projectiles"))
+    {
+      TakeDamage(25);
+      return;
+    }
+    if (collision.gameObject.CompareTag("Explosion"))
+    {
+      TakeDamage(10);
+      return;
+    }
+  }
+
   // Custom methods
   // --------------------------------------------------
 

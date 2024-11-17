@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3876206613052090382}
   m_Layer: 0
   m_Name: BasicBullet
-  m_TagString: Untagged
+  m_TagString: Projectiles
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -162,3 +162,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 3697814036825086358}
+  maxLifeTime: 5
