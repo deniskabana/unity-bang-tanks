@@ -70,6 +70,7 @@ public class TerrainManager : MonoBehaviour
         if (debug) Debug.Log("Generating heightmap texture...");
         heightmapTexture = new Texture2D(ts.textureWidth, ts.textureHeight, TextureFormat.RGBA32, false);
         Color[] pixelColorList = new Color[ts.textureWidth * ts.textureHeight];
+        heightmapTexture.filterMode = FilterMode.Trilinear;
 
         // Generate the heightmap texture based on the heightmap data
         for (int x = 0; x < ts.textureWidth; x++)

@@ -18,8 +18,15 @@ public class PlayersTurnManager : MonoBehaviour
   // Runtime variables
   // --------------------------------------------------
 
+  [System.Serializable]
+  public struct PlayersState
+  {
+    public string name;
+    public PlayerTank script;
+  }
+  private List<PlayersState> playersState = new List<PlayersState>();
+
   private bool initialized = false;
-  private readonly List<PlayerTank> players = new List<PlayerTank>();
   private int currentPlayerIndex = 0;
   private int turnCounter = 0;
   private float outcomeTimer = 0;
@@ -46,7 +53,7 @@ public class PlayersTurnManager : MonoBehaviour
 
     if (gs.enableActiveIndicator && LevelManager.GetState() == GameState.Turn)
     {
-      activePlayerIndicator.transform.position = players[currentPlayerIndex].transform.position + new Vector3(0, indicatorYOffset, 0);
+      activePlayerIndicator.transform.position = GetCurrentPlayer().transform.position + new Vector3(0, indicatorYOffset, 0);
     }
 
     if (outcomeTimer > 0)
@@ -82,6 +89,7 @@ public class PlayersTurnManager : MonoBehaviour
 
     if (debug) Debug.Log("PlayersTurnManager: Creating players...");
     ShuffleSkins();
+    ShufflePlayerNames();
     CreatePlayers();
     ShufflePlayers();
     initialized = true;
@@ -102,7 +110,7 @@ public class PlayersTurnManager : MonoBehaviour
 
       if (gs.playerPositioning == GameplaySettings.PlayerPositioning.Random)
       {
-        float playerMinDistance = 1f;
+        float playerMinDistance = worldWidth * 0.05f; // 5% of the world width
         float sideSafeDistance = worldWidth * 0.1f;
         bool positionValid;
 
@@ -132,7 +140,7 @@ public class PlayersTurnManager : MonoBehaviour
       playerObject.transform.localScale = new Vector3(gs.playerScale, gs.playerScale, 1);
       PlayerTank playerTank = playerObject.GetComponent<PlayerTank>();
       playerTank.Initialize(i, shuffledSkins[i % shuffledSkins.Length]);
-      players.Add(playerTank);
+      playersState.Add(new PlayersState { name = playerNames[i], script = playerTank });
     }
   }
 
@@ -141,23 +149,23 @@ public class PlayersTurnManager : MonoBehaviour
     if (debug) Debug.Log("PlayersTurnManager: Player turn started for player " + currentPlayerIndex);
     if (gs.enableActiveIndicator) activePlayerIndicator.SetActive(true);
 
-    UIManager.SetActiveTankHUDImage(players[currentPlayerIndex].GetSkin().preview);
-    UIManager.SetActiveTankHUDName("Play " + (currentPlayerIndex + 1));
+    UIManager.SetActiveTankHUDImage(GetCurrentPlayer().GetSkin().preview);
+    UIManager.SetActiveTankHUDName(playersState[currentPlayerIndex].name);
     CameraManager.Zoom(true); // Zoom in
-    CameraManager.TrackObject(players[currentPlayerIndex].gameObject); // Track player
+    CameraManager.TrackObject(GetCurrentPlayer().gameObject); // Track player
 
     turnCounter += 1;
-    players[currentPlayerIndex].HandleTurnStart();
+    GetCurrentPlayer().HandleTurnStart();
   }
 
   void OnPlayerTurnEnd()
   {
     if (debug) Debug.Log("PlayersTurnManager: Player turn ended for player " + currentPlayerIndex);
     if (gs.enableActiveIndicator) activePlayerIndicator.SetActive(false);
-    players[currentPlayerIndex].HandleTurnEnd();
+    GetCurrentPlayer().HandleTurnEnd();
 
     currentPlayerIndex += 1;
-    if (currentPlayerIndex >= players.Count) currentPlayerIndex = 0;
+    if (currentPlayerIndex >= playersState.Count) currentPlayerIndex = 0;
     StartOutcomeTimer();
   }
 
@@ -171,14 +179,17 @@ public class PlayersTurnManager : MonoBehaviour
     LevelManager.Instance.EndPlayerOutcome();
   }
 
+  PlayerTank GetCurrentPlayer()
+  {
+    return playersState[currentPlayerIndex].script;
+  }
+
   void ShufflePlayers()
   {
-    for (int i = players.Count - 1; i > 0; i--)
+    for (int i = playersState.Count - 1; i > 0; i--)
     {
       int j = Random.Range(0, i + 1);
-      PlayerTank temp = players[i];
-      players[i] = players[j];
-      players[j] = temp;
+      (playersState[j], playersState[i]) = (playersState[i], playersState[j]);
     }
   }
 
@@ -189,11 +200,109 @@ public class PlayersTurnManager : MonoBehaviour
     for (int i = newShuffledSkins.Length - 1; i > 0; i--)
     {
       int j = Random.Range(0, i + 1);
-      PlayerSkin temp = newShuffledSkins[i];
-      newShuffledSkins[i] = newShuffledSkins[j];
-      newShuffledSkins[j] = temp;
+      (newShuffledSkins[j], newShuffledSkins[i]) = (newShuffledSkins[i], newShuffledSkins[j]);
     }
 
     shuffledSkins = newShuffledSkins;
   }
+
+  // Player names
+  // --------------------------------------------------
+
+  void ShufflePlayerNames()
+  {
+    for (int i = playerNames.Length - 1; i > 0; i--)
+    {
+      int j = Random.Range(0, i + 1);
+      string temp = playerNames[i];
+      playerNames[i] = playerNames[j];
+      playerNames[j] = temp;
+    }
+  }
+
+  // Player names are 6 letters long, easy to read in monospace, easy to pronounce and remember
+  // and are well known names in English speaking countries and other countries as well
+  string[] playerNames = new string[]{
+    "Macaz",
+    "Puefe",
+    "Yaxoa",
+    "Lawmu",
+    "Yalur",
+    "Elolo",
+    "Mexad",
+    "Ifipa",
+    "Yevli",
+    "Nitya",
+    "Unlig",
+    "Yaxen",
+    "Ayuto",
+    "Oseze",
+    "Jaciu",
+    "Vuwaa",
+    "Fexaw",
+    "Ehene",
+    "Imyez",
+    "Ogusu",
+    "Ekiji",
+    "Morbu",
+    "Etuno",
+    "Uhsom",
+    "Enhok",
+    "Bobek",
+    "Kvana",
+    "Furio",
+    "Lovzo",
+    "Civeb",
+    "Uzlup",
+    "Neora",
+    "Palpa",
+    "Donur",
+    "Twika",
+    "Rumid",
+    "Uteya",
+    "Yifoo",
+    "Oxunu",
+    "Piski",
+    "Kurea",
+    "Vokor",
+    "Ihbas",
+    "Pozva",
+    "Ecahu",
+    "Yamki",
+    "Smino",
+    "Meaho",
+    "Upewi",
+    "Cocle",
+    "Obano",
+    "Usoco",
+    "Gafne",
+    "Ilupo",
+    "Eleri",
+    "Ozupi",
+    "Yuoba",
+    "Asoyo",
+    "Vimgi",
+    "Mupoz",
+    "Pewib",
+    "Bazik",
+    "Elode",
+    "Xurum",
+    "Nayal",
+    "Nikub",
+    "Xelea",
+    "Adzom",
+    "Rereu",
+    "Stepo",
+    "Dalor",
+    "Vihok",
+    "Ilseh",
+    "Myava",
+    "Cecam",
+    "Wapif",
+    "Fodii",
+    "Jyela",
+    "Skegi",
+    "Moren",
+    "Tiday",
+  };
 }

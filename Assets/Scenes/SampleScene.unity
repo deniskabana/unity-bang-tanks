@@ -1425,23 +1425,23 @@ MonoBehaviour:
   debug: 0
   gameplaySettings:
     amountOfPlayers: 2
-    playerPositioning: 0
+    playerPositioning: 1
     maxPlayerHealth: 100
     maxFuelPerRound: 150
-    playerScale: 0.45
+    playerScale: 0.4
     enableActiveIndicator: 1
     animateActiveIndicator: 1
   terrainSettings:
     textureWidth: 3000
-    textureHeight: 1500
-    noiseScale: 0.0017
+    textureHeight: 1250
+    noiseScale: 0.0012
     heightMultiplier: 1200
     enableTerrainChunking: 1
     pixelsPerUnit: 100
-    terrainScale: 1.8
-    minRandomOffset: 0
+    terrainScale: 2
+    minRandomOffset: -1000
     maxRandomOffset: 1000
-    chunkSize: 100
+    chunkSize: 128
   playerSkinSettings:
     playerSkins:
     - name: Blue
@@ -1605,7 +1605,7 @@ MonoBehaviour:
   enableCameraAnimation: 1
   resolutionChangePollTime: 1
   cameraZoomedOutRatio: 0.86
-  cameraZoomedInRatio: 0.613
+  cameraZoomedInRatio: 0.56
   cameraSpeedZoom: 2
   cameraSpeedMove: 2
   constrainCameraBoundaries: 1
@@ -2138,7 +2138,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 17
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535

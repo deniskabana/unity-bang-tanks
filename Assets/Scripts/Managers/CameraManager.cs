@@ -125,19 +125,20 @@ public class CameraManager : MonoBehaviour
         // Cancel early if we're already at the desired position
         if (mainCamera.position.x == targetPosition.x && mainCamera.position.y == targetPosition.y) return;
 
-        if (enableCameraAnimation)
+        // float threshold = 1 / 1000f; // Also called deadzone
+        float threshold = 1f;
+        if (Mathf.Abs(mainCamera.position.x - targetPosition.x) > threshold || Mathf.Abs(mainCamera.position.y - targetPosition.y) > threshold)
         {
-            // If the distance between the camera and the target is greater than the threshold, move the camera
-            float threshold = 1 / 10000f;
-
-            if (Mathf.Abs(mainCamera.position.x - targetPosition.x) > threshold && Mathf.Abs(mainCamera.position.y - targetPosition.y) > threshold)
+            if (enableCameraAnimation)
             {
                 targetPosition = Vector3.Lerp(mainCamera.position, targetPosition, Time.deltaTime * cameraSpeedMove);
+                mainCamera.position = targetPosition;
             }
+
+            targetPosition.z = cameraZ; // Keep the camera Z position constant
+            mainCamera.position = targetPosition;
         }
 
-        targetPosition.z = cameraZ; // Keep the camera Z position constant
-        mainCamera.position = targetPosition;
     }
 
     void CalculateCameraBounds()
@@ -173,7 +174,7 @@ public class CameraManager : MonoBehaviour
         float aspectRatio = (float)Screen.width / Screen.height;
 
         actualCamZoomedOutSize = terrainWidth / aspectRatio / 2f * cameraZoomedOutRatio;
-        actualCamZoomedInSize = actualCamZoomedOutSize * cameraZoomedInRatio;
+        actualCamZoomedInSize = terrainWidth / aspectRatio / 2f * cameraZoomedInRatio;
 
         if (debug) Debug.Log("CameraManager: New camera sizes: " + actualCamZoomedInSize + "; " + actualCamZoomedOutSize);
     }
