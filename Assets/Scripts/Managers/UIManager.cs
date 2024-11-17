@@ -19,6 +19,11 @@ public struct UIManagerReferences
     [Header("HUD / TankInfo")]
     public RectTransform hudTankImage;
     public RectTransform hudTankName;
+
+    [Header("Strength Indicator")]
+    public RectTransform strengthIndicator;
+    public RectTransform strengthIndicatorHandle;
+    public RectTransform strengthIndicatorRange;
 }
 
 public class UIManager : MonoBehaviour
@@ -33,12 +38,14 @@ public class UIManager : MonoBehaviour
     [SerializeField] float uiMoveSpeed = 6;
 
     [Header("Advanced")]
+    [SerializeField, Range(0.1f, 10f)] float strengthIndicatorSpeed = 4f;
     [SerializeField] UIManagerReferences references;
 
     // Runtime variables
     // --------------------------------------------------
 
     bool isHUDVisible = true;
+    bool isStrengthIndicatorVisible = false;
     bool isTouchControlsVisible = true;
     float touchControlsYOff = -(Screen.height / 3);
     float hudYOff = Screen.height / 3;
@@ -64,6 +71,7 @@ public class UIManager : MonoBehaviour
     {
         HandleTouchControlsPosition();
         HandleHUDPosition();
+        HandleStrengthIndicator();
     }
 
     // Custom methods
@@ -74,6 +82,7 @@ public class UIManager : MonoBehaviour
         // Activate / deactivate UI elements
         references.touchControlsRt.gameObject.SetActive(touchControlsEnabled);
         references.hudContainer.gameObject.SetActive(true);
+        references.strengthIndicator.gameObject.SetActive(false);
         // Default Y positions
         touchControlsYDefault = references.touchControlsRt.localPosition.y;
         hudYDefault = references.hudContainer.localPosition.y;
@@ -121,6 +130,53 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    // Strength indicator
+    // --------------------------------------------------
+
+    [System.Serializable]
+    struct StrengthIndicatorStatus
+    {
+        public float minY;
+        public float maxY;
+        public float speed;
+        public float currentValue; // 0 to 1
+        public bool isIncreasing;
+    }
+    StrengthIndicatorStatus strengthIndicatorStatus;
+
+    void HandleStrengthIndicator()
+    {
+        if (!isStrengthIndicatorVisible) return;
+
+        RectTransform rt = references.strengthIndicatorHandle;
+        if (!rt) return;
+
+        float newY = Mathf.Lerp(strengthIndicatorStatus.minY, strengthIndicatorStatus.maxY, strengthIndicatorStatus.currentValue);
+        rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, newY);
+
+        if (strengthIndicatorStatus.isIncreasing)
+        {
+            strengthIndicatorStatus.currentValue += Time.deltaTime * strengthIndicatorStatus.speed;
+            if (strengthIndicatorStatus.currentValue >= 1)
+            {
+                strengthIndicatorStatus.currentValue = 1;
+                strengthIndicatorStatus.isIncreasing = false;
+            }
+        }
+        else
+        {
+            strengthIndicatorStatus.currentValue -= Time.deltaTime * strengthIndicatorStatus.speed;
+            if (strengthIndicatorStatus.currentValue <= 0)
+            {
+                strengthIndicatorStatus.currentValue = 0;
+                strengthIndicatorStatus.isIncreasing = true;
+            }
+        }
+    }
+
+    // Static methods
+    // --------------------------------------------------
+
     public static void ShowTouchControls()
     {
         if (!Instance.touchControlsEnabled) return;
@@ -145,6 +201,33 @@ public class UIManager : MonoBehaviour
     {
         if (Instance.debug) Debug.Log("UIManager: HideHUD");
         Instance.isHUDVisible = false;
+    }
+
+    public static void ShowStrengthIndicator()
+    {
+        if (Instance.debug) Debug.Log("UIManager: ShowStrengthIndicator");
+        Instance.isStrengthIndicatorVisible = true;
+        Instance.strengthIndicatorStatus = new StrengthIndicatorStatus
+        {
+            minY = 0,
+            maxY = Instance.references.strengthIndicatorRange.sizeDelta.y * Instance.references.strengthIndicatorRange.localScale.y,
+            speed = Instance.strengthIndicatorSpeed,
+            currentValue = 0,
+            isIncreasing = true
+        };
+        Instance.references.strengthIndicator.gameObject.SetActive(true);
+    }
+
+    public static void HideStrengthIndicator()
+    {
+        if (Instance.debug) Debug.Log("UIManager: HideStrengthIndicator");
+        Instance.isStrengthIndicatorVisible = false;
+        Instance.references.strengthIndicator.gameObject.SetActive(false);
+    }
+
+    public static float GetStrengthIndicatorValue()
+    {
+        return Instance.strengthIndicatorStatus.currentValue;
     }
 
     public static void ShowTouchAimButton()

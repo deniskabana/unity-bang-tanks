@@ -6,8 +6,6 @@ public class TankShooting : MonoBehaviour
 {
     [Header("Shooting settings")]
     [SerializeField] float cannonMinMaxAngle = 90f;
-    [SerializeField] float minBulletForce = 5f;
-    [SerializeField] float maxBulletForce = 50f;
     [SerializeField] float cannonAimSpeed = 40f;
 
     [Header("References")]

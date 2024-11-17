@@ -140,9 +140,12 @@ public class PlayerTank : MonoBehaviour
         UIManager.ShowTouchShootButton();
         break;
       case PlayerState.TurnStage.Shooting:
-        GameObject bullet = shootingScript.Shoot(UnityEngine.Random.Range(300, 1000));
+        float strengthValue = UIManager.GetStrengthIndicatorValue();
+        float shotStrength = Mathf.Lerp(LevelManager.Instance.gameplaySettings.minShotStrength, LevelManager.Instance.gameplaySettings.maxShotStrength, strengthValue);
+        GameObject bullet = shootingScript.Shoot(shotStrength);
         CameraManager.Zoom(false); // Zoom out
         CameraManager.TrackObject(bullet); // Track bullet
+        UIManager.HideStrengthIndicator();
         LevelManager.Instance.EndPlayerTurn();
         break;
     }
@@ -156,6 +159,7 @@ public class PlayerTank : MonoBehaviour
     {
       case PlayerState.TurnStage.Aiming:
         state.turnStage = PlayerState.TurnStage.Shooting;
+        UIManager.ShowStrengthIndicator();
         break;
     }
   }
