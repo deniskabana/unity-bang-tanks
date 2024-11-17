@@ -1,7 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class CameraManager : MonoBehaviour
@@ -34,8 +31,9 @@ public class CameraManager : MonoBehaviour
     // Resolution change detection
     float lastScreenWidth;
     float lastScreenHeight;
+    Vector3 lastTargetPosition;
 
-    [Serializable]
+    [System.Serializable]
     public struct CameraBounds
     {
         public float minYZoomedIn;
@@ -96,7 +94,7 @@ public class CameraManager : MonoBehaviour
 
         // If the distance between the camera and the target is greater than the threshold, zoom the camera
         float threshold = 1 / 100f;
-        if (Math.Abs(currentSize - newSize) > threshold && enableCameraAnimation)
+        if (Mathf.Abs(currentSize - newSize) > threshold && enableCameraAnimation)
         {
             newSize = Mathf.Lerp(currentSize, newSize, Time.deltaTime * cameraSpeedZoom);
         }
@@ -106,8 +104,8 @@ public class CameraManager : MonoBehaviour
 
     void HandleCameraMovement()
     {
-        if (!trackedObject) return;
-        Vector3 targetPosition = trackedObject.transform.position;
+        if (trackedObject) lastTargetPosition = trackedObject.transform.position;
+        Vector3 targetPosition = lastTargetPosition;
 
         if (constrainCameraBoundaries)
         {
@@ -130,9 +128,9 @@ public class CameraManager : MonoBehaviour
         if (enableCameraAnimation)
         {
             // If the distance between the camera and the target is greater than the threshold, move the camera
-            float threshold = 1 / 1200f;
+            float threshold = 1 / 10000f;
 
-            if (Math.Abs(mainCamera.position.x - targetPosition.x) > threshold && Math.Abs(mainCamera.position.y - targetPosition.y) > threshold)
+            if (Mathf.Abs(mainCamera.position.x - targetPosition.x) > threshold && Mathf.Abs(mainCamera.position.y - targetPosition.y) > threshold)
             {
                 targetPosition = Vector3.Lerp(mainCamera.position, targetPosition, Time.deltaTime * cameraSpeedMove);
             }

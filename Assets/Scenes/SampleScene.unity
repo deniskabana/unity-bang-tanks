@@ -1424,7 +1424,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debug: 0
   gameplaySettings:
-    amountOfPlayers: 3
+    amountOfPlayers: 2
+    playerPositioning: 0
     maxPlayerHealth: 100
     maxFuelPerRound: 150
     playerScale: 0.45
@@ -1440,7 +1441,7 @@ MonoBehaviour:
     terrainScale: 1.8
     minRandomOffset: 0
     maxRandomOffset: 1000
-    chunkSize: 160
+    chunkSize: 100
   playerSkinSettings:
     playerSkins:
     - name: Blue
@@ -1459,9 +1460,9 @@ MonoBehaviour:
       preview: {fileID: 21300000, guid: d14b25830439a480ab799d4b0a6a7523, type: 3}
       isLocked: 0
     - name: Purple
-      body1: {fileID: 21300000, guid: fc1f31aa427de488393852d76c443f06, type: 3}
-      body2: {fileID: 21300000, guid: dfa16fccf28ea4cffb4f61a82dc48805, type: 3}
-      preview: {fileID: 21300000, guid: 40682f751937242909b7f25310df883a, type: 3}
+      body1: {fileID: 21300000, guid: d031f6f9cfb39492cae0ec2159e3e448, type: 3}
+      body2: {fileID: 21300000, guid: c07c08a717a0040a7bbe98a08cedfcaf, type: 3}
+      preview: {fileID: 21300000, guid: 5c4bc7bea09854a52aff4079bc3599e6, type: 3}
       isLocked: 0
     - name: Red
       body1: {fileID: 21300000, guid: 2d55ba8906e384896b45a5656219acd0, type: 3}
@@ -1472,6 +1473,16 @@ MonoBehaviour:
       body1: {fileID: 21300000, guid: da3a8417dcbf749328eedc0088727ee1, type: 3}
       body2: {fileID: 21300000, guid: 04d41dc093c154eec913106196cdd6d7, type: 3}
       preview: {fileID: 21300000, guid: ff301c36df970407b907f43c8fb4468c, type: 3}
+      isLocked: 0
+    - name: White
+      body1: {fileID: 21300000, guid: 7503867bcec3a4a6f82b7998f243b9bc, type: 3}
+      body2: {fileID: 21300000, guid: 26e78917e2e4647c98c60aa0fa2848ea, type: 3}
+      preview: {fileID: 21300000, guid: ade12a0ddcd8a4ab8b51891404d8effd, type: 3}
+      isLocked: 0
+    - name: Mint
+      body1: {fileID: 21300000, guid: 0911f97b555354beab763d22a79e7c85, type: 3}
+      body2: {fileID: 21300000, guid: 91e6eb10283c24b3a930216661508b43, type: 3}
+      preview: {fileID: 21300000, guid: 4d9e5d9cb342a40e59f0c1adc1fcb192, type: 3}
       isLocked: 0
 --- !u!4 &624826800
 Transform:

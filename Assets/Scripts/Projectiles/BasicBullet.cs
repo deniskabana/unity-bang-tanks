@@ -6,7 +6,7 @@ using UnityEngine;
 public class BasicBullet : MonoBehaviour
 {
     [SerializeField] Rigidbody2D rb;
-    [SerializeField] float maxLifeTime = 5f;
+    [SerializeField] float maxLifeTime = 10f;
 
     // Built-in methods
     // --------------------------------------------------

@@ -99,8 +99,33 @@ public class PlayersTurnManager : MonoBehaviour
 
     for (int i = 0; i < gs.amountOfPlayers; i++)
     {
-      float terrainPartSize = worldWidth / (gs.amountOfPlayers + 1);
-      playerPositions[i] = terrainPartSize + terrainPartSize * i;
+
+      if (gs.playerPositioning == GameplaySettings.PlayerPositioning.Random)
+      {
+        float playerMinDistance = 1f;
+        float sideSafeDistance = worldWidth * 0.1f;
+        bool positionValid;
+
+        do
+        {
+          positionValid = true;
+          playerPositions[i] = Random.Range(sideSafeDistance, worldWidth - sideSafeDistance);
+
+          for (int j = 0; j < i; j++)
+          {
+            if (Mathf.Abs(playerPositions[i] - playerPositions[j]) < playerMinDistance)
+            {
+              positionValid = false;
+              break;
+            }
+          }
+        } while (!positionValid);
+      }
+      else
+      {
+        float terrainPartSize = worldWidth / (gs.amountOfPlayers + 1);
+        playerPositions[i] = terrainPartSize + terrainPartSize * i;
+      }
 
       float playerX = terrainBounds.min.x + playerPositions[i];
       GameObject playerObject = Instantiate(playerPrefab, new Vector3(playerX, playerY, 0), Quaternion.identity, playersParent);
