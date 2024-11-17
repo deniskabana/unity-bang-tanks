@@ -27,9 +27,6 @@ public class PlayersTurnManager : MonoBehaviour
   private PlayerSkinSettings pss;
   PlayerSkin[] shuffledSkins;
 
-  private float cameraSizeInTurn = 5f;
-  private float cameraSizeInOutcome = 8f;
-
   // Built-in methods
   // --------------------------------------------------
 

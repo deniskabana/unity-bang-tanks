@@ -1427,16 +1427,17 @@ MonoBehaviour:
     amountOfPlayers: 3
     maxPlayerHealth: 100
     maxFuelPerRound: 150
-    playerScale: 0.3
+    playerScale: 0.45
     enableActiveIndicator: 1
     animateActiveIndicator: 1
   terrainSettings:
     textureWidth: 3000
     textureHeight: 1500
-    noiseScale: 0.00145
+    noiseScale: 0.0017
     heightMultiplier: 1200
     enableTerrainChunking: 1
     pixelsPerUnit: 100
+    terrainScale: 1.8
     minRandomOffset: 0
     maxRandomOffset: 1000
     chunkSize: 160

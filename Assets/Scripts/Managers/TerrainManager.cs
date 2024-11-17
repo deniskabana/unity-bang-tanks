@@ -103,7 +103,7 @@ public class TerrainManager : MonoBehaviour
 
         // Ensure the heightmapMaskObject retains the same size and position as the texture
         terrainTextureObject.transform.position = collidersGroupTransform.position;
-        terrainTextureObject.transform.localScale = new Vector3(1, 1, 1);
+        terrainTextureObject.transform.localScale = new Vector3(ts.terrainScale, ts.terrainScale, 1);
 
         if (debug) Debug.Log("Heightmap texture generated.");
     }
@@ -116,6 +116,7 @@ public class TerrainManager : MonoBehaviour
 
         // Instantiate the grid segment prefab
         GameObject chunkObject = Instantiate(terrainChunkPrefab, collidersGroupTransform.position, Quaternion.identity, collidersGroupTransform);
+        chunkObject.transform.localScale = new Vector3(ts.terrainScale, ts.terrainScale, 1);
         chunkObject.name = "TerrainSingleCollider";
 
         TerrainChunk chunkScript = chunkObject.GetComponent<TerrainChunk>();
@@ -158,13 +159,14 @@ public class TerrainManager : MonoBehaviour
 
                 // For each chunk, set its position in world space relative to the parent object
                 Vector3 position = new Vector3(
-                    chunkPosition.x + xCursor * chunkWorldSize,
-                    chunkPosition.y + yCursor * chunkWorldSize,
+                    chunkPosition.x + xCursor * chunkWorldSize * ts.terrainScale,
+                    chunkPosition.y + yCursor * chunkWorldSize * ts.terrainScale,
                     0);
 
                 // Instantiate the grid segment prefab and initialize it
                 GameObject chunkObject = Instantiate(terrainChunkPrefab, position, Quaternion.identity, collidersGroupTransform);
                 chunkObject.name = $"TerrainChunk_x:{xCursor}_y:{yCursor}";
+                chunkObject.transform.localScale = new Vector3(ts.terrainScale, ts.terrainScale, 1);
                 TerrainChunk chunkScript = chunkObject.GetComponent<TerrainChunk>();
                 chunkScript.Initialize(CreateChunkTexture(xCursor, yCursor));
             }
@@ -172,8 +174,8 @@ public class TerrainManager : MonoBehaviour
 
         // Align the grid with the heightmap mask object
         collidersGroupTransform.position = new Vector3(
-            -ts.textureWidth / 2 / ts.pixelsPerUnit + ts.chunkSize / 2 / ts.pixelsPerUnit,
-            -ts.textureHeight / 2 / ts.pixelsPerUnit + ts.chunkSize / 2 / ts.pixelsPerUnit,
+            -ts.textureWidth / 2 / ts.pixelsPerUnit * ts.terrainScale + ts.chunkSize / 2 / ts.pixelsPerUnit * ts.terrainScale,
+            -ts.textureHeight / 2 / ts.pixelsPerUnit * ts.terrainScale + ts.chunkSize / 2 / ts.pixelsPerUnit * ts.terrainScale,
             0
         );
 
