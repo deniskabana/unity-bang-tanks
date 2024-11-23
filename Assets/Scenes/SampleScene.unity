@@ -2137,7 +2137,9 @@ MonoBehaviour:
   animationsEnabled: 1
   animationStopThreshold: 0.1
   uiMoveSpeed: 5
-  strengthIndicatorSpeed: 0.7
+  minStrengthIndicatorXPos: -170
+  maxStrengthIndicatorXPos: 159
+  strengthIndicatorSpeed: 0.6
   references:
     touchControlsRt: {fileID: 1250378169}
     touchStageMovement: {fileID: 860109646}
@@ -2151,6 +2153,9 @@ MonoBehaviour:
     hudTankBody1: {fileID: 4880331588875662990}
     hudTankBody2: {fileID: 5133338674106034087}
     hudTankName: {fileID: 901347749}
+    indicatorMovement: {fileID: 127400698}
+    indicatorAim: {fileID: 1185489554}
+    indicatorShootStrength: {fileID: 300480986}
     strengthIndicatorHandle: {fileID: 1072215501}
     strengthIndicatorRange: {fileID: 426374051}
 --- !u!114 &624826807
@@ -3007,7 +3012,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -171.2, y: -2.1}
+  m_AnchoredPosition: {x: 159, y: -2.1}
   m_SizeDelta: {x: 26, y: 248}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1072215502
@@ -4247,7 +4252,6 @@ GameObject:
   - component: {fileID: 1848777206}
   - component: {fileID: 1848777205}
   - component: {fileID: 1848777204}
-  - component: {fileID: 1848777207}
   m_Layer: 5
   m_Name: UI Control Button (CONFIRM)
   m_TagString: Untagged
@@ -4345,22 +4349,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1848777202}
   m_CullTransparentMesh: 1
---- !u!111 &1848777207
-Animation:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1848777202}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: 44f98b2dd9894471a90837db5ed285e4, type: 2}
-  m_Animations:
-  - {fileID: 7400000, guid: 44f98b2dd9894471a90837db5ed285e4, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_CullingType: 0
 --- !u!1 &1862039103
 GameObject:
   m_ObjectHideFlags: 0

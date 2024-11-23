@@ -22,6 +22,9 @@ public struct UIManagerReferences
     public Transform hudTankBody1;
     public Transform hudTankBody2;
     public RectTransform hudTankName;
+    public RectTransform indicatorMovement;
+    public RectTransform indicatorAim;
+    public RectTransform indicatorShootStrength;
 
     [Header("Strength Indicator")]
     public RectTransform strengthIndicatorHandle;
@@ -38,6 +41,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] bool animationsEnabled = true;
     [SerializeField] float animationStopThreshold = 0.1f;
     [SerializeField] float uiMoveSpeed = 6;
+    [SerializeField] float minStrengthIndicatorXPos = -100;
+    [SerializeField] float maxStrengthIndicatorXPos = 100;
 
     [Header("Advanced")]
     [SerializeField, Range(0.1f, 10f)] float strengthIndicatorSpeed = 4f;
@@ -84,6 +89,7 @@ public class UIManager : MonoBehaviour
         // Activate / deactivate UI elements
         references.touchControlsRt.gameObject.SetActive(touchControlsEnabled);
         references.hudContainer.gameObject.SetActive(true);
+        references.touchButtonShoot.gameObject.SetActive(true);
 
         references.touchStageMovement.gameObject.SetActive(true); // <- Initially visible
         references.touchStageAim.gameObject.SetActive(false);
@@ -157,8 +163,8 @@ public class UIManager : MonoBehaviour
         RectTransform rt = references.strengthIndicatorHandle;
         if (!rt) return;
 
-        float newY = Mathf.Lerp(strengthIndicatorStatus.minPos, strengthIndicatorStatus.maxPos, strengthIndicatorStatus.currentValue);
-        rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, newY);
+        float newX = Mathf.Lerp(strengthIndicatorStatus.minPos, strengthIndicatorStatus.maxPos, strengthIndicatorStatus.currentValue);
+        rt.anchoredPosition = new Vector2(newX, rt.anchoredPosition.y);
 
         if (strengthIndicatorStatus.isIncreasing)
         {
@@ -182,6 +188,29 @@ public class UIManager : MonoBehaviour
 
     // Static methods
     // --------------------------------------------------
+
+    public static void SetTouchStage(PlayerState.TurnStage stage)
+    {
+        if (Instance.debug) Debug.Log("UIManager: SetTouchStage: " + stage);
+        switch (stage)
+        {
+            case PlayerState.TurnStage.Moving:
+                Instance.references.touchStageMovement.gameObject.SetActive(true);
+                Instance.references.touchStageAim.gameObject.SetActive(false);
+                Instance.references.touchStageShootStrength.gameObject.SetActive(false);
+                break;
+            case PlayerState.TurnStage.Aiming:
+                Instance.references.touchStageMovement.gameObject.SetActive(false);
+                Instance.references.touchStageAim.gameObject.SetActive(true);
+                Instance.references.touchStageShootStrength.gameObject.SetActive(false);
+                break;
+            case PlayerState.TurnStage.Shooting:
+                Instance.references.touchStageMovement.gameObject.SetActive(false);
+                Instance.references.touchStageAim.gameObject.SetActive(false);
+                Instance.references.touchStageShootStrength.gameObject.SetActive(true);
+                break;
+        }
+    }
 
     public static void ShowTouchControls()
     {
@@ -209,22 +238,21 @@ public class UIManager : MonoBehaviour
         Instance.isHUDVisible = false;
     }
 
-    public static void ShowStrengthIndicator()
+    public static void AnimateStrengthIndicator()
     {
         if (Instance.debug) Debug.Log("UIManager: ShowStrengthIndicator");
         Instance.isStrengthIndicatorVisible = true;
         Instance.strengthIndicatorStatus = new StrengthIndicatorStatus
         {
-            minPos = 0,
-            maxPos = Instance.references.strengthIndicatorRange.sizeDelta.y * Instance.references.strengthIndicatorRange.localScale.y,
+            minPos = Instance.minStrengthIndicatorXPos,
+            maxPos = Instance.maxStrengthIndicatorXPos,
             speed = Instance.strengthIndicatorSpeed,
             currentValue = 0,
             isIncreasing = true
         };
-        Instance.references.touchStageShootStrength.gameObject.SetActive(true);
     }
 
-    public static void HideStrengthIndicator()
+    public static void StopStrengthIndicator()
     {
         if (Instance.debug) Debug.Log("UIManager: HideStrengthIndicator");
         Instance.isStrengthIndicatorVisible = false;
