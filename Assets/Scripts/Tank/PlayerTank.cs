@@ -76,11 +76,13 @@ public class PlayerTank : MonoBehaviour
     if (collision.gameObject.CompareTag("Projectiles"))
     {
       TakeDamage(25);
+      Debug.Log("Player hit by projectile");
       return;
     }
     if (collision.gameObject.CompareTag("Explosion"))
     {
       TakeDamage(10);
+      Debug.Log("Player hit by explosion");
       return;
     }
   }
@@ -123,7 +125,7 @@ public class PlayerTank : MonoBehaviour
     state.turnStage = PlayerState.TurnStage.Moving;
     UIManager.ShowTouchAimButton();
     UIManager.UpdateActiveGasBar(1);
-    UIManager.UpdateActiveArmorBar(state.health / LevelManager.Instance.gameplaySettings.maxPlayerHealth);
+    UIManager.UpdateActiveArmorBar(LevelManager.Instance.gameplaySettings.maxPlayerHealth / state.health);
   }
 
   public void HandleTurnEnd()

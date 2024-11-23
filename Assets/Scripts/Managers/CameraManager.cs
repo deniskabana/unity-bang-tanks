@@ -126,7 +126,7 @@ public class CameraManager : MonoBehaviour
         if (mainCamera.position.x == targetPosition.x && mainCamera.position.y == targetPosition.y) return;
 
         // float threshold = 1 / 1000f; // Also called deadzone
-        float threshold = 1f;
+        float threshold = 0.5f;
         if (Mathf.Abs(mainCamera.position.x - targetPosition.x) > threshold || Mathf.Abs(mainCamera.position.y - targetPosition.y) > threshold)
         {
             if (enableCameraAnimation)

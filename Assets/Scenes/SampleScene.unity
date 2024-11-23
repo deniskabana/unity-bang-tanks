@@ -1200,7 +1200,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -0.000091552734, y: 0.0032730103}
+  m_AnchoredPosition: {x: -0.000061035156, y: 0.0032730103}
   m_SizeDelta: {x: 786.00006, y: 127.4232}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &588912763
@@ -1425,8 +1425,8 @@ MonoBehaviour:
   debug: 0
   gameplaySettings:
     amountOfPlayers: 3
-    playerPositioning: 0
-    playerScale: 0.4
+    playerPositioning: 1
+    playerScale: 0.35
     minShotStrength: 100
     maxShotStrength: 1200
     maxPlayerHealth: 100
@@ -1434,16 +1434,16 @@ MonoBehaviour:
     enableActiveIndicator: 1
     animateActiveIndicator: 1
   terrainSettings:
-    textureWidth: 3000
-    textureHeight: 1250
-    noiseScale: 0.0012
-    heightMultiplier: 1200
+    textureWidth: 3600
+    textureHeight: 1400
+    noiseScale: 0.0022
+    heightMultiplier: 1000
     enableTerrainChunking: 1
     pixelsPerUnit: 100
     terrainScale: 2
     minRandomOffset: -1000
     maxRandomOffset: 1000
-    chunkSize: 128
+    chunkSize: 200
   playerSkinSettings:
     playerSkins:
     - name: Blue
