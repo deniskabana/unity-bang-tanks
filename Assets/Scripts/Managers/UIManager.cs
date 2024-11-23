@@ -7,7 +7,9 @@ public struct UIManagerReferences
 {
     [Header("Touch Controls")]
     public RectTransform touchControlsRt;
-    public RectTransform touchButtonAim;
+    public RectTransform touchStageMovement;
+    public RectTransform touchStageAim;
+    public RectTransform touchStageShootStrength;
     public RectTransform touchButtonShoot;
 
     [Header("HUD")]
@@ -22,7 +24,6 @@ public struct UIManagerReferences
     public RectTransform hudTankName;
 
     [Header("Strength Indicator")]
-    public RectTransform strengthIndicator;
     public RectTransform strengthIndicatorHandle;
     public RectTransform strengthIndicatorRange;
 }
@@ -83,7 +84,11 @@ public class UIManager : MonoBehaviour
         // Activate / deactivate UI elements
         references.touchControlsRt.gameObject.SetActive(touchControlsEnabled);
         references.hudContainer.gameObject.SetActive(true);
-        references.strengthIndicator.gameObject.SetActive(false);
+
+        references.touchStageMovement.gameObject.SetActive(true); // <- Initially visible
+        references.touchStageAim.gameObject.SetActive(false);
+        references.touchStageShootStrength.gameObject.SetActive(false);
+
         // Default Y positions
         touchControlsYDefault = references.touchControlsRt.localPosition.y;
         hudYDefault = references.hudContainer.localPosition.y;
@@ -137,8 +142,8 @@ public class UIManager : MonoBehaviour
     [System.Serializable]
     struct StrengthIndicatorStatus
     {
-        public float minY;
-        public float maxY;
+        public float minPos;
+        public float maxPos;
         public float speed;
         public float currentValue; // 0 to 1
         public bool isIncreasing;
@@ -152,7 +157,7 @@ public class UIManager : MonoBehaviour
         RectTransform rt = references.strengthIndicatorHandle;
         if (!rt) return;
 
-        float newY = Mathf.Lerp(strengthIndicatorStatus.minY, strengthIndicatorStatus.maxY, strengthIndicatorStatus.currentValue);
+        float newY = Mathf.Lerp(strengthIndicatorStatus.minPos, strengthIndicatorStatus.maxPos, strengthIndicatorStatus.currentValue);
         rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, newY);
 
         if (strengthIndicatorStatus.isIncreasing)
@@ -210,38 +215,25 @@ public class UIManager : MonoBehaviour
         Instance.isStrengthIndicatorVisible = true;
         Instance.strengthIndicatorStatus = new StrengthIndicatorStatus
         {
-            minY = 0,
-            maxY = Instance.references.strengthIndicatorRange.sizeDelta.y * Instance.references.strengthIndicatorRange.localScale.y,
+            minPos = 0,
+            maxPos = Instance.references.strengthIndicatorRange.sizeDelta.y * Instance.references.strengthIndicatorRange.localScale.y,
             speed = Instance.strengthIndicatorSpeed,
             currentValue = 0,
             isIncreasing = true
         };
-        Instance.references.strengthIndicator.gameObject.SetActive(true);
+        Instance.references.touchStageShootStrength.gameObject.SetActive(true);
     }
 
     public static void HideStrengthIndicator()
     {
         if (Instance.debug) Debug.Log("UIManager: HideStrengthIndicator");
         Instance.isStrengthIndicatorVisible = false;
-        Instance.references.strengthIndicator.gameObject.SetActive(false);
+        Instance.references.touchStageShootStrength.gameObject.SetActive(false);
     }
 
     public static float GetStrengthIndicatorValue()
     {
         return Instance.strengthIndicatorStatus.currentValue;
-    }
-
-    public static void ShowTouchAimButton()
-    {
-        if (Instance.debug) Debug.Log("UIManager: ShowAimButton");
-        Instance.references.touchButtonAim.gameObject.SetActive(true);
-        Instance.references.touchButtonShoot.gameObject.SetActive(false);
-    }
-    public static void ShowTouchShootButton()
-    {
-        if (Instance.debug) Debug.Log("UIManager: ShowShootButton");
-        Instance.references.touchButtonAim.gameObject.SetActive(false);
-        Instance.references.touchButtonShoot.gameObject.SetActive(true);
     }
 
     public static void UpdateActiveGasBar(float value)

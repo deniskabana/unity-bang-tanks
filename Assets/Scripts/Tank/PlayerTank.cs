@@ -102,7 +102,6 @@ public class PlayerTank : MonoBehaviour
     shootingScript.Initialize();
     physicsScript.Initialize();
 
-    ControlsManager.OnControlDown.AddListener(OnShootButtonPressed);
     ControlsManager.OnControlUp.AddListener(OnShootButtonReleased);
   }
 
@@ -123,7 +122,6 @@ public class PlayerTank : MonoBehaviour
     state.isPlayingTurn = true;
     state.fuel = LevelManager.Instance.gameplaySettings.maxFuelPerRound;
     state.turnStage = PlayerState.TurnStage.Moving;
-    UIManager.ShowTouchAimButton();
     UIManager.UpdateActiveGasBar(1);
     UIManager.UpdateActiveArmorBar(LevelManager.Instance.gameplaySettings.maxPlayerHealth / state.health);
   }
@@ -131,7 +129,6 @@ public class PlayerTank : MonoBehaviour
   public void HandleTurnEnd()
   {
     state.isPlayingTurn = false;
-    UIManager.ShowTouchAimButton();
   }
 
   public void TakeDamage(int damage)
@@ -153,7 +150,6 @@ public class PlayerTank : MonoBehaviour
     {
       case PlayerState.TurnStage.Moving:
         state.turnStage = PlayerState.TurnStage.Aiming;
-        UIManager.ShowTouchShootButton();
         break;
       case PlayerState.TurnStage.Shooting:
         float strengthValue = UIManager.GetStrengthIndicatorValue();
@@ -163,19 +159,6 @@ public class PlayerTank : MonoBehaviour
         CameraManager.TrackObject(bullet); // Track bullet
         UIManager.HideStrengthIndicator();
         LevelManager.Instance.EndPlayerTurn();
-        break;
-    }
-  }
-
-  void OnShootButtonPressed(ControlType controlType)
-  {
-    if (controlType != ControlType.Shoot || !state.isPlayingTurn) return;
-
-    switch (state.turnStage)
-    {
-      case PlayerState.TurnStage.Aiming:
-        state.turnStage = PlayerState.TurnStage.Shooting;
-        UIManager.ShowStrengthIndicator();
         break;
     }
   }
