@@ -192,24 +192,14 @@ public class UIManager : MonoBehaviour
     public static void SetTouchStage(PlayerState.TurnStage stage)
     {
         if (Instance.debug) Debug.Log("UIManager: SetTouchStage: " + stage);
-        switch (stage)
-        {
-            case PlayerState.TurnStage.Moving:
-                Instance.references.touchStageMovement.gameObject.SetActive(true);
-                Instance.references.touchStageAim.gameObject.SetActive(false);
-                Instance.references.touchStageShootStrength.gameObject.SetActive(false);
-                break;
-            case PlayerState.TurnStage.Aiming:
-                Instance.references.touchStageMovement.gameObject.SetActive(false);
-                Instance.references.touchStageAim.gameObject.SetActive(true);
-                Instance.references.touchStageShootStrength.gameObject.SetActive(false);
-                break;
-            case PlayerState.TurnStage.Shooting:
-                Instance.references.touchStageMovement.gameObject.SetActive(false);
-                Instance.references.touchStageAim.gameObject.SetActive(false);
-                Instance.references.touchStageShootStrength.gameObject.SetActive(true);
-                break;
-        }
+        UIManagerReferences refs = Instance.references;
+        refs.touchStageMovement.gameObject.SetActive(PlayerState.TurnStage.Moving == stage);
+        refs.touchStageAim.gameObject.SetActive(PlayerState.TurnStage.Aiming == stage);
+        refs.touchStageShootStrength.gameObject.SetActive(PlayerState.TurnStage.Shooting == stage);
+
+        refs.indicatorMovement.gameObject.SetActive(PlayerState.TurnStage.Moving == stage);
+        refs.indicatorAim.gameObject.SetActive(PlayerState.TurnStage.Aiming == stage);
+        refs.indicatorShootStrength.gameObject.SetActive(PlayerState.TurnStage.Shooting == stage);
     }
 
     public static void ShowTouchControls()

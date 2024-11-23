@@ -1551,7 +1551,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &519425562
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1990,7 +1990,7 @@ MonoBehaviour:
   gameplaySettings:
     amountOfPlayers: 3
     playerPositioning: 1
-    playerScale: 0.35
+    playerScale: 0.5
     minShotStrength: 100
     maxShotStrength: 1200
     maxPlayerHealth: 100
@@ -2004,7 +2004,7 @@ MonoBehaviour:
     heightMultiplier: 1000
     enableTerrainChunking: 1
     pixelsPerUnit: 100
-    terrainScale: 2
+    terrainScale: 2.5
     minRandomOffset: -1000
     maxRandomOffset: 1000
     chunkSize: 200
@@ -2450,7 +2450,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &860109646
 RectTransform:
   m_ObjectHideFlags: 0
