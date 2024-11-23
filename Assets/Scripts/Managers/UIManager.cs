@@ -17,7 +17,8 @@ public struct UIManagerReferences
     public RectTransform hudArmorBarMask;
 
     [Header("HUD / TankInfo")]
-    public RectTransform hudTankImage;
+    public Transform hudTankBody1;
+    public Transform hudTankBody2;
     public RectTransform hudTankName;
 
     [Header("Strength Indicator")]
@@ -266,10 +267,11 @@ public class UIManager : MonoBehaviour
         UpdateActiveGasBar(1);
     }
 
-    public static void SetActiveTankHUDImage(Sprite sprite)
+    public static void SetActiveTankHUDSkin(PlayerSkin playerSkin)
     {
-        if (Instance.debug) Debug.Log("UIManager: SetActiveTankHUDImage: " + sprite.name);
-        Instance.references.hudTankImage.GetComponent<UnityEngine.UI.Image>().sprite = sprite;
+        if (Instance.debug) Debug.Log("UIManager: SetActiveTankHUDImage: " + playerSkin.name);
+        Instance.references.hudTankBody1.GetComponent<SpriteRenderer>().sprite = playerSkin.body1;
+        Instance.references.hudTankBody2.GetComponent<SpriteRenderer>().sprite = playerSkin.body2;
     }
 
     public static void SetActiveTankHUDName(string name)

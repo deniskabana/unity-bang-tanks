@@ -149,7 +149,7 @@ public class PlayersTurnManager : MonoBehaviour
     if (debug) Debug.Log("PlayersTurnManager: Player turn started for player " + currentPlayerIndex);
     if (gs.enableActiveIndicator) activePlayerIndicator.SetActive(true);
 
-    UIManager.SetActiveTankHUDImage(GetCurrentPlayer().GetSkin().preview);
+    UIManager.SetActiveTankHUDSkin(GetCurrentPlayer().GetSkin());
     UIManager.SetActiveTankHUDName(playersState[currentPlayerIndex].name);
     CameraManager.Zoom(true); // Zoom in
     CameraManager.TrackObject(GetCurrentPlayer().gameObject); // Track player

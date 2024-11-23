@@ -694,81 +694,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 413235861}
   m_CullTransparentMesh: 1
---- !u!1 &450133185
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 450133186}
-  - component: {fileID: 450133188}
-  - component: {fileID: 450133187}
-  m_Layer: 5
-  m_Name: TankImage_OLD
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!224 &450133186
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 450133185}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.21, y: 0.21, z: 0.21}
-  m_ConstrainProportionsScale: 1
-  m_Children: []
-  m_Father: {fileID: 948316965}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2, y: 11.5}
-  m_SizeDelta: {x: 300.219, y: 186.018}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &450133187
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 450133185}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 1f3d4b71b46c641f3ad3d0b4552cf540, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &450133188
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 450133185}
-  m_CullTransparentMesh: 1
 --- !u!1 &464318982
 GameObject:
   m_ObjectHideFlags: 0
@@ -1533,42 +1458,34 @@ MonoBehaviour:
     - name: Blue
       body1: {fileID: 21300000, guid: 425b2b88a28a24352b13aacae1afe208, type: 3}
       body2: {fileID: 21300000, guid: c618d5907ce9248d78462d6089f57174, type: 3}
-      preview: {fileID: 21300000, guid: 1f3d4b71b46c641f3ad3d0b4552cf540, type: 3}
       isLocked: 0
     - name: Green
       body1: {fileID: 21300000, guid: 3e38119dae24943e19456274fd9f0f4e, type: 3}
       body2: {fileID: 21300000, guid: 3049ba37bff9b48c8a2f39e3e8ca6fd3, type: 3}
-      preview: {fileID: 21300000, guid: 9d0a34b0879b644859b84302be147558, type: 3}
       isLocked: 0
     - name: Orange
       body1: {fileID: 21300000, guid: 9a30f6c9597a7404991ffa883e59fc13, type: 3}
       body2: {fileID: 21300000, guid: 63bf008f59f6a4cc689d8c289f68afe7, type: 3}
-      preview: {fileID: 21300000, guid: d14b25830439a480ab799d4b0a6a7523, type: 3}
       isLocked: 0
     - name: Purple
       body1: {fileID: 21300000, guid: d031f6f9cfb39492cae0ec2159e3e448, type: 3}
       body2: {fileID: 21300000, guid: c07c08a717a0040a7bbe98a08cedfcaf, type: 3}
-      preview: {fileID: 21300000, guid: 5c4bc7bea09854a52aff4079bc3599e6, type: 3}
       isLocked: 0
     - name: Red
       body1: {fileID: 21300000, guid: 2d55ba8906e384896b45a5656219acd0, type: 3}
       body2: {fileID: 21300000, guid: 66bfdd7e4e12142d6bdb1fca08668ac2, type: 3}
-      preview: {fileID: 21300000, guid: a749c58b5b77646caa3bd05a7bfe2581, type: 3}
       isLocked: 0
     - name: Silver
       body1: {fileID: 21300000, guid: da3a8417dcbf749328eedc0088727ee1, type: 3}
       body2: {fileID: 21300000, guid: 04d41dc093c154eec913106196cdd6d7, type: 3}
-      preview: {fileID: 21300000, guid: ff301c36df970407b907f43c8fb4468c, type: 3}
       isLocked: 0
     - name: White
       body1: {fileID: 21300000, guid: 7503867bcec3a4a6f82b7998f243b9bc, type: 3}
       body2: {fileID: 21300000, guid: 26e78917e2e4647c98c60aa0fa2848ea, type: 3}
-      preview: {fileID: 21300000, guid: ade12a0ddcd8a4ab8b51891404d8effd, type: 3}
       isLocked: 0
     - name: Mint
       body1: {fileID: 21300000, guid: 0911f97b555354beab763d22a79e7c85, type: 3}
       body2: {fileID: 21300000, guid: 91e6eb10283c24b3a930216661508b43, type: 3}
-      preview: {fileID: 21300000, guid: 4d9e5d9cb342a40e59f0c1adc1fcb192, type: 3}
       isLocked: 0
 --- !u!4 &624826800
 Transform:
@@ -1674,7 +1591,8 @@ MonoBehaviour:
     hudGasBarMask: {fileID: 401623044}
     emptyBarReference: {fileID: 413235862}
     hudArmorBarMask: {fileID: 1966098653}
-    hudTankImage: {fileID: 450133186}
+    hudTankBody1: {fileID: 4880331588875662990}
+    hudTankBody2: {fileID: 5133338674106034087}
     hudTankName: {fileID: 901347749}
     strengthIndicator: {fileID: 317543562}
     strengthIndicatorHandle: {fileID: 887693429}
@@ -2303,7 +2221,6 @@ RectTransform:
   - {fileID: 602051302}
   - {fileID: 901347749}
   - {fileID: 1088981124}
-  - {fileID: 450133186}
   m_Father: {fileID: 1644570014}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
