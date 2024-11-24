@@ -93,13 +93,13 @@ public class CameraManager : MonoBehaviour
         if (currentSize == newSize) return;
 
         // If the distance between the camera and the target is greater than the threshold, zoom the camera
-        float threshold = 1 / 100f;
+        float threshold = 1 / 1000f;
         if (Mathf.Abs(currentSize - newSize) > threshold && enableCameraAnimation)
         {
             newSize = Mathf.Lerp(currentSize, newSize, Time.deltaTime * cameraSpeedZoom);
         }
 
-        mainCameraComponent.orthographicSize = Mathf.Round(newSize * 1000f) / 1000f;
+        mainCameraComponent.orthographicSize = Mathf.Round(newSize * 10000f) / 10000f;
     }
 
     void HandleCameraMovement()
@@ -125,8 +125,8 @@ public class CameraManager : MonoBehaviour
         // Cancel early if we're already at the desired position
         if (mainCamera.position.x == targetPosition.x && mainCamera.position.y == targetPosition.y) return;
 
-        // float threshold = 1 / 1000f; // Also called deadzone
-        float threshold = 0.5f;
+        float threshold = 1 / 100f; // Also called deadzone
+        // float threshold = 0.5f;
         if (Mathf.Abs(mainCamera.position.x - targetPosition.x) > threshold || Mathf.Abs(mainCamera.position.y - targetPosition.y) > threshold)
         {
             if (enableCameraAnimation)

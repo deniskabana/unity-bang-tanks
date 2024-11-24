@@ -123,7 +123,7 @@ public class PlayerTank : MonoBehaviour
     state.fuel = LevelManager.Instance.gameplaySettings.maxFuelPerRound;
     state.turnStage = PlayerState.TurnStage.Moving;
     UIManager.UpdateActiveGasBar(1);
-    UIManager.UpdateActiveArmorBar(LevelManager.Instance.gameplaySettings.maxPlayerHealth / state.health);
+    UIManager.UpdateActiveArmorBar(state.health / LevelManager.Instance.gameplaySettings.maxPlayerHealth);
     UIManager.SetTouchControlsStage(state.turnStage);
   }
 
@@ -134,6 +134,7 @@ public class PlayerTank : MonoBehaviour
 
   public void TakeDamage(int damage)
   {
+    Debug.Log("Player took damage: " + damage);
     state.health -= damage;
     UIManager.UpdateActiveArmorBar(state.health / LevelManager.Instance.gameplaySettings.maxPlayerHealth);
 
@@ -166,7 +167,6 @@ public class PlayerTank : MonoBehaviour
         GameObject bullet = shootingScript.Shoot(shotStrength);
 
         // Resets after end of player turn
-        CameraManager.Zoom(false); // Zoom out
         CameraManager.TrackObject(bullet); // Track bullet
         UIManager.SetTouchControlsStage(null); // Reset touch controls
         UIManager.StopStrengthIndicator(); // Reset strength indicator

@@ -14,6 +14,7 @@ public class ExplosionManager : MonoBehaviour
     [Header("References")]
     [SerializeField] private Transform explosionParent;
     [SerializeField] private GameObject explosionPrefab;
+    [SerializeField] private GameObject explosionParticlesPrefab;
 
     void Awake()
     {
@@ -32,6 +33,7 @@ public class ExplosionManager : MonoBehaviour
     {
         // Create explosion GameObject
         GameObject explosion = Instantiate(explosionPrefab, position, Quaternion.identity, explosionParent);
+        Instantiate(explosionParticlesPrefab, position, Quaternion.identity);
 
         // TODO: replace with animation / sprite / whatever
         Sprite circleSprite = CreateCircleSprite(radius, Color.yellow);

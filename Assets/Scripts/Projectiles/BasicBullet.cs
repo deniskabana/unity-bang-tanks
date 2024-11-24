@@ -6,7 +6,7 @@ using UnityEngine;
 public class BasicBullet : MonoBehaviour
 {
     [SerializeField] Rigidbody2D rb;
-    [SerializeField] float maxLifeTime = 10f;
+    [SerializeField] float maxLifeTime = 13f;
 
     // Built-in methods
     // --------------------------------------------------
@@ -27,13 +27,25 @@ public class BasicBullet : MonoBehaviour
 
     void HandleCollision()
     {
-        ExplosionManager.Instance.CreateExplosion(1.5f, transform.position);
-        Destroy(gameObject);
+        ExplosionManager.Instance.CreateExplosion(0.75f, transform.position);
+        StartCoroutine(DestroyObject());
     }
 
     IEnumerator DestroyAfterTime()
     {
         yield return new WaitForSeconds(maxLifeTime);
+        StartCoroutine(DestroyObject());
+    }
+
+    IEnumerator DestroyObject()
+    {
+        gameObject.GetComponent<CircleCollider2D>().enabled = false;
+        gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        rb.bodyType = RigidbodyType2D.Kinematic;
+        rb.velocity = Vector2.zero;
+        CameraManager.Zoom(false); // Zoom out
+
+        yield return new WaitForSeconds(1.2f); // Wait for particle effect to finish
         Destroy(gameObject);
     }
 }
