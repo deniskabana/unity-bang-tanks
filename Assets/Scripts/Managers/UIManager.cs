@@ -45,12 +45,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] bool animationsEnabled = true;
     [SerializeField] float animationStopThreshold = 0.1f;
     [SerializeField] float uiMoveSpeed = 6;
-    [SerializeField] float minStrengthIndicatorXPos = -100;
-    [SerializeField] float maxStrengthIndicatorXPos = 100;
 
     [Header("Advanced")]
-    [SerializeField, Range(0.1f, 10f)] float strengthIndicatorSpeed = 4f;
-    [SerializeField, Range(0.1f, 10f)] float touchControlAnimationsSpeed = 3f;
+    [SerializeField, Range(0.1f, 10f)] float strengthIndicatorSpeed = 1f;
     [SerializeField] UIManagerReferences references;
 
     // Runtime variables
@@ -64,6 +61,8 @@ public class UIManager : MonoBehaviour
     float touchControlsYDefault;
     float hudYDefault;
     float barDefaultWidth;
+    float minStrengthIndicatorXPos = -100;
+    float maxStrengthIndicatorXPos = 100;
     PlayerState.TurnStage touchControlStage;
 
     // Build-in methods
@@ -239,8 +238,8 @@ public class UIManager : MonoBehaviour
         switch (stage)
         {
             case PlayerState.TurnStage.Moving:
-                Instance.PlayAnimationIn(refs.touchStageMovement.gameObject, true); // Instant in first turn
-                // Reset previous stages
+                Instance.PlayAnimationIn(refs.touchStageMovement.gameObject, true); // Instant animation for arrows in first turn
+                // Reset previous stages instantly
                 Instance.PlayAnimationOut(refs.touchStageAim.gameObject, true);
                 Instance.PlayAnimationOut(refs.touchStageShootStrength.gameObject, true);
 
@@ -269,11 +268,6 @@ public class UIManager : MonoBehaviour
 
             case null:
             default:
-                Instance.PlayAnimationOut(refs.touchStageShootStrength.gameObject);
-                // Reset other stages
-                Instance.PlayAnimationOut(refs.touchStageAim.gameObject, true);
-                Instance.PlayAnimationOut(refs.touchStageMovement.gameObject, true);
-
                 refs.indicatorMovement.gameObject.SetActive(false);
                 refs.indicatorAim.gameObject.SetActive(false);
                 refs.indicatorShootStrength.gameObject.SetActive(false);

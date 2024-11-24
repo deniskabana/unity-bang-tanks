@@ -2153,10 +2153,7 @@ MonoBehaviour:
   animationsEnabled: 1
   animationStopThreshold: 0.1
   uiMoveSpeed: 5
-  minStrengthIndicatorXPos: -170
-  maxStrengthIndicatorXPos: 159
   strengthIndicatorSpeed: 0.6
-  touchControlAnimationsSpeed: 1.8
   references:
     touchControlsRt: {fileID: 1250378169}
     touchStageMovement: {fileID: 860109646}
