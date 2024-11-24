@@ -49,6 +49,8 @@ public class UIManager : MonoBehaviour
     [Header("Advanced")]
     [SerializeField, Range(0.1f, 10f)] float strengthIndicatorSpeed = 1f;
     [SerializeField] UIManagerReferences references;
+    [SerializeField] float minStrengthIndicatorXPos = -100;
+    [SerializeField] float maxStrengthIndicatorXPos = 100;
 
     // Runtime variables
     // --------------------------------------------------
@@ -61,8 +63,6 @@ public class UIManager : MonoBehaviour
     float touchControlsYDefault;
     float hudYDefault;
     float barDefaultWidth;
-    float minStrengthIndicatorXPos = -100;
-    float maxStrengthIndicatorXPos = 100;
     PlayerState.TurnStage touchControlStage;
 
     // Build-in methods
@@ -95,6 +95,8 @@ public class UIManager : MonoBehaviour
         references.touchControlsRt.gameObject.SetActive(touchControlsEnabled);
         references.hudContainer.gameObject.SetActive(true);
         references.touchButtonShoot.gameObject.SetActive(true);
+
+        references.indicatorMovement.gameObject.SetActive(true);
 
         references.touchStageMovement.gameObject.SetActive(true);
         references.touchStageAim.gameObject.SetActive(true);
