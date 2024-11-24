@@ -1545,6 +1545,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 519425562}
+  - component: {fileID: 519425563}
   m_Layer: 5
   m_Name: StageStrength
   m_TagString: Untagged
@@ -1572,6 +1573,21 @@ RectTransform:
   m_AnchoredPosition: {x: 27.000046, y: 5.326553}
   m_SizeDelta: {x: 410.8884, y: 100}
   m_Pivot: {x: 0, y: 0.5}
+--- !u!111 &519425563
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519425561}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 0}
+  m_Animations: []
+  m_WrapMode: 1
+  m_PlayAutomatically: 0
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!1 &579732308
 GameObject:
   m_ObjectHideFlags: 0
@@ -2140,12 +2156,15 @@ MonoBehaviour:
   minStrengthIndicatorXPos: -170
   maxStrengthIndicatorXPos: 159
   strengthIndicatorSpeed: 0.6
+  touchControlAnimationsSpeed: 1.8
   references:
     touchControlsRt: {fileID: 1250378169}
     touchStageMovement: {fileID: 860109646}
     touchStageAim: {fileID: 891466460}
     touchStageShootStrength: {fileID: 519425562}
     touchButtonShoot: {fileID: 1848777203}
+    uiAnimationIn: {fileID: 7400000, guid: 2e46de5d0d1d74564945eeea29a8ac58, type: 2}
+    uiAnimationOut: {fileID: 7400000, guid: 44f98b2dd9894471a90837db5ed285e4, type: 2}
     hudContainer: {fileID: 579732309}
     hudGasBarMask: {fileID: 401623044}
     emptyBarReference: {fileID: 413235862}
@@ -2444,6 +2463,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 860109646}
+  - component: {fileID: 860109647}
   m_Layer: 5
   m_Name: StageMovement
   m_TagString: Untagged
@@ -2472,6 +2492,21 @@ RectTransform:
   m_AnchoredPosition: {x: 27.000046, y: 5.3265533}
   m_SizeDelta: {x: 206.8232, y: 100}
   m_Pivot: {x: 0, y: 0.5}
+--- !u!111 &860109647
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 860109645}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 0}
+  m_Animations: []
+  m_WrapMode: 1
+  m_PlayAutomatically: 0
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!1 &868401883
 GameObject:
   m_ObjectHideFlags: 0
@@ -2513,6 +2548,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 891466460}
+  - component: {fileID: 891466461}
   m_Layer: 5
   m_Name: StageAim
   m_TagString: Untagged
@@ -2541,6 +2577,21 @@ RectTransform:
   m_AnchoredPosition: {x: 27, y: 5.326553}
   m_SizeDelta: {x: 206.82, y: 100}
   m_Pivot: {x: 0, y: 0.5}
+--- !u!111 &891466461
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 891466459}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 0}
+  m_Animations: []
+  m_WrapMode: 1
+  m_PlayAutomatically: 0
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!1 &901347748
 GameObject:
   m_ObjectHideFlags: 0

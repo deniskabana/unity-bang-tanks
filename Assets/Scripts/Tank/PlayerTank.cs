@@ -124,7 +124,7 @@ public class PlayerTank : MonoBehaviour
     state.turnStage = PlayerState.TurnStage.Moving;
     UIManager.UpdateActiveGasBar(1);
     UIManager.UpdateActiveArmorBar(LevelManager.Instance.gameplaySettings.maxPlayerHealth / state.health);
-    UIManager.SetTouchStage(state.turnStage);
+    UIManager.SetTouchControlsStage(state.turnStage);
   }
 
   public void HandleTurnEnd()
@@ -151,12 +151,12 @@ public class PlayerTank : MonoBehaviour
     {
       case PlayerState.TurnStage.Moving:
         state.turnStage = PlayerState.TurnStage.Aiming;
-        UIManager.SetTouchStage(state.turnStage);
+        UIManager.SetTouchControlsStage(state.turnStage);
         break;
 
       case PlayerState.TurnStage.Aiming:
         state.turnStage = PlayerState.TurnStage.Shooting;
-        UIManager.SetTouchStage(state.turnStage);
+        UIManager.SetTouchControlsStage(state.turnStage);
         UIManager.AnimateStrengthIndicator();
         break;
 
@@ -164,9 +164,14 @@ public class PlayerTank : MonoBehaviour
         float strengthValue = UIManager.GetStrengthIndicatorValue();
         float shotStrength = Mathf.Lerp(LevelManager.Instance.gameplaySettings.minShotStrength, LevelManager.Instance.gameplaySettings.maxShotStrength, strengthValue);
         GameObject bullet = shootingScript.Shoot(shotStrength);
+
+        // Resets after end of player turn
         CameraManager.Zoom(false); // Zoom out
         CameraManager.TrackObject(bullet); // Track bullet
-        UIManager.StopStrengthIndicator();
+        UIManager.SetTouchControlsStage(null); // Reset touch controls
+        UIManager.StopStrengthIndicator(); // Reset strength indicator
+
+        // End turn
         LevelManager.Instance.EndPlayerTurn();
         break;
     }

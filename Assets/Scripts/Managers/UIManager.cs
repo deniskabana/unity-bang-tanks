@@ -12,6 +12,10 @@ public struct UIManagerReferences
     public RectTransform touchStageShootStrength;
     public RectTransform touchButtonShoot;
 
+    [Header("Touch Controls / Animations")]
+    public AnimationClip uiAnimationIn;
+    public AnimationClip uiAnimationOut;
+
     [Header("HUD")]
     public RectTransform hudContainer;
     public RectTransform hudGasBarMask;
@@ -46,6 +50,7 @@ public class UIManager : MonoBehaviour
 
     [Header("Advanced")]
     [SerializeField, Range(0.1f, 10f)] float strengthIndicatorSpeed = 4f;
+    [SerializeField, Range(0.1f, 10f)] float touchControlAnimationsSpeed = 3f;
     [SerializeField] UIManagerReferences references;
 
     // Runtime variables
@@ -59,6 +64,7 @@ public class UIManager : MonoBehaviour
     float touchControlsYDefault;
     float hudYDefault;
     float barDefaultWidth;
+    PlayerState.TurnStage touchControlStage;
 
     // Build-in methods
     // --------------------------------------------------
@@ -91,9 +97,13 @@ public class UIManager : MonoBehaviour
         references.hudContainer.gameObject.SetActive(true);
         references.touchButtonShoot.gameObject.SetActive(true);
 
-        references.touchStageMovement.gameObject.SetActive(true); // <- Initially visible
-        references.touchStageAim.gameObject.SetActive(false);
-        references.touchStageShootStrength.gameObject.SetActive(false);
+        references.touchStageMovement.gameObject.SetActive(true);
+        references.touchStageAim.gameObject.SetActive(true);
+        references.touchStageShootStrength.gameObject.SetActive(true);
+
+        PlayAnimationIn(references.touchStageMovement.gameObject, true);
+        PlayAnimationOut(references.touchStageAim.gameObject, true);
+        PlayAnimationOut(references.touchStageShootStrength.gameObject, true);
 
         // Default Y positions
         touchControlsYDefault = references.touchControlsRt.localPosition.y;
@@ -186,20 +196,89 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    void PlayAnimationIn(GameObject uiObj, bool instant = false)
+    {
+        if (!animationsEnabled) return;
+        if (debug) Debug.Log("UIManager: PlayAnimationIn (" + uiObj.name + ")");
+        Animation anim = uiObj.GetComponent<Animation>();
+        if (!anim || anim.isPlaying) return;
+        anim.wrapMode = WrapMode.Once;
+
+        if (anim.GetClip(references.uiAnimationIn.name) == null)
+            anim.AddClip(references.uiAnimationIn, references.uiAnimationIn.name);
+
+        anim.Play(references.uiAnimationIn.name);
+        if (instant) anim[references.uiAnimationIn.name].time = anim[references.uiAnimationIn.name].length;
+    }
+
+    void PlayAnimationOut(GameObject uiObj, bool instant = false)
+    {
+        if (!animationsEnabled) return;
+        if (debug) Debug.Log("UIManager: PlayAnimationOut (" + uiObj.name + ")");
+        Animation anim = uiObj.GetComponent<Animation>();
+        if (!anim) return;
+        anim.wrapMode = WrapMode.Once;
+
+        if (anim.GetClip(references.uiAnimationOut.name) == null)
+            anim.AddClip(references.uiAnimationOut, references.uiAnimationOut.name);
+
+        anim.Play(references.uiAnimationOut.name);
+        if (instant) anim[references.uiAnimationOut.name].time = anim[references.uiAnimationOut.name].length;
+    }
+
     // Static methods
     // --------------------------------------------------
 
-    public static void SetTouchStage(PlayerState.TurnStage stage)
+    public static void SetTouchControlsStage(System.Nullable<PlayerState.TurnStage> stage)
     {
-        if (Instance.debug) Debug.Log("UIManager: SetTouchStage: " + stage);
+        if (stage == Instance.touchControlStage) return;
+        if (Instance.debug) Debug.Log("UIManager: SetTouchControlsStage = " + stage);
         UIManagerReferences refs = Instance.references;
-        refs.touchStageMovement.gameObject.SetActive(PlayerState.TurnStage.Moving == stage);
-        refs.touchStageAim.gameObject.SetActive(PlayerState.TurnStage.Aiming == stage);
-        refs.touchStageShootStrength.gameObject.SetActive(PlayerState.TurnStage.Shooting == stage);
+        if (stage != null) Instance.touchControlStage = (PlayerState.TurnStage)stage;
 
-        refs.indicatorMovement.gameObject.SetActive(PlayerState.TurnStage.Moving == stage);
-        refs.indicatorAim.gameObject.SetActive(PlayerState.TurnStage.Aiming == stage);
-        refs.indicatorShootStrength.gameObject.SetActive(PlayerState.TurnStage.Shooting == stage);
+        switch (stage)
+        {
+            case PlayerState.TurnStage.Moving:
+                Instance.PlayAnimationIn(refs.touchStageMovement.gameObject, true); // Instant in first turn
+                // Reset previous stages
+                Instance.PlayAnimationOut(refs.touchStageAim.gameObject, true);
+                Instance.PlayAnimationOut(refs.touchStageShootStrength.gameObject, true);
+
+                refs.indicatorMovement.gameObject.SetActive(true);
+                refs.indicatorAim.gameObject.SetActive(false);
+                refs.indicatorShootStrength.gameObject.SetActive(false);
+                break;
+
+            case PlayerState.TurnStage.Aiming:
+                Instance.PlayAnimationIn(refs.touchStageAim.gameObject);
+                Instance.PlayAnimationOut(refs.touchStageMovement.gameObject);
+
+                refs.indicatorMovement.gameObject.SetActive(false);
+                refs.indicatorAim.gameObject.SetActive(true);
+                refs.indicatorShootStrength.gameObject.SetActive(false);
+                break;
+
+            case PlayerState.TurnStage.Shooting:
+                Instance.PlayAnimationIn(refs.touchStageShootStrength.gameObject);
+                Instance.PlayAnimationOut(refs.touchStageAim.gameObject);
+
+                refs.indicatorMovement.gameObject.SetActive(false);
+                refs.indicatorAim.gameObject.SetActive(false);
+                refs.indicatorShootStrength.gameObject.SetActive(true);
+                break;
+
+            case null:
+            default:
+                Instance.PlayAnimationOut(refs.touchStageShootStrength.gameObject);
+                // Reset other stages
+                Instance.PlayAnimationOut(refs.touchStageAim.gameObject, true);
+                Instance.PlayAnimationOut(refs.touchStageMovement.gameObject, true);
+
+                refs.indicatorMovement.gameObject.SetActive(false);
+                refs.indicatorAim.gameObject.SetActive(false);
+                refs.indicatorShootStrength.gameObject.SetActive(false);
+                break;
+        }
     }
 
     public static void ShowTouchControls()
@@ -246,7 +325,6 @@ public class UIManager : MonoBehaviour
     {
         if (Instance.debug) Debug.Log("UIManager: HideStrengthIndicator");
         Instance.isStrengthIndicatorVisible = false;
-        Instance.references.touchStageShootStrength.gameObject.SetActive(false);
     }
 
     public static float GetStrengthIndicatorValue()
