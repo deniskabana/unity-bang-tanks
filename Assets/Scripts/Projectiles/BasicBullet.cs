@@ -6,6 +6,7 @@ using UnityEngine;
 public class BasicBullet : MonoBehaviour
 {
     [SerializeField] Rigidbody2D rb;
+    [SerializeField, Range(0f, 100f)] float explosionStrengthRation = 0.86f;
     [SerializeField] float maxLifeTime = 13f;
 
     // Built-in methods
@@ -14,6 +15,7 @@ public class BasicBullet : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision)
     {
         rb.velocity = Vector2.zero; // Immediately stop the bullet
+        rb.position = collision.GetContact(0).point; // Move the bullet to the point of collision
         HandleCollision();
     }
 
@@ -28,7 +30,7 @@ public class BasicBullet : MonoBehaviour
 
     void HandleCollision()
     {
-        ExplosionManager.Instance.CreateExplosion(0.75f, transform.position);
+        ExplosionManager.Instance.CreateExplosion(explosionStrengthRation, transform.position);
         StartCoroutine(DestroyObject());
     }
 

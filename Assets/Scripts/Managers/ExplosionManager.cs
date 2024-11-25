@@ -9,7 +9,7 @@ public class ExplosionManager : MonoBehaviour
     public bool debug = false;
 
     [Header("Explosion Visuals")]
-    [SerializeField] float maxSpriteLifetime = 0.25f;
+    [SerializeField] float actionDelay = 0.15f;
 
     [Header("References")]
     [SerializeField] private Transform explosionParent;
@@ -35,33 +35,21 @@ public class ExplosionManager : MonoBehaviour
         GameObject explosion = Instantiate(explosionPrefab, position, Quaternion.identity, explosionParent);
         Instantiate(explosionParticlesPrefab, position, Quaternion.identity);
 
-        // TODO: replace with animation / sprite / whatever
-        Sprite circleSprite = CreateCircleSprite(radius, Color.yellow);
-
-        // Add a SpriteRenderer component to the explosion and assign sprite
-        SpriteRenderer spriteRenderer = explosion.GetComponent<SpriteRenderer>();
-        spriteRenderer.sprite = circleSprite;
-        spriteRenderer.sortingOrder = 1; // Set sorting order to render above terrain and player
-
         // Set circle collider size to match the sprite size
         CircleCollider2D circleCollider = explosion.GetComponent<CircleCollider2D>();
         circleCollider.radius = radius;
 
-        // Clear spriteRenderer.sprite after maxSpriteLifetime
-        StartCoroutine(ClearSpriteAfterDelay(spriteRenderer, maxSpriteLifetime)); // Clear sprite after a delay
-
         // Create permanent terrain mask
         Sprite spriteForMask = CreateCircleSprite(radius, Color.black);
         SpriteMask spriteMaskComponent = explosion.GetComponent<SpriteMask>();
-        spriteMaskComponent.sprite = spriteForMask; // Assign the explosion sprite to the SpriteMask component to uncover terrain
+        StartCoroutine(SetMaskAfterDelay(actionDelay, spriteMaskComponent, spriteForMask));
     }
 
-    private IEnumerator ClearSpriteAfterDelay(SpriteRenderer spriteRenderer, float delay)
+    private IEnumerator SetMaskAfterDelay(float delay, SpriteMask spriteMask, Sprite mask)
     {
         yield return new WaitForSeconds(delay);
-        spriteRenderer.sprite = null;
+        spriteMask.sprite = mask; // Assign the explosion sprite to the SpriteMask component to uncover terrain
         gameObject.tag = "Untagged";
-        Destroy(spriteRenderer);
     }
 
     Sprite CreateCircleSprite(float radius, Color color)

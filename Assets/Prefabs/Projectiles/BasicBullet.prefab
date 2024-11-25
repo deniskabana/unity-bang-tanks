@@ -163,6 +163,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 3697814036825086358}
+  explosionStrengthRation: 1
   maxLifeTime: 13
 --- !u!96 &-915499901941355098
 TrailRenderer:
