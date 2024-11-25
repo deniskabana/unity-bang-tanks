@@ -13,6 +13,7 @@ public class BasicBullet : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
+        rb.velocity = Vector2.zero; // Immediately stop the bullet
         HandleCollision();
     }
 
@@ -43,9 +44,8 @@ public class BasicBullet : MonoBehaviour
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
         rb.bodyType = RigidbodyType2D.Kinematic;
         rb.velocity = Vector2.zero;
-        CameraManager.Zoom(false); // Zoom out
 
-        yield return new WaitForSeconds(1.2f); // Wait for particle effect to finish
+        yield return new WaitForSeconds(1.2f); // Wait for trail effect to finish
         Destroy(gameObject);
     }
 }
