@@ -2038,8 +2038,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debug: 0
   gameplaySettings:
-    amountOfPlayers: 3
-    playerPositioning: 1
+    amountOfPlayers: 2
+    playerPositioning: 0
     playerScale: 0.5
     minShotStrength: 100
     maxShotStrength: 1200
@@ -2154,7 +2154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debug: 0
-  maxSpriteLifetime: 0.5
+  actionDelay: 0.15
   explosionParent: {fileID: 476266739}
   explosionPrefab: {fileID: 7781946742746118445, guid: a6ee80721016a43cab1eb217bee1d384, type: 3}
   explosionParticlesPrefab: {fileID: 570106876239635423, guid: caa4eac872a85474b88a5a12d1c5b9da, type: 3}
