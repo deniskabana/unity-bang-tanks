@@ -2175,6 +2175,7 @@ GameObject:
   - component: {fileID: 624826806}
   - component: {fileID: 624826805}
   - component: {fileID: 624826807}
+  - component: {fileID: 624826808}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -2395,6 +2396,47 @@ MonoBehaviour:
   cameraSpeedMove: 1.35
   constrainCameraBoundaries: 1
   mainCamera: {fileID: 519420032}
+--- !u!114 &624826808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 624826798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5717e0665f0c4e0d81aebd58eaf7563, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  debug: 1
+  weaponsData:
+  - isEnabled: 1
+    slug: small_cannon
+    projectilePrefab: {fileID: 5882382787347245810, guid: 367fd9135c1924428a25c8fbb21d038d, type: 3}
+    hudIcon: {fileID: 21300000, guid: 130a6dcc2dbcf4b0ba6678931b4b4196, type: 3}
+    type: 0
+    projectileSpawnCount: 1
+    maxProjectileLifeTime: 5
+    projectileMass: 1
+    explodeOnImpact: 1
+  - isEnabled: 1
+    slug: large_cannon
+    projectilePrefab: {fileID: 5882382787347245810, guid: 367fd9135c1924428a25c8fbb21d038d, type: 3}
+    hudIcon: {fileID: 21300000, guid: 0b78b6bb75b6f4ac1b059a344e960bd5, type: 3}
+    type: 0
+    projectileSpawnCount: 1
+    maxProjectileLifeTime: 5
+    projectileMass: 2.5
+    explodeOnImpact: 1
+  - isEnabled: 0
+    slug: triple_shot
+    projectilePrefab: {fileID: 5882382787347245810, guid: 367fd9135c1924428a25c8fbb21d038d, type: 3}
+    hudIcon: {fileID: 21300000, guid: e9bba11719a7449bbbfcf0cc45025469, type: 3}
+    type: 0
+    projectileSpawnCount: 3
+    maxProjectileLifeTime: 5
+    projectileMass: 1
+    explodeOnImpact: 1
 --- !u!1 &628441520
 GameObject:
   m_ObjectHideFlags: 0
