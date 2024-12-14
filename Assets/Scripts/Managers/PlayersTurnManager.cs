@@ -140,7 +140,7 @@ public class PlayersTurnManager : MonoBehaviour
       playerObject.transform.localScale = new Vector3(gs.playerScale, gs.playerScale, 1);
       PlayerTank playerTank = playerObject.GetComponent<PlayerTank>();
       playerTank.Initialize(i, shuffledSkins[i % shuffledSkins.Length]);
-      playersState.Add(new PlayersState { name = PlayerNames.playerNames[i], script = playerTank });
+      playersState.Add(new PlayersState { name = PlayerNamesData.playerNames[i], script = playerTank });
     }
   }
 
@@ -211,10 +211,10 @@ public class PlayersTurnManager : MonoBehaviour
 
   void ShufflePlayerNames()
   {
-    for (int i = PlayerNames.playerNames.Length - 1; i > 0; i--)
+    for (int i = PlayerNamesData.playerNames.Length - 1; i > 0; i--)
     {
       int j = Random.Range(0, i + 1);
-      (PlayerNames.playerNames[j], PlayerNames.playerNames[i]) = (PlayerNames.playerNames[i], PlayerNames.playerNames[j]);
+      (PlayerNamesData.playerNames[j], PlayerNamesData.playerNames[i]) = (PlayerNamesData.playerNames[i], PlayerNamesData.playerNames[j]);
     }
   }
 }

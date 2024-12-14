@@ -175,6 +175,8 @@ public class PlayerTank : MonoBehaviour
         lastShotStrengthValue = strengthValue; // Remember last shot strength
 
         // End turn
+        // TODO: Set the game to waiting mode until projectiles are destroyed or maxTime is reached
+        // TODO: After waiting made, end player turn and start consequences timer
         LevelManager.Instance.EndPlayerTurn();
         break;
     }

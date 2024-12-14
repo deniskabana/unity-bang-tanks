@@ -13,5 +13,5 @@ public struct PlayerSkin
 [System.Serializable]
 public class PlayerSkinSettings
 {
-  [SerializeField] public List<PlayerSkin> playerSkins = new List<PlayerSkin>();
+  [SerializeField] public List<PlayerSkin> playerSkins = new();
 }

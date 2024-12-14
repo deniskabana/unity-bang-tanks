@@ -2341,7 +2341,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17128f1559cfd4c2c95b237414e2d7fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debug: 1
+  debug: 0
   touchControlsEnabled: 1
   animationsEnabled: 1
   animationStopThreshold: 0.1
@@ -2389,8 +2389,8 @@ MonoBehaviour:
   debug: 0
   enableCameraAnimation: 1
   resolutionChangePollTime: 1
-  cameraZoomedOutRatio: 0.74
-  cameraZoomedInRatio: 0.5
+  cameraZoomedOutRatio: 0.8
+  cameraZoomedInRatio: 0.56
   cameraSpeedZoom: 1.35
   cameraSpeedMove: 1.35
   constrainCameraBoundaries: 1

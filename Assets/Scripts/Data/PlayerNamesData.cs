@@ -1,4 +1,4 @@
-public static class PlayerNames
+public static class PlayerNamesData
 {
   // Pseudo-random 5 letter long player names
   // - easy to read
