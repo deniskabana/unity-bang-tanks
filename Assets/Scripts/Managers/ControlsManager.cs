@@ -9,7 +9,9 @@ public enum ControlType
     Right,
     Shoot,
     Pause,
-    Fullscreen
+    Fullscreen,
+    WeaponNext,
+    WeaponPrevious
 }
 
 public class ControlsManager : MonoBehaviour
@@ -86,7 +88,7 @@ public class ControlsManager : MonoBehaviour
                 OnControlDown?.Invoke(ControlType.Shoot);
                 break;
             case ControlType.Pause:
-                Debug.Log("Pause control pressed; not implemented");
+                Debug.LogError("Pause control pressed; not implemented");
                 OnControlDown?.Invoke(ControlType.Pause);
                 break;
             case ControlType.Fullscreen:
@@ -112,7 +114,7 @@ public class ControlsManager : MonoBehaviour
                 OnControlUp?.Invoke(ControlType.Shoot);
                 break;
             case ControlType.Pause:
-                Debug.Log("Pause control released; not implemented");
+                Debug.LogError("Pause control released; not implemented");
                 OnControlUp?.Invoke(ControlType.Pause);
                 break;
         }

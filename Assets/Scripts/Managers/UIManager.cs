@@ -38,6 +38,7 @@ public struct UIManagerReferences
 
     [Header("Strength Indicator")]
     public RectTransform strengthIndicatorHandle;
+    public RectTransform strengthIndicatorHandleGhost;
     public RectTransform strengthIndicatorRange;
 }
 
@@ -108,6 +109,8 @@ public class UIManager : MonoBehaviour
         references.touchStageAim.gameObject.SetActive(true);
         references.touchStageShootStrength.gameObject.SetActive(true);
 
+        references.strengthIndicatorHandleGhost.gameObject.SetActive(false);
+
         PlayAnimationIn(references.touchStageMovement.gameObject, true);
         PlayAnimationOut(references.touchStageAim.gameObject, true);
         PlayAnimationOut(references.touchStageShootStrength.gameObject, true);
@@ -169,6 +172,7 @@ public class UIManager : MonoBehaviour
         public float maxPos;
         public float speed;
         public float currentValue; // 0 to 1
+        public float ghostValue;
         public bool isIncreasing;
     }
     StrengthIndicatorStatus strengthIndicatorStatus;
@@ -180,9 +184,19 @@ public class UIManager : MonoBehaviour
         RectTransform rt = references.strengthIndicatorHandle;
         if (!rt) return;
 
+        RectTransform rtGhost = references.strengthIndicatorHandleGhost;
+
         float newX = Mathf.Lerp(strengthIndicatorStatus.minPos, strengthIndicatorStatus.maxPos, strengthIndicatorStatus.currentValue);
         rt.anchoredPosition = new Vector2(newX, rt.anchoredPosition.y);
 
+        // Ghost - last shot strength indicator
+        if (rtGhost)
+        {
+            float ghostX = Mathf.Lerp(strengthIndicatorStatus.minPos, strengthIndicatorStatus.maxPos, strengthIndicatorStatus.ghostValue);
+            rtGhost.anchoredPosition = new Vector2(ghostX, rtGhost.anchoredPosition.y);
+        }
+
+        // Shot strength indicator
         if (strengthIndicatorStatus.isIncreasing)
         {
             strengthIndicatorStatus.currentValue += Time.deltaTime * strengthIndicatorStatus.speed;
@@ -202,6 +216,9 @@ public class UIManager : MonoBehaviour
             }
         }
     }
+
+    // Animations
+    // --------------------------------------------------
 
     void PlayAnimationIn(GameObject uiObj, bool instant = false)
     {
@@ -332,6 +349,13 @@ public class UIManager : MonoBehaviour
     public static float GetStrengthIndicatorValue()
     {
         return Instance.strengthIndicatorStatus.currentValue;
+    }
+
+    public static void SetStrengthIndicatorGhostValue(float value)
+    {
+        if (Instance.debug) Debug.Log("UIManager: SetStrengthIndicatorGhostValue: " + value);
+        Instance.references.strengthIndicatorHandleGhost.gameObject.SetActive(true);
+        Instance.strengthIndicatorStatus.ghostValue = value;
     }
 
     public static void UpdateActiveGasBar(float value)

@@ -110,8 +110,8 @@ public class PlayersTurnManager : MonoBehaviour
 
       if (gs.playerPositioning == GameplaySettings.PlayerPositioning.Random)
       {
-        float playerMinDistance = worldWidth * 0.05f; // 5% of the world width
-        float sideSafeDistance = worldWidth * 0.1f;
+        float playerMinDistance = worldWidth * 0.05f; // TODO: Make this a setting
+        float sideSafeDistance = worldWidth * 0.1f; // TODO: Make this a setting
         bool positionValid;
 
         do

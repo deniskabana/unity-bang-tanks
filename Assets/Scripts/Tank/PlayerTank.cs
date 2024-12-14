@@ -29,7 +29,8 @@ public class PlayerTank : MonoBehaviour
   private PlayerState state;
   private TankPhysics physicsScript;
   private TankShooting shootingScript;
-  PlayerSkin skin;
+  private PlayerSkin skin;
+  private float lastShotStrengthValue = -1;
 
   private int selfPlayerIndex;
 
@@ -159,6 +160,7 @@ public class PlayerTank : MonoBehaviour
         state.turnStage = PlayerState.TurnStage.Shooting;
         UIManager.SetTouchControlsStage(state.turnStage);
         UIManager.AnimateStrengthIndicator();
+        if (lastShotStrengthValue != -1) UIManager.SetStrengthIndicatorGhostValue(lastShotStrengthValue);
         break;
 
       case PlayerState.TurnStage.Shooting:
@@ -170,6 +172,7 @@ public class PlayerTank : MonoBehaviour
         CameraManager.TrackObject(bullet); // Track bullet
         UIManager.SetTouchControlsStage(null); // Reset touch controls
         UIManager.StopStrengthIndicator(); // Reset strength indicator
+        lastShotStrengthValue = strengthValue; // Remember last shot strength
 
         // End turn
         LevelManager.Instance.EndPlayerTurn();
