@@ -22,13 +22,19 @@ public struct UIManagerReferences
     public RectTransform emptyBarReference;
     public RectTransform hudArmorBarMask;
 
-    [Header("HUD / TankInfo")]
+    [Header("HUD / Tank Info")]
     public Transform hudTankBody1;
     public Transform hudTankBody2;
     public RectTransform hudTankName;
     public RectTransform indicatorMovement;
     public RectTransform indicatorAim;
     public RectTransform indicatorShootStrength;
+
+    [Header("HUD / Weapon")]
+    public RectTransform hudWeaponArrowLeft;
+    public RectTransform hudWeaponArrowRight;
+    public RectTransform hudWeaponIcon;
+    public RectTransform hudWeaponName;
 
     [Header("Strength Indicator")]
     public RectTransform strengthIndicatorHandle;

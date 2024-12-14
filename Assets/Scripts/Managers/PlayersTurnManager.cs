@@ -140,7 +140,7 @@ public class PlayersTurnManager : MonoBehaviour
       playerObject.transform.localScale = new Vector3(gs.playerScale, gs.playerScale, 1);
       PlayerTank playerTank = playerObject.GetComponent<PlayerTank>();
       playerTank.Initialize(i, shuffledSkins[i % shuffledSkins.Length]);
-      playersState.Add(new PlayersState { name = playerNames[i], script = playerTank });
+      playersState.Add(new PlayersState { name = PlayerNames.playerNames[i], script = playerTank });
     }
   }
 
@@ -211,109 +211,10 @@ public class PlayersTurnManager : MonoBehaviour
 
   void ShufflePlayerNames()
   {
-    for (int i = playerNames.Length - 1; i > 0; i--)
+    for (int i = PlayerNames.playerNames.Length - 1; i > 0; i--)
     {
       int j = Random.Range(0, i + 1);
-      string temp = playerNames[i];
-      playerNames[i] = playerNames[j];
-      playerNames[j] = temp;
+      (PlayerNames.playerNames[j], PlayerNames.playerNames[i]) = (PlayerNames.playerNames[i], PlayerNames.playerNames[j]);
     }
   }
-
-  // Player names are 6 letters long, easy to read in monospace, easy to pronounce and remember
-  // and are well known names in English speaking countries and other countries as well
-  string[] playerNames = new string[]{
-    "Macaz",
-    "Puefe",
-    "Yaxoa",
-    "Lawmu",
-    "Yalur",
-    "Oksar",
-    "Elolo",
-    "Mexad",
-    "Ifipa",
-    "Yevli",
-    "Nitya",
-    "Unlig",
-    "Yaxen",
-    "Ayuto",
-    "Oseze",
-    "Jaciu",
-    "Vuwaa",
-    "Fexaw",
-    "Ehene",
-    "Imyez",
-    "Ogusu",
-    "Ekiji",
-    "Morbu",
-    "Etuno",
-    "Uhsom",
-    "Enhok",
-    "Bobek",
-    "Kvana",
-    "Furio",
-    "Lovzo",
-    "Merak",
-    "Civeb",
-    "Uzlup",
-    "Neora",
-    "Palpa",
-    "Donur",
-    "Twika",
-    "Rumid",
-    "Uteya",
-    "Koket",
-    "Yifoo",
-    "Pator",
-    "Rugel",
-    "Oxunu",
-    "Piski",
-    "Kurea",
-    "Vokor",
-    "Ihbas",
-    "Pozva",
-    "Ecahu",
-    "Yamki",
-    "Smino",
-    "Meaho",
-    "Upewi",
-    "Cocle",
-    "Obano",
-    "Erkel",
-    "Usoco",
-    "Gafne",
-    "Ilupo",
-    "Eleri",
-    "Ozupi",
-    "Yuoba",
-    "Nekas",
-    "Macsi",
-    "Asoyo",
-    "Vimgi",
-    "Mupoz",
-    "Pewib",
-    "Bazik",
-    "Elode",
-    "Anawi",
-    "Xurum",
-    "Nayal",
-    "Nikub",
-    "Xelea",
-    "Adzom",
-    "Rereu",
-    "Stepo",
-    "Dalor",
-    "Vihok",
-    "Ilseh",
-    "Myava",
-    "Kolno",
-    "Cecam",
-    "Wapif",
-    "Fodii",
-    "Jyela",
-    "Skegi",
-    "Moren",
-    "Tiday",
-    "Zedma"
-  };
 }
