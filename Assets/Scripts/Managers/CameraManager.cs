@@ -8,7 +8,7 @@ public class CameraManager : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] bool enableCameraAnimation = true;
-    [SerializeField] float resolutionChangePollTime = 1f;
+    [SerializeField] float resolutionChangePollTime = 0.1f; // 50ms
     [SerializeField] float cameraZoomedOutRatio = 0.86f; // Manually tested ratios
     [SerializeField] float cameraZoomedInRatio = 0.613f; // Manually tested ratios
     [SerializeField] float cameraSpeedZoom = 2f;

@@ -11,15 +11,25 @@ public class WeaponSelectionManager : MonoBehaviour
     [Header("Weapons data")]
     [SerializeField] private List<WeaponDetail> weaponsData;
 
-    // Start is called before the first frame update
-    void Start()
-    {
+    // Built-in methods
+    // --------------------------------------------------
 
+    void Awake()
+    {
+        Instance = this;
     }
 
-    // Update is called once per frame
-    void Update()
+    void Start()
     {
+        if (!Instance) Instance = this;
+    }
 
+    // Custom methods
+    // --------------------------------------------------
+
+    public static WeaponDetail GetWeaponDetail(int index)
+    {
+        if (Instance.debug) Debug.Log("WeaponSelectionManager - GetWeaponDetail(" + index + ")");
+        return Instance.weaponsData[Mathf.Clamp(index, 0, Instance.weaponsData.Count - 1)];
     }
 }

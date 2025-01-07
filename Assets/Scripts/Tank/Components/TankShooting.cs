@@ -18,6 +18,7 @@ public class TankShooting : MonoBehaviour
 
     private float shotForce = 20;  // Force to apply to the bullet
     private float shotAngle = 0;  // Force to apply to the bullet
+    private int weaponIndex = 0;  // Index of the current weapon
 
     // Custom methods
     // --------------------------------------------------
@@ -50,10 +51,33 @@ public class TankShooting : MonoBehaviour
 
     public GameObject Shoot(float force)
     {
-        shotForce = force; // This should be retrieved from the UI
-        GameObject bullet = Instantiate(bulletPrefab, firingPoint.position, firingPoint.rotation);
+        WeaponDetail currentWeapon = GetCurrentWeapon();
+        shotForce = force; // This is retrieved from UI
+        GameObject bullet = Instantiate(currentWeapon.projectilePrefab, firingPoint.position, firingPoint.rotation);
         Vector3 direction = firingPoint.position - cannonTransform.position;
-        bullet.GetComponent<BasicBullet>().Initialize(direction, shotForce);
+
+        switch (currentWeapon.type)
+        {
+            case ProjectileType.Cannonball:
+                bullet.GetComponent<BasicBullet>().Initialize(direction, shotForce, currentWeapon);
+                break;
+
+            case ProjectileType.Grenade:
+                // bullet.GetComponent<Grenade>().Initialize(direction, shotForce);
+                Debug.LogError("Grenade not implemented yet");
+                break;
+        }
+
         return bullet;
+    }
+
+    public void SetWeaponIndex(int index)
+    {
+        weaponIndex = index;
+    }
+
+    public WeaponDetail GetCurrentWeapon()
+    {
+        return WeaponSelectionManager.GetWeaponDetail(weaponIndex);
     }
 }

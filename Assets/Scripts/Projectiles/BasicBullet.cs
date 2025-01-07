@@ -7,7 +7,9 @@ public class BasicBullet : MonoBehaviour
 {
     [SerializeField] Rigidbody2D rb;
     [SerializeField, Range(0f, 100f)] float explosionStrengthRation = 0.86f;
-    [SerializeField] float maxLifeTime = 13f;
+
+    private float baseDamage = 1f;
+    private float maxProjectileLifeTime = 5f;
 
     // Built-in methods
     // --------------------------------------------------
@@ -22,10 +24,13 @@ public class BasicBullet : MonoBehaviour
     // Custom methods
     // --------------------------------------------------
 
-    public void Initialize(Vector3 direction, float shotForce)
+    public void Initialize(Vector3 direction, float shotForce, WeaponDetail weapon)
     {
         rb.AddForce(direction * shotForce);
         StartCoroutine(DestroyAfterTime());
+
+        baseDamage = weapon.baseDamage;
+        maxProjectileLifeTime = weapon.maxProjectileLifeTime;
     }
 
     void HandleCollision()
@@ -36,7 +41,7 @@ public class BasicBullet : MonoBehaviour
 
     IEnumerator DestroyAfterTime()
     {
-        yield return new WaitForSeconds(maxLifeTime);
+        yield return new WaitForSeconds(maxProjectileLifeTime);
         StartCoroutine(DestroyObject());
     }
 
