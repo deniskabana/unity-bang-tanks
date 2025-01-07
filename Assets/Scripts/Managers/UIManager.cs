@@ -1,6 +1,10 @@
+using System.Collections.Generic;
 using TMPro;
 using Unity;
+using UnityEditor.Build.Content;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.UI;
 
 [System.Serializable]
 public struct UIManagerReferences
@@ -18,9 +22,9 @@ public struct UIManagerReferences
 
     [Header("HUD")]
     public RectTransform hudContainer;
-    public RectTransform hudGasBarMask;
-    public RectTransform emptyBarReference;
-    public RectTransform hudArmorBarMask;
+    public RectTransform hudHealthBarSlider;
+    public RectTransform hudBatteryBarGroup;
+    public GameObject hudBatteryBarSliderPrefab;
 
     [Header("HUD / Tank Info")]
     public Transform hudTankBody1;
@@ -54,7 +58,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] float uiMoveSpeed = 6;
 
     [Header("Advanced")]
-    [SerializeField, Range(0.1f, 10f)] float strengthIndicatorSpeed = 1f;
+    [SerializeField, Range(0.01f, 2f)] float strengthIndicatorSpeed = 0.4f;
     [SerializeField] UIManagerReferences references;
     [SerializeField] float minStrengthIndicatorXPos = -100;
     [SerializeField] float maxStrengthIndicatorXPos = 100;
@@ -69,7 +73,7 @@ public class UIManager : MonoBehaviour
     float hudYOff = Screen.height / 3;
     float touchControlsYDefault;
     float hudYDefault;
-    float barDefaultWidth;
+    List<GameObject> batteryBars = new List<GameObject>();
     PlayerState.TurnStage touchControlStage;
 
     // Build-in methods
@@ -118,9 +122,6 @@ public class UIManager : MonoBehaviour
         // Default Y positions
         touchControlsYDefault = references.touchControlsRt.localPosition.y;
         hudYDefault = references.hudContainer.localPosition.y;
-        // Default bar width (all bars are same width)
-        barDefaultWidth = references.emptyBarReference.sizeDelta.x;
-        ResetBars();
         // Touch controls listeners
         LevelManager.OnPlayerTurnStart.AddListener(ShowTouchControls);
         LevelManager.OnPlayerTurnEnd.AddListener(HideTouchControls);
@@ -358,27 +359,45 @@ public class UIManager : MonoBehaviour
         Instance.strengthIndicatorStatus.ghostValue = value;
     }
 
-    public static void UpdateActiveGasBar(float value)
+    void CreateBatteryBars(int amount)
     {
-        if (Instance.debug) Debug.Log("UIManager: UpdateActiveGasBar: " + value);
-        if (value < 0) return;
-        Instance.references.hudGasBarMask.sizeDelta =
-            new Vector2(value * Instance.barDefaultWidth, Instance.references.hudGasBarMask.sizeDelta.y);
+        if (debug) Debug.Log("UIManager: CreateBatteryBars: " + amount);
+
+        // Clear previous battery bars
+        foreach (GameObject go in batteryBars) Destroy(go);
+        batteryBars.Clear();
+
+        for (int i = 0; i < amount; i++)
+        {
+            GameObject go = Instantiate(references.hudBatteryBarSliderPrefab, references.hudBatteryBarGroup);
+            RectTransform rt = go.GetComponent<RectTransform>();
+            float width = rt.sizeDelta.x * rt.localScale.x * 1.1f;
+            rt.anchoredPosition = new Vector2(i * width, 0);
+            batteryBars.Add(go);
+        }
     }
 
-    public static void UpdateActiveArmorBar(float value)
+    public static void UpdateActiveBatteryBars(float currentValue, int batteryCapacity, int batteryAmount)
     {
-        if (Instance.debug) Debug.Log("UIManager: UpdateActiveArmorBar: " + value);
-        if (value < 0) return;
-        Instance.references.hudArmorBarMask.sizeDelta =
-            new Vector2(value * Instance.barDefaultWidth, Instance.references.hudArmorBarMask.sizeDelta.y);
+        if (Instance.debug) Debug.Log("UIManager: UpdateActiveBatteryBars: " + currentValue + " / " + batteryCapacity + " / " + batteryAmount);
+        if (currentValue < 0) return;
+        if (Instance.batteryBars.Count != batteryAmount) Instance.CreateBatteryBars(batteryAmount);
+
+        for (int i = 0; i < Instance.batteryBars.Count; i++)
+        {
+            Slider slider = Instance.batteryBars[i].GetComponent<Slider>();
+            slider.maxValue = batteryCapacity;
+            slider.value = Mathf.Clamp(currentValue - i * batteryCapacity, 0, batteryCapacity);
+        }
     }
 
-    public static void ResetBars()
+    public static void UpdateActiveHealthBar(float currentValue, float maxValue)
     {
-        if (Instance.debug) Debug.Log("UIManager: ResetBars");
-        UpdateActiveArmorBar(1);
-        UpdateActiveGasBar(1);
+        if (Instance.debug) Debug.Log("UIManager: UpdateActiveHealthBar: " + currentValue + " / " + maxValue);
+        if (currentValue < 0) return;
+        Slider slider = Instance.references.hudHealthBarSlider.GetComponent<Slider>();
+        slider.maxValue = maxValue;
+        slider.value = currentValue;
     }
 
     public static void SetActiveTankHUDSkin(PlayerSkin playerSkin)

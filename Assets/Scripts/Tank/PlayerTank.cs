@@ -7,9 +7,15 @@ public struct PlayerState
 {
   public bool isPlayingTurn;
   public int health;
-  public float fuel;
+  public int maxHealth;
+  public float energy;
   public enum TurnStage { Moving, Aiming, Shooting }
   public TurnStage turnStage;
+
+  // Upgrades
+  public int batteryCapacity;
+  public int batteryRechargeRate;
+  public int batteryAmount;
 
   // Shooting, weapon choice, etc.
   // TODO: prepare for multiple weapons
@@ -34,8 +40,6 @@ public class PlayerTank : MonoBehaviour
 
   private int selfPlayerIndex;
 
-  readonly float fuelDepletionRate = 20f;
-
   // Built-in methods
   // --------------------------------------------------
 
@@ -48,19 +52,15 @@ public class PlayerTank : MonoBehaviour
     if (ControlsManager.GetInput(ControlType.Left)) inputX = -1;
     if (ControlsManager.GetInput(ControlType.Right)) inputX = 1;
 
-    if (ControlsManager.GetInput(ControlType.Shoot))
-    {
-    }
-
     if (state.turnStage == PlayerState.TurnStage.Moving)
     {
       // Handling horizontal movement
-      if (inputX != 0 && state.fuel > 0 && physicsScript.isGrounded)
+      if (inputX != 0 && state.energy > 0 && physicsScript.isGrounded)
       {
         // Deplete fuel even if the tank can not move
-        state.fuel -= fuelDepletionRate * Time.deltaTime;
+        state.energy -= LevelManager.Instance.gameplaySettings.energyDepletionRate * Time.deltaTime;
         GameplaySettings gs = LevelManager.Instance.gameplaySettings;
-        UIManager.UpdateActiveGasBar(state.fuel / gs.maxFuelPerRound);
+        UIManager.UpdateActiveBatteryBars(state.energy, state.batteryCapacity, state.batteryAmount);
         physicsScript.HandleMovement(inputX);
       }
     }
@@ -112,19 +112,23 @@ public class PlayerTank : MonoBehaviour
     state = new PlayerState
     {
       isPlayingTurn = false,
-      health = gs.maxPlayerHealth,
-      fuel = gs.maxFuelPerRound,
-      turnStage = PlayerState.TurnStage.Moving
+      health = gs.maxPlayerHealth / 2,
+      maxHealth = gs.maxPlayerHealth,
+      energy = gs.batteryCapacity * gs.batteryAmountStart,
+      turnStage = PlayerState.TurnStage.Moving,
+      batteryCapacity = gs.batteryCapacity,
+      batteryAmount = gs.batteryAmountStart,
+      batteryRechargeRate = gs.batteryRechargeRate
     };
   }
 
   public void HandleTurnStart()
   {
     state.isPlayingTurn = true;
-    state.fuel = LevelManager.Instance.gameplaySettings.maxFuelPerRound;
+    state.energy = Mathf.Min(state.energy + state.batteryRechargeRate * state.batteryCapacity, state.batteryCapacity * state.batteryAmount);
     state.turnStage = PlayerState.TurnStage.Moving;
-    UIManager.UpdateActiveGasBar(1);
-    UIManager.UpdateActiveArmorBar(state.health / LevelManager.Instance.gameplaySettings.maxPlayerHealth);
+    UIManager.UpdateActiveBatteryBars(state.energy, state.batteryCapacity, state.batteryAmount);
+    UIManager.UpdateActiveHealthBar(state.health, state.maxHealth);
     UIManager.SetTouchControlsStage(state.turnStage);
   }
 
@@ -137,7 +141,7 @@ public class PlayerTank : MonoBehaviour
   {
     Debug.Log("Player took damage: " + damage);
     state.health -= damage;
-    UIManager.UpdateActiveArmorBar(state.health / LevelManager.Instance.gameplaySettings.maxPlayerHealth);
+    UIManager.UpdateActiveHealthBar(state.health, state.maxHealth);
 
     if (state.health <= 0) LevelManager.Instance.GameOver();
   }
