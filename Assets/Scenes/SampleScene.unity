@@ -2325,6 +2325,7 @@ MonoBehaviour:
     strengthIndicatorHandle: {fileID: 1072215501}
     strengthIndicatorHandleGhost: {fileID: 751809311}
     strengthIndicatorRange: {fileID: 426374051}
+    damagePopupPrefab: {fileID: 4662842122155737726, guid: fb055424d9758494190913cc0f48a01e, type: 3}
   minStrengthIndicatorXPos: -171
   maxStrengthIndicatorXPos: 159
 --- !u!114 &624826807

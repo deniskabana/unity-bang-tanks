@@ -30,11 +30,13 @@ public class ExplosionManager : MonoBehaviour
     // Custom methods
     // --------------------------------------------------
 
-    public void CreateExplosion(float radius, Vector3 position)
+    public void CreateExplosion(float radius, Vector3 position, float damage)
     {
         // Create explosion GameObject
         GameObject explosion = Instantiate(explosionPrefab, position, Quaternion.identity, explosionParent);
         Instantiate(explosionParticlesPrefab, position, Quaternion.identity).transform.localScale = new Vector3(radius, radius, 1);
+
+        explosion.GetComponent<ExplosionDamage>().explosionDamage = damage;
 
         // Set circle collider size to match the sprite size
         CircleCollider2D circleCollider = explosion.GetComponent<CircleCollider2D>();

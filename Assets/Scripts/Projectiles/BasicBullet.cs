@@ -33,7 +33,7 @@ public class BasicBullet : MonoBehaviour
 
     void HandleCollision()
     {
-        ExplosionManager.Instance.CreateExplosion(explosionStrengthRation, transform.position);
+        ExplosionManager.Instance.CreateExplosion(explosionStrengthRation, transform.position, baseDamage);
         StartCoroutine(DestroyObject());
     }
 

@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -71,22 +72,13 @@ public class PlayerTank : MonoBehaviour
     }
   }
 
-  void OnCollisionEnter2D(Collision2D collision)
-  {
-    if (collision.gameObject.CompareTag("Projectiles"))
-    {
-      int damage = collision.gameObject.GetComponent<BasicBullet>().baseDamage;
-      TakeDamage(damage);
-    }
-  }
-
   void OnTriggerEnter2D(Collider2D collision)
   {
     if (collision.gameObject.CompareTag("Explosion"))
     {
       float minDamageRatio = 0.5f;
       float radius = collision.GetComponent<CircleCollider2D>().radius;
-      float maxDamage = ExplosionManager.Instance.maxExplosionDamage;
+      float maxDamage = collision.GetComponent<ExplosionDamage>().explosionDamage; // Bullet will pass the damage value to explosion
       float distance = Vector2.Distance(transform.position, collision.transform.position);
       int damage = Mathf.FloorToInt(Mathf.Lerp(maxDamage, minDamageRatio * maxDamage, distance / radius));
       TakeDamage(damage);
@@ -147,7 +139,17 @@ public class PlayerTank : MonoBehaviour
     state.health -= damage;
     UIManager.UpdateActiveHealthBar(state.health, state.maxHealth);
 
-    if (state.health <= 0) LevelManager.Instance.GameOver();
+    GameObject damagePopup = Instantiate(UIManager.Instance.references.damagePopupPrefab, transform.position, Quaternion.identity);
+    float scaleFactor = 2f;
+    damagePopup.transform.localScale = new Vector3(transform.localScale.x * scaleFactor, transform.localScale.y * scaleFactor, 1);
+    damagePopup.GetComponent<TextMeshPro>().text = damage.ToString();
+
+    if (state.health <= 0)
+    {
+      if (state.isPlayingTurn) LevelManager.Instance.EndPlayerTurn();
+      // TODO: Add explosion effect, particles and some climax to it
+      Destroy(gameObject);
+    }
   }
 
   // Event handlers

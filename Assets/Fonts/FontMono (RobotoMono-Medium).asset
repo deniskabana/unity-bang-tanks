@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: RobotoMono-Medium SDF Material
-  m_Shader: {fileID: 4800000, guid: 68e6db2ebdc24f95958faec2be5558d6, type: 3}
+  m_Shader: {fileID: 4800000, guid: dd89cf5b9246416f84610a006f916af7, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -168,9 +168,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
   m_Name: FontMono (RobotoMono-Medium)
   m_EditorClassIdentifier: 
-  hashCode: 434491209
+  hashCode: -2121714903
   material: {fileID: -7409214681997741846}
-  materialHashCode: -283818039
+  materialHashCode: 917829993
   m_Version: 1.1.0
   m_SourceFontFileGUID: c4f3b2dae5ac94cf4b2860cc5387e0ab
   m_SourceFontFile_EditorRef: {fileID: 12800000, guid: c4f3b2dae5ac94cf4b2860cc5387e0ab, type: 3}

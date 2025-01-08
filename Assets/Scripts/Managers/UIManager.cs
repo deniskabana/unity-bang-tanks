@@ -42,6 +42,9 @@ public struct UIManagerReferences
     public RectTransform strengthIndicatorHandle;
     public RectTransform strengthIndicatorHandleGhost;
     public RectTransform strengthIndicatorRange;
+
+    [Header("In game UI prefabs")]
+    public GameObject damagePopupPrefab;
 }
 
 public class UIManager : MonoBehaviour
@@ -58,7 +61,7 @@ public class UIManager : MonoBehaviour
 
     [Header("Advanced")]
     [SerializeField, Range(0.01f, 2f)] float strengthIndicatorSpeed = 0.4f;
-    [SerializeField] UIManagerReferences references;
+    [SerializeField] public UIManagerReferences references;
     [SerializeField] float minStrengthIndicatorXPos = -100;
     [SerializeField] float maxStrengthIndicatorXPos = 100;
 
