@@ -1,9 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
-using Unity;
-using UnityEditor.Build.Content;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 [System.Serializable]
@@ -24,6 +21,7 @@ public struct UIManagerReferences
     public RectTransform hudContainer;
     public RectTransform hudHealthBarSlider;
     public RectTransform hudBatteryBarGroup;
+    public RectTransform hudBatteryRechargeRateText;
     public GameObject hudBatteryBarSliderPrefab;
 
     [Header("HUD / Tank Info")]
@@ -56,6 +54,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] bool animationsEnabled = true;
     [SerializeField] float animationStopThreshold = 0.1f;
     [SerializeField] float uiMoveSpeed = 6;
+    [SerializeField, Range(0f, 1f)] float emptyBatteryBarAlphaValue = 0.75f;
 
     [Header("Advanced")]
     [SerializeField, Range(0.01f, 2f)] float strengthIndicatorSpeed = 0.4f;
@@ -377,17 +376,48 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public static void UpdateActiveBatteryBars(float currentValue, int batteryCapacity, int batteryAmount)
+    public static void UpdateActiveBatteryBars(float currentValue, int batteryCapacity, int batteryAmount, int batteryRechargeRate)
     {
         if (Instance.debug) Debug.Log("UIManager: UpdateActiveBatteryBars: " + currentValue + " / " + batteryCapacity + " / " + batteryAmount);
         if (currentValue < 0) return;
         if (Instance.batteryBars.Count != batteryAmount) Instance.CreateBatteryBars(batteryAmount);
+
+        Instance.references.hudBatteryRechargeRateText.GetComponent<TextMeshProUGUI>().text = "+" + batteryRechargeRate;
 
         for (int i = 0; i < Instance.batteryBars.Count; i++)
         {
             Slider slider = Instance.batteryBars[i].GetComponent<Slider>();
             slider.maxValue = batteryCapacity;
             slider.value = Mathf.Clamp(currentValue - i * batteryCapacity, 0, batteryCapacity);
+
+            if (slider.value > 0 && slider.value < 0.2f * slider.maxValue)
+            {
+                Animation anim = Instance.batteryBars[i].GetComponent<Animation>();
+                if (!anim.isPlaying)
+                {
+                    anim.wrapMode = WrapMode.Loop;
+                    anim.Play();
+                }
+            }
+            else
+            {
+                Animation anim = Instance.batteryBars[i].GetComponent<Animation>();
+                if (anim.isPlaying)
+                {
+                    anim.Stop();
+                }
+
+                Instance.batteryBars[i].transform.Find("Fill Area").GetComponent<CanvasGroup>().alpha = 1;
+            }
+
+            if (slider.value == 0)
+            {
+                Instance.batteryBars[i].GetComponent<CanvasGroup>().alpha = Instance.emptyBatteryBarAlphaValue;
+            }
+            else
+            {
+                Instance.batteryBars[i].GetComponent<CanvasGroup>().alpha = 1;
+            }
         }
     }
 

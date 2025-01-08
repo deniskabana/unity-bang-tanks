@@ -60,7 +60,7 @@ public class PlayerTank : MonoBehaviour
         // Deplete fuel even if the tank can not move
         state.energy -= LevelManager.Instance.gameplaySettings.energyDepletionRate * Time.deltaTime;
         GameplaySettings gs = LevelManager.Instance.gameplaySettings;
-        UIManager.UpdateActiveBatteryBars(state.energy, state.batteryCapacity, state.batteryAmount);
+        UIManager.UpdateActiveBatteryBars(state.energy, state.batteryCapacity, state.batteryAmount, state.batteryRechargeRate);
         physicsScript.HandleMovement(inputX);
       }
     }
@@ -112,7 +112,7 @@ public class PlayerTank : MonoBehaviour
     state = new PlayerState
     {
       isPlayingTurn = false,
-      health = gs.maxPlayerHealth / 2,
+      health = gs.maxPlayerHealth,
       maxHealth = gs.maxPlayerHealth,
       energy = gs.batteryCapacity * gs.batteryAmountStart,
       turnStage = PlayerState.TurnStage.Moving,
@@ -127,7 +127,7 @@ public class PlayerTank : MonoBehaviour
     state.isPlayingTurn = true;
     state.energy = Mathf.Min(state.energy + state.batteryRechargeRate * state.batteryCapacity, state.batteryCapacity * state.batteryAmount);
     state.turnStage = PlayerState.TurnStage.Moving;
-    UIManager.UpdateActiveBatteryBars(state.energy, state.batteryCapacity, state.batteryAmount);
+    UIManager.UpdateActiveBatteryBars(state.energy, state.batteryCapacity, state.batteryAmount, state.batteryRechargeRate);
     UIManager.UpdateActiveHealthBar(state.health, state.maxHealth);
     UIManager.SetTouchControlsStage(state.turnStage);
   }
