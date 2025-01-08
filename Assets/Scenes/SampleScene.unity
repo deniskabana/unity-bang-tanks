@@ -2262,7 +2262,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debug: 0
-  actionDelay: 0.15
+  maxExplosionDamage: 20
+  visualActionDelay: 0.15
   explosionParent: {fileID: 476266739}
   explosionPrefab: {fileID: 7781946742746118445, guid: a6ee80721016a43cab1eb217bee1d384, type: 3}
   explosionParticlesPrefab: {fileID: 570106876239635423, guid: caa4eac872a85474b88a5a12d1c5b9da, type: 3}
@@ -2366,7 +2367,7 @@ MonoBehaviour:
     projectilePrefab: {fileID: 5882382787347245810, guid: 367fd9135c1924428a25c8fbb21d038d, type: 3}
     hudIcon: {fileID: 21300000, guid: 130a6dcc2dbcf4b0ba6678931b4b4196, type: 3}
     type: 0
-    baseDamage: 12
+    baseDamage: 25
     projectileSpawnCount: 1
     maxProjectileLifeTime: 5
     projectileMass: 1
@@ -2376,17 +2377,17 @@ MonoBehaviour:
     projectilePrefab: {fileID: 5882382787347245810, guid: 367fd9135c1924428a25c8fbb21d038d, type: 3}
     hudIcon: {fileID: 21300000, guid: 0b78b6bb75b6f4ac1b059a344e960bd5, type: 3}
     type: 0
-    baseDamage: 26
+    baseDamage: 50
     projectileSpawnCount: 1
     maxProjectileLifeTime: 5
     projectileMass: 2.5
     explodeOnImpact: 1
-  - isEnabled: 0
+  - isEnabled: 1
     slug: triple_shot
     projectilePrefab: {fileID: 5882382787347245810, guid: 367fd9135c1924428a25c8fbb21d038d, type: 3}
     hudIcon: {fileID: 21300000, guid: e9bba11719a7449bbbfcf0cc45025469, type: 3}
     type: 0
-    baseDamage: 8
+    baseDamage: 10
     projectileSpawnCount: 3
     maxProjectileLifeTime: 5
     projectileMass: 1

@@ -77,8 +77,6 @@ public class PlayerTank : MonoBehaviour
     {
       int damage = collision.gameObject.GetComponent<BasicBullet>().baseDamage;
       TakeDamage(damage);
-      Debug.Log("Player hit by projectile");
-      return;
     }
   }
 
@@ -91,11 +89,7 @@ public class PlayerTank : MonoBehaviour
       float maxDamage = ExplosionManager.Instance.maxExplosionDamage;
       float distance = Vector2.Distance(transform.position, collision.transform.position);
       int damage = Mathf.FloorToInt(Mathf.Lerp(maxDamage, minDamageRatio * maxDamage, distance / radius));
-
       TakeDamage(damage);
-
-      Debug.Log("Player hit by explosion! Taking damage: " + damage);
-      return;
     }
   }
 
@@ -150,7 +144,6 @@ public class PlayerTank : MonoBehaviour
 
   public void TakeDamage(int damage)
   {
-    Debug.Log("Player took damage: " + damage);
     state.health -= damage;
     UIManager.UpdateActiveHealthBar(state.health, state.maxHealth);
 

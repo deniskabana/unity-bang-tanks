@@ -15,7 +15,7 @@ public struct WeaponDetail
   public GameObject projectilePrefab;
   public Sprite hudIcon;
   public ProjectileType type;
-  public float baseDamage;
+  public int baseDamage;
   public int projectileSpawnCount;
   public float maxProjectileLifeTime;
   public float projectileMass;

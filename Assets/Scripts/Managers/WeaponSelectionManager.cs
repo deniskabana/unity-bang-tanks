@@ -29,7 +29,8 @@ public class WeaponSelectionManager : MonoBehaviour
 
     public static WeaponDetail GetWeaponDetail(int index)
     {
-        if (Instance.debug) Debug.Log("WeaponSelectionManager - GetWeaponDetail(" + index + ")");
-        return Instance.weaponsData[Mathf.Clamp(index, 0, Instance.weaponsData.Count - 1)];
+        int actualIndex = Mathf.Clamp(index, 0, Instance.weaponsData.Count - 1);
+        if (Instance.debug) Debug.Log("WeaponSelectionManager - GetWeaponDetail(" + index + "): " + Instance.weaponsData[actualIndex].slug);
+        return Instance.weaponsData[actualIndex];
     }
 }
