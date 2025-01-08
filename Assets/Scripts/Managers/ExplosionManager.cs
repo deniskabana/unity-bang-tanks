@@ -33,7 +33,7 @@ public class ExplosionManager : MonoBehaviour
     {
         // Create explosion GameObject
         GameObject explosion = Instantiate(explosionPrefab, position, Quaternion.identity, explosionParent);
-        Instantiate(explosionParticlesPrefab, position, Quaternion.identity);
+        Instantiate(explosionParticlesPrefab, position, Quaternion.identity).transform.localScale = new Vector3(radius, radius, 1);
 
         // Set circle collider size to match the sprite size
         CircleCollider2D circleCollider = explosion.GetComponent<CircleCollider2D>();

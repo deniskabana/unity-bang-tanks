@@ -76,13 +76,17 @@ public class PlayerTank : MonoBehaviour
   {
     if (collision.gameObject.CompareTag("Projectiles"))
     {
-      TakeDamage(25);
+      TakeDamage(25); // TODO: Get damage from projectile
       Debug.Log("Player hit by projectile");
       return;
     }
+  }
+
+  void OnTriggerEnter2D(Collider2D collision)
+  {
     if (collision.gameObject.CompareTag("Explosion"))
     {
-      TakeDamage(10);
+      TakeDamage(10); // TODO: Ratio by distance from center of explosion
       Debug.Log("Player hit by explosion");
       return;
     }

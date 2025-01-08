@@ -6,7 +6,7 @@ using UnityEngine;
 public class BasicBullet : MonoBehaviour
 {
     [SerializeField] Rigidbody2D rb;
-    [SerializeField, Range(0f, 100f)] float explosionStrengthRation = 0.86f;
+    [SerializeField, Range(0f, 100f)] float explosionStrengthRation = 4f;
 
     private float baseDamage = 1f;
     private float maxProjectileLifeTime = 5f;
