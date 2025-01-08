@@ -8,8 +8,9 @@ public class ExplosionManager : MonoBehaviour
 
     public bool debug = false;
 
-    [Header("Explosion Visuals")]
-    [SerializeField] float actionDelay = 0.15f;
+    [Header("Explosion")]
+    [SerializeField] public float maxExplosionDamage = 20f;
+    [SerializeField] float visualActionDelay = 0.15f;
 
     [Header("References")]
     [SerializeField] private Transform explosionParent;
@@ -42,14 +43,14 @@ public class ExplosionManager : MonoBehaviour
         // Create permanent terrain mask
         Sprite spriteForMask = CreateCircleSprite(radius, Color.black);
         SpriteMask spriteMaskComponent = explosion.GetComponent<SpriteMask>();
-        StartCoroutine(SetMaskAfterDelay(actionDelay, spriteMaskComponent, spriteForMask));
+        StartCoroutine(WaitSetMaskDisableCollider(visualActionDelay, spriteMaskComponent, spriteForMask));
     }
 
-    private IEnumerator SetMaskAfterDelay(float delay, SpriteMask spriteMask, Sprite mask)
+    private IEnumerator WaitSetMaskDisableCollider(float delay, SpriteMask spriteMask, Sprite mask)
     {
         yield return new WaitForSeconds(delay);
         spriteMask.sprite = mask; // Assign the explosion sprite to the SpriteMask component to uncover terrain
-        gameObject.tag = "Untagged";
+        spriteMask.gameObject.GetComponent<CircleCollider2D>().enabled = false; // Disable the collider to hits after explosion
     }
 
     Sprite CreateCircleSprite(float radius, Color color)

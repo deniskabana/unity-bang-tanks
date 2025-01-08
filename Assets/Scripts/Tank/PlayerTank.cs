@@ -59,7 +59,6 @@ public class PlayerTank : MonoBehaviour
       {
         // Deplete fuel even if the tank can not move
         state.energy -= LevelManager.Instance.gameplaySettings.energyDepletionRate * Time.deltaTime;
-        GameplaySettings gs = LevelManager.Instance.gameplaySettings;
         UIManager.UpdateActiveBatteryBars(state.energy, state.batteryCapacity, state.batteryAmount, state.batteryRechargeRate);
         physicsScript.HandleMovement(inputX);
       }
@@ -76,7 +75,8 @@ public class PlayerTank : MonoBehaviour
   {
     if (collision.gameObject.CompareTag("Projectiles"))
     {
-      TakeDamage(25); // TODO: Get damage from projectile
+      int damage = collision.gameObject.GetComponent<BasicBullet>().baseDamage;
+      TakeDamage(damage);
       Debug.Log("Player hit by projectile");
       return;
     }
@@ -86,8 +86,15 @@ public class PlayerTank : MonoBehaviour
   {
     if (collision.gameObject.CompareTag("Explosion"))
     {
-      TakeDamage(10); // TODO: Ratio by distance from center of explosion
-      Debug.Log("Player hit by explosion");
+      float minDamageRatio = 0.5f;
+      float radius = collision.GetComponent<CircleCollider2D>().radius;
+      float maxDamage = ExplosionManager.Instance.maxExplosionDamage;
+      float distance = Vector2.Distance(transform.position, collision.transform.position);
+      int damage = Mathf.FloorToInt(Mathf.Lerp(maxDamage, minDamageRatio * maxDamage, distance / radius));
+
+      TakeDamage(damage);
+
+      Debug.Log("Player hit by explosion! Taking damage: " + damage);
       return;
     }
   }
