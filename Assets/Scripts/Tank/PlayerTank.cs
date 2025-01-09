@@ -76,11 +76,11 @@ public class PlayerTank : MonoBehaviour
   {
     if (collision.gameObject.CompareTag("Explosion"))
     {
-      float minDamageRatio = 0.5f;
+      float minDamageRatio = 0.3f;
       float radius = collision.GetComponent<CircleCollider2D>().radius;
       float maxDamage = collision.GetComponent<ExplosionDamage>().explosionDamage; // Bullet will pass the damage value to explosion
       float distance = Vector2.Distance(transform.position, collision.transform.position);
-      float tolerance = 0.10f;
+      float tolerance = radius * 0.1f;
       int damage = Mathf.CeilToInt(Mathf.Lerp(maxDamage, minDamageRatio * maxDamage, distance / (radius + tolerance)));
       TakeDamage(damage);
     }
