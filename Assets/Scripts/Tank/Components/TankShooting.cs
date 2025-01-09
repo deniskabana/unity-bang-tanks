@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class TankShooting : MonoBehaviour
 {
@@ -31,14 +33,13 @@ public class TankShooting : MonoBehaviour
         shotAngle = 30f;
         AimCannonInstantly(shotAngle);
         weapons = WeaponSelectionManager.GetWeaponsData();
-
-        ControlsManager.OnControlUp.AddListener(OnNextWeaponControlButton);
     }
 
     public void Initialize()
     {
         shotAngle = Random.Range(-cannonMinMaxAngle / 2, cannonMinMaxAngle / 2);
         AimCannonInstantly(shotAngle);
+        weapons = WeaponSelectionManager.GetWeaponsData();
         shotForce = 0f;
     }
 
@@ -58,40 +59,43 @@ public class TankShooting : MonoBehaviour
     {
         WeaponDetail currentWeapon = GetCurrentWeapon();
         shotForce = force; // This is retrieved from UI
-        GameObject bullet = Instantiate(currentWeapon.projectilePrefab, firingPoint.position, firingPoint.rotation);
-        Vector3 direction = firingPoint.position - cannonTransform.position;
 
-        switch (currentWeapon.type)
+        // TODO: ProjectileType.Grenade and others support
+
+        // ProjectileType.Bullet
+        if (currentWeapon.projectileSpawnCount == 1)
         {
-            case ProjectileType.Cannonball:
-                bullet.GetComponent<BasicBullet>().Initialize(direction, shotForce, currentWeapon);
-                break;
-
-            case ProjectileType.Grenade:
-                // bullet.GetComponent<Grenade>().Initialize(direction, shotForce);
-                Debug.LogError("Grenade not implemented yet");
-                break;
+            GameObject bullet = Instantiate(currentWeapon.projectilePrefab, firingPoint.position, firingPoint.rotation);
+            Vector3 direction = firingPoint.position - cannonTransform.position;
+            bullet.GetComponent<BasicBullet>().Initialize(direction, shotForce, currentWeapon);
+            return bullet;
         }
+        else
+        {
+            // ProjectileType.Spread
+            List<GameObject> bullets = new List<GameObject>();
+            for (int i = 0; i < currentWeapon.projectileSpawnCount; i++)
+            {
+                float projectileSpread = 10f;
 
-        return bullet;
+                GameObject bullet = Instantiate(currentWeapon.projectilePrefab, firingPoint.position, firingPoint.rotation);
+                Vector3 direction = firingPoint.position - cannonTransform.position;
+                // Spread the bullets
+                direction = Quaternion.Euler(0, 0, Random.Range(-projectileSpread, projectileSpread)) * direction;
+                bullet.GetComponent<BasicBullet>().Initialize(direction, shotForce, currentWeapon);
+                bullets.Add(bullet);
+            }
+            return bullets[0];
+        }
     }
 
     public void SetNextWeapon()
     {
         weaponIndex = (weaponIndex + 1) % weapons.Count;
-        UIManager.SetActiveWeapon(weapons[weaponIndex]);
     }
 
     public WeaponDetail GetCurrentWeapon()
     {
         return weapons[weaponIndex];
-    }
-
-    private void OnNextWeaponControlButton(ControlType controlType)
-    {
-        if (controlType == ControlType.WeaponNext)
-        {
-            SetNextWeapon();
-        }
     }
 }

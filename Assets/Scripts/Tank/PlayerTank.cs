@@ -102,6 +102,7 @@ public class PlayerTank : MonoBehaviour
     physicsScript.Initialize();
 
     ControlsManager.OnControlUp.AddListener(OnShootButtonReleased);
+    ControlsManager.OnControlUp.AddListener(OnNextWeaponButtonReleased);
   }
 
   void SetInitialState()
@@ -192,6 +193,13 @@ public class PlayerTank : MonoBehaviour
         LevelManager.Instance.EndPlayerTurn();
         break;
     }
+  }
+
+  void OnNextWeaponButtonReleased(ControlType controlType)
+  {
+    if (controlType != ControlType.WeaponNext || !state.isPlayingTurn) return;
+    shootingScript.SetNextWeapon();
+    UIManager.SetActiveWeapon(shootingScript.GetCurrentWeapon());
   }
 
   public void SetSkin(PlayerSkin _skin)
