@@ -59,9 +59,9 @@ public class PlayerTank : MonoBehaviour
       if (inputX != 0 && state.energy > 0 && physicsScript.isGrounded)
       {
         // Deplete fuel even if the tank can not move
-        state.energy -= LevelManager.Instance.gameplaySettings.energyDepletionRate * Time.deltaTime;
         UIManager.UpdateActiveBatteryBars(state.energy, state.batteryCapacity, state.batteryAmount, state.batteryRechargeRate);
-        physicsScript.HandleMovement(inputX);
+        float moveSpeed = physicsScript.HandleMovement(inputX);
+        if (moveSpeed != 0) state.energy -= LevelManager.Instance.gameplaySettings.energyDepletionRate * Time.deltaTime;
       }
     }
 
@@ -129,7 +129,8 @@ public class PlayerTank : MonoBehaviour
     UIManager.UpdateActiveBatteryBars(state.energy, state.batteryCapacity, state.batteryAmount, state.batteryRechargeRate);
     UIManager.UpdateActiveHealthBar(state.health, state.maxHealth);
     UIManager.SetTouchControlsStage(state.turnStage);
-    UIManager.SetActiveWeapon(shootingScript.GetCurrentWeapon());
+    bool canAfford = state.energy >= shootingScript.GetCurrentWeapon().batteryCost * state.batteryCapacity;
+    UIManager.SetActiveWeapon(shootingScript.GetCurrentWeapon(), canAfford);
   }
 
   public void HandleTurnEnd()
@@ -161,6 +162,7 @@ public class PlayerTank : MonoBehaviour
   void OnShootButtonReleased(ControlType controlType)
   {
     if (controlType != ControlType.Shoot || !state.isPlayingTurn) return;
+    if (state.energy < shootingScript.GetCurrentWeapon().batteryCost * state.batteryCapacity) return;
 
     switch (state.turnStage)
     {
@@ -181,6 +183,8 @@ public class PlayerTank : MonoBehaviour
         float shotStrength = Mathf.Lerp(LevelManager.Instance.gameplaySettings.minShotStrength, LevelManager.Instance.gameplaySettings.maxShotStrength, strengthValue);
         GameObject bullet = shootingScript.Shoot(shotStrength);
 
+        state.energy -= shootingScript.GetCurrentWeapon().batteryCost * state.batteryCapacity;
+
         // Resets after end of player turn
         CameraManager.TrackObject(bullet); // Track bullet
         UIManager.SetTouchControlsStage(null); // Reset touch controls
@@ -199,7 +203,8 @@ public class PlayerTank : MonoBehaviour
   {
     if (controlType != ControlType.WeaponNext || !state.isPlayingTurn) return;
     shootingScript.SetNextWeapon();
-    UIManager.SetActiveWeapon(shootingScript.GetCurrentWeapon());
+    bool canAfford = state.energy >= shootingScript.GetCurrentWeapon().batteryCost * state.batteryCapacity;
+    UIManager.SetActiveWeapon(shootingScript.GetCurrentWeapon(), canAfford);
   }
 
   public void SetSkin(PlayerSkin _skin)

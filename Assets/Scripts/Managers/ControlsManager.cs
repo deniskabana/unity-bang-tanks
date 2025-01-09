@@ -149,8 +149,6 @@ public class ControlsManager : MonoBehaviour
                 return Instance.isRightButtonPressed;
             case ControlType.Shoot:
                 return Instance.isShootButtonPressed;
-            case ControlType.Pause:
-                return false;
             default:
                 return false;
         }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -63,6 +64,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] float minStrengthIndicatorXPos = -100;
     [SerializeField] float maxStrengthIndicatorXPos = 100;
 
+    [Header("Colors")]
+    [SerializeField] Color textDefaultColor = Color.black;
+    [SerializeField] Color textWarningColor = Color.red;
+
     // Runtime variables
     // --------------------------------------------------
 
@@ -73,6 +78,8 @@ public class UIManager : MonoBehaviour
     float hudYOff = Screen.height / 3;
     float touchControlsYDefault;
     float hudYDefault;
+    WeaponDetail displayedWeapon;
+
     List<GameObject> batteryBars = new List<GameObject>();
     PlayerState.TurnStage touchControlStage;
 
@@ -128,6 +135,9 @@ public class UIManager : MonoBehaviour
         // HUD listeners
         LevelManager.OnPlayerTurnStart.AddListener(ShowHUD);
         LevelManager.OnPlayerTurnEnd.AddListener(HideHUD);
+
+        // Default data to prevent errors in weapon selection
+        displayedWeapon = WeaponSelectionManager.GetWeaponDetail(0);
     }
 
     void HandleTouchControlsPosition()
@@ -391,7 +401,7 @@ public class UIManager : MonoBehaviour
             slider.maxValue = batteryCapacity;
             slider.value = Mathf.Clamp(currentValue - i * batteryCapacity, 0, batteryCapacity);
 
-            if (slider.value > 0 && slider.value < 0.2f * slider.maxValue)
+            if (slider.value > 0.05 && slider.value < 0.2f * slider.maxValue)
             {
                 Animation anim = Instance.batteryBars[i].GetComponent<Animation>();
                 if (!anim.isPlaying)
@@ -420,6 +430,10 @@ public class UIManager : MonoBehaviour
                 Instance.batteryBars[i].GetComponent<CanvasGroup>().alpha = 1;
             }
         }
+
+        bool canAfford = Instance.displayedWeapon.batteryCost * batteryCapacity <= currentValue;
+        Instance.references.hudWeaponCostText.GetComponent<TextMeshProUGUI>().color = canAfford ? Instance.textDefaultColor : Instance.textWarningColor;
+        // TODO: replace shoot button icon with stop
     }
 
     public static void UpdateActiveHealthBar(float currentValue, float maxValue)
@@ -444,10 +458,12 @@ public class UIManager : MonoBehaviour
         Instance.references.hudTankName.GetComponent<TextMeshProUGUI>().text = name;
     }
 
-    public static void SetActiveWeapon(WeaponDetail weapon)
+    public static void SetActiveWeapon(WeaponDetail _weapon, bool canAfford)
     {
-        if (Instance.debug) Debug.Log("UIManager: SetActiveWeapon: " + weapon.slug);
-        Instance.references.hudWeaponIcon.GetComponent<Image>().sprite = weapon.hudIcon;
-        Instance.references.hudWeaponCostText.GetComponent<TextMeshProUGUI>().text = weapon.batteryCost.ToString();
+        Instance.displayedWeapon = _weapon;
+        if (Instance.debug) Debug.Log("UIManager: SetActiveWeapon: " + Instance.displayedWeapon.slug);
+        Instance.references.hudWeaponIcon.GetComponent<Image>().sprite = Instance.displayedWeapon.hudIcon;
+        Instance.references.hudWeaponCostText.GetComponent<TextMeshProUGUI>().text = Instance.displayedWeapon.batteryCost.ToString();
+        Instance.references.hudWeaponCostText.GetComponent<TextMeshProUGUI>().color = canAfford ? Instance.textDefaultColor : Instance.textWarningColor;
     }
 }
