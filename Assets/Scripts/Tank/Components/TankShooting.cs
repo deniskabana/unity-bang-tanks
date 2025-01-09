@@ -73,19 +73,17 @@ public class TankShooting : MonoBehaviour
         else
         {
             // ProjectileType.Spread
+            float spreadForceDeviation = 0.06f;
             List<GameObject> bullets = new List<GameObject>();
             for (int i = 0; i < currentWeapon.projectileSpawnCount; i++)
             {
-                float projectileSpread = 10f;
-
                 GameObject bullet = Instantiate(currentWeapon.projectilePrefab, firingPoint.position, firingPoint.rotation);
                 Vector3 direction = firingPoint.position - cannonTransform.position;
-                // Spread the bullets
-                direction = Quaternion.Euler(0, 0, Random.Range(-projectileSpread, projectileSpread)) * direction;
-                bullet.GetComponent<BasicBullet>().Initialize(direction, shotForce, currentWeapon);
+                float actualShotForce = shotForce - spreadForceDeviation * i * shotForce;
+                bullet.GetComponent<BasicBullet>().Initialize(direction, actualShotForce, currentWeapon);
                 bullets.Add(bullet);
             }
-            return bullets[0];
+            return bullets[Mathf.FloorToInt(bullets.Count / 2)];
         }
     }
 
