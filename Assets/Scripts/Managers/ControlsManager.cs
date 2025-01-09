@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public enum ControlType
 {
@@ -11,7 +12,8 @@ public enum ControlType
     Pause,
     Fullscreen,
     WeaponNext,
-    WeaponPrevious
+    WeaponPrevious,
+    Restart,
 }
 
 public class ControlsManager : MonoBehaviour
@@ -56,6 +58,17 @@ public class ControlsManager : MonoBehaviour
         // Space
         if (Input.GetKeyDown(KeyCode.Space)) HandleControlDown(ControlType.Shoot);
         if (Input.GetKeyUp(KeyCode.Space)) HandleControlUp(ControlType.Shoot);
+
+        // Tab or R
+        if (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.R))
+        {
+            HandleControlDown(ControlType.WeaponNext);
+        }
+        if (Input.GetKeyUp(KeyCode.Tab) || Input.GetKeyUp(KeyCode.R))
+        {
+            HandleControlUp(ControlType.WeaponNext);
+        }
+
 
         // Escape or P
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P))
@@ -116,6 +129,12 @@ public class ControlsManager : MonoBehaviour
             case ControlType.Pause:
                 Debug.LogError("Pause control released; not implemented");
                 OnControlUp?.Invoke(ControlType.Pause);
+                break;
+            case ControlType.WeaponNext:
+                OnControlUp?.Invoke(ControlType.WeaponNext);
+                break;
+            case ControlType.Restart:
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
                 break;
         }
     }

@@ -20,6 +20,8 @@ public class TankShooting : MonoBehaviour
     private float shotAngle = 0;  // Force to apply to the bullet
     private int weaponIndex = 0;  // Index of the current weapon
 
+    private List<WeaponDetail> weapons;
+
     // Custom methods
     // --------------------------------------------------
 
@@ -28,6 +30,9 @@ public class TankShooting : MonoBehaviour
         // For preview purposes
         shotAngle = 30f;
         AimCannonInstantly(shotAngle);
+        weapons = WeaponSelectionManager.GetWeaponsData();
+
+        ControlsManager.OnControlUp.AddListener(OnNextWeaponControlButton);
     }
 
     public void Initialize()
@@ -71,13 +76,22 @@ public class TankShooting : MonoBehaviour
         return bullet;
     }
 
-    public void SetWeaponIndex(int index)
+    public void SetNextWeapon()
     {
-        weaponIndex = index;
+        weaponIndex = (weaponIndex + 1) % weapons.Count;
+        UIManager.SetActiveWeapon(weapons[weaponIndex]);
     }
 
     public WeaponDetail GetCurrentWeapon()
     {
-        return WeaponSelectionManager.GetWeaponDetail(weaponIndex);
+        return weapons[weaponIndex];
+    }
+
+    private void OnNextWeaponControlButton(ControlType controlType)
+    {
+        if (controlType == ControlType.WeaponNext)
+        {
+            SetNextWeapon();
+        }
     }
 }

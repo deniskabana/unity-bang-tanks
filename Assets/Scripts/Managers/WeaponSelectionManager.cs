@@ -33,4 +33,9 @@ public class WeaponSelectionManager : MonoBehaviour
         if (Instance.debug) Debug.Log("WeaponSelectionManager - GetWeaponDetail(" + index + "): " + Instance.weaponsData[actualIndex].slug);
         return Instance.weaponsData[actualIndex];
     }
+
+    public static List<WeaponDetail> GetWeaponsData()
+    {
+        return Instance.weaponsData;
+    }
 }

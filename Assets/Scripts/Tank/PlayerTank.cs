@@ -80,7 +80,8 @@ public class PlayerTank : MonoBehaviour
       float radius = collision.GetComponent<CircleCollider2D>().radius;
       float maxDamage = collision.GetComponent<ExplosionDamage>().explosionDamage; // Bullet will pass the damage value to explosion
       float distance = Vector2.Distance(transform.position, collision.transform.position);
-      int damage = Mathf.FloorToInt(Mathf.Lerp(maxDamage, minDamageRatio * maxDamage, distance / radius));
+      float tolerance = 0.10f;
+      int damage = Mathf.CeilToInt(Mathf.Lerp(maxDamage, minDamageRatio * maxDamage, distance / (radius + tolerance)));
       TakeDamage(damage);
     }
   }
@@ -127,6 +128,7 @@ public class PlayerTank : MonoBehaviour
     UIManager.UpdateActiveBatteryBars(state.energy, state.batteryCapacity, state.batteryAmount, state.batteryRechargeRate);
     UIManager.UpdateActiveHealthBar(state.health, state.maxHealth);
     UIManager.SetTouchControlsStage(state.turnStage);
+    UIManager.SetActiveWeapon(shootingScript.GetCurrentWeapon());
   }
 
   public void HandleTurnEnd()

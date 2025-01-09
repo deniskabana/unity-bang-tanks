@@ -12,6 +12,7 @@ public struct WeaponDetail
 {
   public bool isEnabled;
   public string slug;
+  [Range(0, 7)] public int batteryCost;
   public GameObject projectilePrefab;
   public Sprite hudIcon;
   public ProjectileType type;

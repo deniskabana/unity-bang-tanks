@@ -33,10 +33,8 @@ public struct UIManagerReferences
     public RectTransform indicatorShootStrength;
 
     [Header("HUD / Weapon")]
-    public RectTransform hudWeaponArrowLeft;
-    public RectTransform hudWeaponArrowRight;
     public RectTransform hudWeaponIcon;
-    public RectTransform hudWeaponName;
+    public RectTransform hudWeaponCostText;
 
     [Header("Strength Indicator")]
     public RectTransform strengthIndicatorHandle;
@@ -444,5 +442,12 @@ public class UIManager : MonoBehaviour
     {
         if (Instance.debug) Debug.Log("UIManager: SetActiveTankHUDName: " + name);
         Instance.references.hudTankName.GetComponent<TextMeshProUGUI>().text = name;
+    }
+
+    public static void SetActiveWeapon(WeaponDetail weapon)
+    {
+        if (Instance.debug) Debug.Log("UIManager: SetActiveWeapon: " + weapon.slug);
+        Instance.references.hudWeaponIcon.GetComponent<Image>().sprite = weapon.hudIcon;
+        Instance.references.hudWeaponCostText.GetComponent<TextMeshProUGUI>().text = weapon.batteryCost.ToString();
     }
 }
