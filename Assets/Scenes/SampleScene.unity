@@ -2528,21 +2528,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debug: 0
   gameplaySettings:
-    amountOfPlayers: 2
-    playerPositioning: 0
+    amountOfPlayers: 3
+    playerPositioning: 1
     playerScale: 0.5
     minShotStrength: 100
     maxShotStrength: 1200
     batteryCapacity: 25
-    batteryRechargeRate: 1
+    batteryRechargeRate: 2
     batteryAmountMax: 7
-    batteryAmountStart: 3
-    energyDepletionRate: 6.16
+    batteryAmountStart: 4
+    energyDepletionRate: 5.95
     maxPlayerHealth: 100
     enableActiveIndicator: 1
     animateActiveIndicator: 1
   terrainSettings:
-    textureWidth: 3000
+    textureWidth: 2400
     textureHeight: 1400
     noiseScale: 0.0022
     heightMultiplier: 1000
@@ -2761,26 +2761,26 @@ MonoBehaviour:
     projectileMass: 1
     explodeOnImpact: 1
   - isEnabled: 1
+    slug: triple_shot
+    batteryCost: 2
+    projectilePrefab: {fileID: 5882382787347245810, guid: b735b5845ea8443e2b0590ab98174c08, type: 3}
+    hudIcon: {fileID: 21300000, guid: e9bba11719a7449bbbfcf0cc45025469, type: 3}
+    type: 0
+    baseDamage: 14
+    projectileSpawnCount: 3
+    maxProjectileLifeTime: 5
+    projectileMass: 1
+    explodeOnImpact: 1
+  - isEnabled: 1
     slug: large_cannon
-    batteryCost: 3
+    batteryCost: 4
     projectilePrefab: {fileID: 5882382787347245810, guid: 3485b79b042e34ea9a414b5d0428843d, type: 3}
     hudIcon: {fileID: 21300000, guid: 0b78b6bb75b6f4ac1b059a344e960bd5, type: 3}
     type: 0
     baseDamage: 60
     projectileSpawnCount: 1
     maxProjectileLifeTime: 10
-    projectileMass: 2.5
-    explodeOnImpact: 1
-  - isEnabled: 1
-    slug: triple_shot
-    batteryCost: 2
-    projectilePrefab: {fileID: 5882382787347245810, guid: b735b5845ea8443e2b0590ab98174c08, type: 3}
-    hudIcon: {fileID: 21300000, guid: e9bba11719a7449bbbfcf0cc45025469, type: 3}
-    type: 0
-    baseDamage: 18
-    projectileSpawnCount: 3
-    maxProjectileLifeTime: 5
-    projectileMass: 1
+    projectileMass: 2.8
     explodeOnImpact: 1
 --- !u!1 &628441520
 GameObject:
@@ -3186,6 +3186,81 @@ Transform:
   - {fileID: 515402749}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &888606105
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 888606106}
+  - component: {fileID: 888606108}
+  - component: {fileID: 888606107}
+  m_Layer: 5
+  m_Name: IconNotAllowed
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &888606106
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 888606105}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 1848777203}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 49.1, y: 47.7}
+  m_SizeDelta: {x: 203, y: 203}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &888606107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 888606105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 6a086886953e34367a1058119f82df40, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &888606108
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 888606105}
+  m_CullTransparentMesh: 1
 --- !u!1 &891466459
 GameObject:
   m_ObjectHideFlags: 0
@@ -4613,7 +4688,7 @@ GameObject:
   - component: {fileID: 1331156776}
   - component: {fileID: 1331156775}
   m_Layer: 5
-  m_Name: Button icon
+  m_Name: Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5738,6 +5813,7 @@ RectTransform:
   m_Children:
   - {fileID: 793152588}
   - {fileID: 1331156774}
+  - {fileID: 888606106}
   m_Father: {fileID: 1250378169}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}

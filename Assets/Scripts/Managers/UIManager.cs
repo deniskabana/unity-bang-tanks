@@ -465,5 +465,16 @@ public class UIManager : MonoBehaviour
         Instance.references.hudWeaponIcon.GetComponent<Image>().sprite = Instance.displayedWeapon.hudIcon;
         Instance.references.hudWeaponCostText.GetComponent<TextMeshProUGUI>().text = Instance.displayedWeapon.batteryCost.ToString();
         Instance.references.hudWeaponCostText.GetComponent<TextMeshProUGUI>().color = canAfford ? Instance.textDefaultColor : Instance.textWarningColor;
+
+        if (canAfford)
+        {
+            Instance.references.touchButtonShoot.Find("Icon").gameObject.SetActive(true);
+            Instance.references.touchButtonShoot.Find("IconNotAllowed").gameObject.SetActive(false);
+        }
+        else
+        {
+            Instance.references.touchButtonShoot.Find("Icon").gameObject.SetActive(false);
+            Instance.references.touchButtonShoot.Find("IconNotAllowed").gameObject.SetActive(true);
+        }
     }
 }
