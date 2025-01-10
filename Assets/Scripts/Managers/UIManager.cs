@@ -10,9 +10,10 @@ public struct UIManagerReferences
     [Header("Touch Controls")]
     public RectTransform touchControlsRt;
     public RectTransform touchStageMovement;
-    public RectTransform touchStageAim;
     public RectTransform touchStageShootStrength;
     public RectTransform touchButtonShoot;
+    public RectTransform touchModeMove;
+    public RectTransform touchModeAim;
 
     [Header("Touch Controls / Animations")]
     public AnimationClip uiAnimationIn;
@@ -117,13 +118,11 @@ public class UIManager : MonoBehaviour
         references.indicatorMovement.gameObject.SetActive(true);
 
         references.touchStageMovement.gameObject.SetActive(true);
-        references.touchStageAim.gameObject.SetActive(true);
         references.touchStageShootStrength.gameObject.SetActive(true);
 
         references.strengthIndicatorHandleGhost.gameObject.SetActive(false);
 
         PlayAnimationIn(references.touchStageMovement.gameObject, true);
-        PlayAnimationOut(references.touchStageAim.gameObject, true);
         PlayAnimationOut(references.touchStageShootStrength.gameObject, true);
 
         // Default Y positions
@@ -275,9 +274,10 @@ public class UIManager : MonoBehaviour
         {
             case PlayerState.TurnStage.Moving:
                 Instance.PlayAnimationIn(refs.touchStageMovement.gameObject, true); // Instant animation for arrows in first turn
-                // Reset previous stages instantly
-                Instance.PlayAnimationOut(refs.touchStageAim.gameObject, true);
                 Instance.PlayAnimationOut(refs.touchStageShootStrength.gameObject, true);
+
+                refs.touchModeMove.gameObject.SetActive(true);
+                refs.touchModeAim.gameObject.SetActive(false);
 
                 refs.indicatorMovement.gameObject.SetActive(true);
                 refs.indicatorAim.gameObject.SetActive(false);
@@ -285,8 +285,8 @@ public class UIManager : MonoBehaviour
                 break;
 
             case PlayerState.TurnStage.Aiming:
-                Instance.PlayAnimationIn(refs.touchStageAim.gameObject);
-                Instance.PlayAnimationOut(refs.touchStageMovement.gameObject);
+                refs.touchModeMove.gameObject.SetActive(false);
+                refs.touchModeAim.gameObject.SetActive(true);
 
                 refs.indicatorMovement.gameObject.SetActive(false);
                 refs.indicatorAim.gameObject.SetActive(true);
@@ -295,7 +295,7 @@ public class UIManager : MonoBehaviour
 
             case PlayerState.TurnStage.Shooting:
                 Instance.PlayAnimationIn(refs.touchStageShootStrength.gameObject);
-                Instance.PlayAnimationOut(refs.touchStageAim.gameObject);
+                Instance.PlayAnimationOut(refs.touchStageMovement.gameObject);
 
                 refs.indicatorMovement.gameObject.SetActive(false);
                 refs.indicatorAim.gameObject.SetActive(false);

@@ -14,6 +14,8 @@ public enum ControlType
     WeaponNext,
     WeaponPrevious,
     Restart,
+    EndTurn,
+    PlayerModeToggle,
 }
 
 public class ControlsManager : MonoBehaviour
@@ -60,25 +62,16 @@ public class ControlsManager : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Space)) HandleControlUp(ControlType.Shoot);
 
         // Tab or R
-        if (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.R))
-        {
-            HandleControlDown(ControlType.WeaponNext);
-        }
-        if (Input.GetKeyUp(KeyCode.Tab) || Input.GetKeyUp(KeyCode.R))
-        {
-            HandleControlUp(ControlType.WeaponNext);
-        }
+        if (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.R)) HandleControlDown(ControlType.WeaponNext);
+        if (Input.GetKeyUp(KeyCode.Tab) || Input.GetKeyUp(KeyCode.R)) HandleControlUp(ControlType.WeaponNext);
 
+        // Up or down arrow changes 2 modes
+        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow)) HandleControlDown(ControlType.PlayerModeToggle);
+        if (Input.GetKeyUp(KeyCode.UpArrow) || Input.GetKeyUp(KeyCode.DownArrow)) HandleControlUp(ControlType.PlayerModeToggle);
 
         // Escape or P
-        if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P))
-        {
-            HandleControlDown(ControlType.Pause);
-        }
-        if (Input.GetKeyUp(KeyCode.Escape) || Input.GetKeyUp(KeyCode.P))
-        {
-            HandleControlUp(ControlType.Pause);
-        }
+        if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P)) HandleControlDown(ControlType.Pause);
+        if (Input.GetKeyUp(KeyCode.Escape) || Input.GetKeyUp(KeyCode.P)) HandleControlUp(ControlType.Pause);
     }
 
     // Custom methods
@@ -86,23 +79,20 @@ public class ControlsManager : MonoBehaviour
 
     public static void HandleControlDown(ControlType controlType)
     {
+        OnControlDown?.Invoke(controlType);
         switch (controlType)
         {
             case ControlType.Left:
                 Instance.isLeftButtonPressed = true;
-                OnControlDown?.Invoke(ControlType.Left);
                 break;
             case ControlType.Right:
                 Instance.isRightButtonPressed = true;
-                OnControlDown?.Invoke(ControlType.Right);
                 break;
             case ControlType.Shoot:
                 Instance.isShootButtonPressed = true;
-                OnControlDown?.Invoke(ControlType.Shoot);
                 break;
             case ControlType.Pause:
                 Debug.LogError("Pause control pressed; not implemented");
-                OnControlDown?.Invoke(ControlType.Pause);
                 break;
             case ControlType.Fullscreen:
                 Screen.fullScreen = !Screen.fullScreen;
@@ -112,29 +102,26 @@ public class ControlsManager : MonoBehaviour
 
     public static void HandleControlUp(ControlType controlType)
     {
+        OnControlUp?.Invoke(controlType);
         switch (controlType)
         {
             case ControlType.Left:
                 Instance.isLeftButtonPressed = false;
-                OnControlUp?.Invoke(ControlType.Left);
                 break;
             case ControlType.Right:
                 Instance.isRightButtonPressed = false;
-                OnControlUp?.Invoke(ControlType.Right);
                 break;
             case ControlType.Shoot:
                 Instance.isShootButtonPressed = false;
-                OnControlUp?.Invoke(ControlType.Shoot);
                 break;
             case ControlType.Pause:
                 Debug.LogError("Pause control released; not implemented");
-                OnControlUp?.Invoke(ControlType.Pause);
-                break;
-            case ControlType.WeaponNext:
-                OnControlUp?.Invoke(ControlType.WeaponNext);
                 break;
             case ControlType.Restart:
                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                break;
+            case ControlType.EndTurn:
+                LevelManager.Instance.EndPlayerTurn();
                 break;
         }
     }

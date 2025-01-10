@@ -102,6 +102,7 @@ public class PlayerTank : MonoBehaviour
     physicsScript.Initialize();
 
     ControlsManager.OnControlUp.AddListener(OnShootButtonReleased);
+    ControlsManager.OnControlUp.AddListener(OnPlayerModeToggleRelease);
     ControlsManager.OnControlUp.AddListener(OnNextWeaponButtonReleased);
   }
 
@@ -167,11 +168,8 @@ public class PlayerTank : MonoBehaviour
     switch (state.turnStage)
     {
       case PlayerState.TurnStage.Moving:
-        state.turnStage = PlayerState.TurnStage.Aiming;
-        UIManager.SetTouchControlsStage(state.turnStage);
-        break;
-
       case PlayerState.TurnStage.Aiming:
+      default:
         state.turnStage = PlayerState.TurnStage.Shooting;
         UIManager.SetTouchControlsStage(state.turnStage);
         UIManager.AnimateStrengthIndicator();
@@ -196,6 +194,26 @@ public class PlayerTank : MonoBehaviour
         // TODO: After waiting made, end player turn and start consequences timer
         LevelManager.Instance.EndPlayerTurn();
         break;
+    }
+  }
+
+  void OnPlayerModeToggleRelease(ControlType controlType)
+  {
+    if (controlType == ControlType.PlayerModeToggle)
+    {
+      if (state.isPlayingTurn)
+      {
+        if (state.turnStage == PlayerState.TurnStage.Moving)
+        {
+          state.turnStage = PlayerState.TurnStage.Aiming;
+          UIManager.SetTouchControlsStage(state.turnStage);
+        }
+        else if (state.turnStage == PlayerState.TurnStage.Aiming)
+        {
+          state.turnStage = PlayerState.TurnStage.Moving;
+          UIManager.SetTouchControlsStage(state.turnStage);
+        }
+      }
     }
   }
 
