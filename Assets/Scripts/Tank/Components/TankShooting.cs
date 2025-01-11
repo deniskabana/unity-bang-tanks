@@ -11,7 +11,6 @@ public class TankShooting : MonoBehaviour
     [SerializeField] float cannonAimSpeed = 40f;
 
     [Header("References")]
-    [SerializeField] GameObject bulletPrefab;
     [SerializeField] Transform cannonTransform;  // Reference to the cannon's transform
     [SerializeField] Transform firingPoint;  // Reference to the bullet spawn point
 
@@ -73,12 +72,14 @@ public class TankShooting : MonoBehaviour
         else
         {
             // ProjectileType.Spread
-            float spreadForceDeviation = 0.06f;
+            float spreadForceDeviation = 0.09f;
+            float spreadAngle = 10f;
             List<GameObject> bullets = new List<GameObject>();
             for (int i = 0; i < currentWeapon.projectileSpawnCount; i++)
             {
                 GameObject bullet = Instantiate(currentWeapon.projectilePrefab, firingPoint.position, firingPoint.rotation);
                 Vector3 direction = firingPoint.position - cannonTransform.position;
+                direction = Quaternion.Euler(0, 0, Random.Range(-spreadAngle, spreadAngle)) * direction;
                 float actualShotForce = shotForce - spreadForceDeviation * i * shotForce;
                 bullet.GetComponent<BasicBullet>().Initialize(direction, actualShotForce, currentWeapon);
                 bullets.Add(bullet);

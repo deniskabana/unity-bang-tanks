@@ -2419,8 +2419,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debug: 0
   gameplaySettings:
-    amountOfPlayers: 3
-    playerPositioning: 1
+    amountOfPlayers: 2
+    playerPositioning: 0
     playerScale: 0.5
     minShotStrength: 100
     maxShotStrength: 1200
@@ -2433,10 +2433,10 @@ MonoBehaviour:
     enableActiveIndicator: 1
     animateActiveIndicator: 1
   terrainSettings:
-    textureWidth: 2400
+    textureWidth: 2600
     textureHeight: 1400
     noiseScale: 0.0022
-    heightMultiplier: 1000
+    heightMultiplier: 900
     enableTerrainChunking: 1
     pixelsPerUnit: 100
     terrainScale: 2.6
@@ -2505,7 +2505,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debug: 0
-  minOutcomeDurationSeconds: 5
+  minOutcomeDurationSeconds: 3
   indicatorYOffset: 2.25
   activePlayerIndicator: {fileID: 868401883}
   playersParent: {fileID: 824662456}

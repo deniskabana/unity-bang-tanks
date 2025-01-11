@@ -66,7 +66,7 @@ public class CameraManager : MonoBehaviour
         HandleCameraMovement();
         HandleCameraZoom();
 
-        if (!trackedObject && cameraZoomedIn) cameraZoomedIn = false;
+        // if (!trackedObject && cameraZoomedIn) cameraZoomedIn = false;
     }
 
     // Custom methods

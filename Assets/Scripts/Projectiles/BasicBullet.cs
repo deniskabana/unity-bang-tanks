@@ -28,6 +28,7 @@ public class BasicBullet : MonoBehaviour
     {
         rb.AddForce(direction * shotForce);
         StartCoroutine(DestroyAfterTime());
+        PlayersTurnManager.AddAwaitedBullet(gameObject);
 
         baseDamage = weapon.baseDamage;
         maxProjectileLifeTime = weapon.maxProjectileLifeTime;
@@ -52,6 +53,7 @@ public class BasicBullet : MonoBehaviour
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
         rb.bodyType = RigidbodyType2D.Kinematic;
         rb.velocity = Vector2.zero;
+        PlayersTurnManager.RemoveAwaitedBullet(gameObject);
 
         yield return new WaitForSeconds(1.2f); // Wait for trail effect to finish
         Destroy(gameObject);

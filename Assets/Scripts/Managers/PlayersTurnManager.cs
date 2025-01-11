@@ -7,7 +7,7 @@ public class PlayersTurnManager : MonoBehaviour
   public bool debug = false;
 
   [Header("Settings")]
-  [SerializeField] int minOutcomeDurationSeconds = 3;
+  [SerializeField] float minOutcomeDurationSeconds = 3;
   [SerializeField] float indicatorYOffset = 2.25f;
 
   [Header("References")]
@@ -30,6 +30,7 @@ public class PlayersTurnManager : MonoBehaviour
   private int currentPlayerIndex = 0;
   private int turnCounter = 0;
   private float outcomeTimer = 0;
+  private List<GameObject> awaitingBullets = new List<GameObject>();
   private GameplaySettings gs;
   private PlayerSkinSettings pss;
   PlayerSkin[] shuffledSkins;
@@ -166,7 +167,7 @@ public class PlayersTurnManager : MonoBehaviour
 
     currentPlayerIndex += 1;
     if (currentPlayerIndex >= playersState.Count) currentPlayerIndex = 0;
-    StartOutcomeTimer();
+    if (awaitingBullets.Count == 0) StartOutcomeTimer();
   }
 
   void StartOutcomeTimer()
@@ -215,6 +216,20 @@ public class PlayersTurnManager : MonoBehaviour
     {
       int j = Random.Range(0, i + 1);
       (PlayerNamesData.playerNames[j], PlayerNamesData.playerNames[i]) = (PlayerNamesData.playerNames[i], PlayerNamesData.playerNames[j]);
+    }
+  }
+
+  public static void AddAwaitedBullet(GameObject bullet)
+  {
+    Instance.awaitingBullets.Add(bullet);
+  }
+
+  public static void RemoveAwaitedBullet(GameObject bullet)
+  {
+    Instance.awaitingBullets.Remove(bullet);
+    if (Instance.awaitingBullets.Count == 0 && LevelManager.GetState() == GameState.TurnOutcome)
+    {
+      Instance.StartOutcomeTimer();
     }
   }
 }
