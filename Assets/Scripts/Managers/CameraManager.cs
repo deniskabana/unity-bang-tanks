@@ -1,5 +1,8 @@
+using System;
 using System.Collections;
 using UnityEngine;
+using Cinemachine;
+using UnityEngine.U2D;
 
 public class CameraManager : MonoBehaviour
 {
@@ -15,6 +18,7 @@ public class CameraManager : MonoBehaviour
     [SerializeField] float cameraSpeedMove = 2f;
     [SerializeField] bool constrainCameraBoundaries = true;
     [SerializeField] Transform mainCamera;
+    [SerializeField] Transform mainVirtualCameraObject;
 
     // Runtime variables
     // --------------------------------------------------
@@ -24,6 +28,7 @@ public class CameraManager : MonoBehaviour
     bool cameraZoomedIn = false;
     GameObject trackedObject;
     Camera mainCameraComponent;
+    CinemachineVirtualCamera mainVirtualCamera;
 
     // Computed camera values
     float actualCamZoomedInSize; // Computed value for zoomed in on player
@@ -51,11 +56,13 @@ public class CameraManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
+        mainVirtualCamera = mainVirtualCameraObject.GetComponent<CinemachineVirtualCamera>();
     }
 
     void Start()
     {
         if (!Instance) Instance = this;
+        mainVirtualCamera = mainVirtualCameraObject.GetComponent<CinemachineVirtualCamera>();
         mainCameraComponent = mainCamera.GetComponent<Camera>();
         cameraZ = mainCamera.transform.position.z;
     }
@@ -74,6 +81,7 @@ public class CameraManager : MonoBehaviour
 
     public void Initialize()
     {
+        return;
         initialized = true;
         CalculateCameraSizes(); // Sizes first
         CalculateCameraBounds(); // Bounds uses new sizes!
@@ -202,12 +210,17 @@ public class CameraManager : MonoBehaviour
 
     public static void TrackObject(GameObject obj, bool zoomIn = true)
     {
+        Instance.mainVirtualCamera.Follow = obj.transform;
+        Instance.mainVirtualCamera.LookAt = obj.transform;
+        return;
         if (Instance.debug) Debug.Log("CameraManager: Track object " + obj.name);
         Instance.trackedObject = obj;
     }
 
     public static void Zoom(bool zoomIn = true)
     {
+        Instance.mainVirtualCamera.m_Lens.OrthographicSize = zoomIn ? 11 : 17;
+        return;
         if (Instance.debug) Debug.Log("CameraManager: Zoom " + (zoomIn ? "in" : "out"));
         Instance.cameraZoomedIn = zoomIn;
     }
