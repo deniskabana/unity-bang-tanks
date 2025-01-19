@@ -30,6 +30,11 @@ public class PlayerTank : MonoBehaviour
   [SerializeField] Transform body1;
   [SerializeField] Transform body2;
 
+  [Header("Smoke Effects")]
+  [SerializeField] GameObject smokeEffectSM;
+  [SerializeField] GameObject smokeEffectMD;
+  [SerializeField] GameObject smokeEffectLG;
+
   // Runtime variables
   // --------------------------------------------------
 
@@ -104,6 +109,10 @@ public class PlayerTank : MonoBehaviour
     ControlsManager.OnControlUp.AddListener(OnShootButtonReleased);
     ControlsManager.OnControlUp.AddListener(OnPlayerModeToggleRelease);
     ControlsManager.OnControlUp.AddListener(OnNextWeaponButtonReleased);
+
+    smokeEffectSM.SetActive(false);
+    smokeEffectMD.SetActive(false);
+    smokeEffectLG.SetActive(false);
   }
 
   void SetInitialState()
@@ -125,7 +134,9 @@ public class PlayerTank : MonoBehaviour
   public void HandleTurnStart()
   {
     state.isPlayingTurn = true;
-    state.energy = Mathf.Min(state.energy + state.batteryRechargeRate * state.batteryCapacity, state.batteryCapacity * state.batteryAmount);
+    state.energy += state.batteryRechargeRate * state.batteryCapacity;
+    if (state.energy > state.batteryCapacity * state.batteryAmount) state.energy = state.batteryCapacity * state.batteryAmount;
+
     state.turnStage = PlayerState.TurnStage.Moving;
     UIManager.UpdateActiveBatteryBars(state.energy, state.batteryCapacity, state.batteryAmount, state.batteryRechargeRate);
     UIManager.UpdateActiveHealthBar(state.health, state.maxHealth);
@@ -148,6 +159,8 @@ public class PlayerTank : MonoBehaviour
     float scaleFactor = 2f;
     damagePopup.transform.localScale = new Vector3(transform.localScale.x * scaleFactor, transform.localScale.y * scaleFactor, 1);
     damagePopup.GetComponent<TextMeshPro>().text = damage.ToString();
+
+    UpdateSmokeFX();
 
     if (state.health <= 0)
     {
@@ -235,5 +248,25 @@ public class PlayerTank : MonoBehaviour
   public PlayerSkin GetSkin()
   {
     return skin;
+  }
+
+  void UpdateSmokeFX()
+  {
+    float healthRatio = (float)state.health / state.maxHealth;
+    float minSafeHealth = 0.5f;
+
+    if (healthRatio >= minSafeHealth)
+    {
+      smokeEffectSM.SetActive(false);
+      smokeEffectMD.SetActive(false);
+      smokeEffectLG.SetActive(false);
+    }
+    else
+    {
+      // If under minSafeHealth, activate effects
+      smokeEffectSM.SetActive(true); // Automatically
+      if (healthRatio < 0.25f) smokeEffectMD.SetActive(true);
+      if (healthRatio < 0.15f) smokeEffectLG.SetActive(true);
+    }
   }
 }

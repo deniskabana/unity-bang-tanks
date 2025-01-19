@@ -52,6 +52,8 @@ public class TankShooting : MonoBehaviour
     {
         shotAngle = Mathf.Clamp(shotAngle + angleSpeed * cannonAimSpeed * Time.deltaTime, -cannonMinMaxAngle, cannonMinMaxAngle);
         cannonTransform.localRotation = Quaternion.Euler(0, 0, shotAngle + 90);
+
+        // TODO: update trajectoryLine linerenderer
     }
 
     public GameObject Shoot(float force)
@@ -79,7 +81,7 @@ public class TankShooting : MonoBehaviour
             {
                 GameObject bullet = Instantiate(currentWeapon.projectilePrefab, firingPoint.position, firingPoint.rotation);
                 Vector3 direction = firingPoint.position - cannonTransform.position;
-                direction = Quaternion.Euler(0, 0, Random.Range(-spreadAngle, spreadAngle)) * direction;
+                direction = Quaternion.Euler(0, 0, -spreadAngle + spreadAngle / currentWeapon.projectileSpawnCount * (i + 1)) * direction;
                 float actualShotForce = shotForce - spreadForceDeviation * i * shotForce;
                 bullet.GetComponent<BasicBullet>().Initialize(direction, actualShotForce, currentWeapon);
                 bullets.Add(bullet);
