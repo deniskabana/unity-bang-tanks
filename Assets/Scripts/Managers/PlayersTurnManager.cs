@@ -137,7 +137,7 @@ public class PlayersTurnManager : MonoBehaviour
       }
 
       float playerX = terrainBounds.min.x + playerPositions[i];
-      GameObject playerObject = Instantiate(playerPrefab, new Vector3(playerX, playerY, 0), Quaternion.identity, playersParent);
+      GameObject playerObject = Instantiate(playerPrefab, new Vector3(playerX, playerY, playersParent.transform.localPosition.z), Quaternion.identity, playersParent);
       playerObject.transform.localScale = new Vector3(gs.playerScale, gs.playerScale, 1);
       PlayerTank playerTank = playerObject.GetComponent<PlayerTank>();
       playerTank.Initialize(i, shuffledSkins[i % shuffledSkins.Length]);

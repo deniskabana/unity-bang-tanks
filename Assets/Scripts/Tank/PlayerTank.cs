@@ -155,7 +155,8 @@ public class PlayerTank : MonoBehaviour
     state.health -= damage;
     UIManager.UpdateActiveHealthBar(state.health, state.maxHealth);
 
-    GameObject damagePopup = Instantiate(UIManager.Instance.references.damagePopupPrefab, transform.position, Quaternion.identity);
+    Vector3 popupPosition = transform.position + new Vector3(0, 1, transform.localPosition.z);
+    GameObject damagePopup = Instantiate(UIManager.Instance.references.damagePopupPrefab, popupPosition, Quaternion.identity);
     float scaleFactor = 2f;
     damagePopup.transform.localScale = new Vector3(transform.localScale.x * scaleFactor, transform.localScale.y * scaleFactor, 1);
     damagePopup.GetComponent<TextMeshPro>().text = damage.ToString();
@@ -198,6 +199,7 @@ public class PlayerTank : MonoBehaviour
 
         // Resets after end of player turn
         CameraManager.TrackObject(bullet); // Track bullet
+        CameraManager.Zoom(false); // Zoom out
         UIManager.SetTouchControlsStage(null); // Reset touch controls
         UIManager.StopStrengthIndicator(); // Reset strength indicator
         lastShotStrengthValue = strengthValue; // Remember last shot strength

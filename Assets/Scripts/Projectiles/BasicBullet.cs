@@ -7,7 +7,7 @@ public class BasicBullet : MonoBehaviour
     [SerializeField, Range(0f, 100f)] float explosionStrengthRation = 4f;
 
     private int baseDamage;
-    private float maxProjectileLifeTime = 5f;
+    private float maxProjectileLifeTime = 10f;
 
     // Built-in methods
     // --------------------------------------------------

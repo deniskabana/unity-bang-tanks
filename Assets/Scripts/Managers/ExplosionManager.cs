@@ -34,7 +34,8 @@ public class ExplosionManager : MonoBehaviour
     {
         // Create explosion GameObject
         GameObject explosion = Instantiate(explosionPrefab, position, Quaternion.identity, explosionParent);
-        Instantiate(explosionParticlesPrefab, position, Quaternion.identity).transform.localScale = new Vector3(radius * 0.85f, radius * 0.85f, 1);
+        float scale = radius * 0.93f;
+        Instantiate(explosionParticlesPrefab, position, Quaternion.identity).transform.localScale = new Vector3(scale, scale, 100);
 
         explosion.GetComponent<ExplosionDamage>().explosionDamage = damage;
 

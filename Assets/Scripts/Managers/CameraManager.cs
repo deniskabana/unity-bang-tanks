@@ -67,10 +67,10 @@ public class CameraManager : MonoBehaviour
         cameraZ = mainCamera.transform.position.z;
     }
 
-    void LateUpdate()
+    void Update()
     {
         if (!initialized) return;
-        HandleCameraMovement();
+        // HandleCameraMovement();
         HandleCameraZoom();
 
         // if (!trackedObject && cameraZoomedIn) cameraZoomedIn = false;
@@ -81,8 +81,8 @@ public class CameraManager : MonoBehaviour
 
     public void Initialize()
     {
-        return;
         initialized = true;
+        return;
         CalculateCameraSizes(); // Sizes first
         CalculateCameraBounds(); // Bounds uses new sizes!
         lastScreenWidth = Screen.width;
@@ -95,19 +95,23 @@ public class CameraManager : MonoBehaviour
     void HandleCameraZoom()
     {
         float currentSize = mainCameraComponent.orthographicSize;
-        float newSize = cameraZoomedIn ? actualCamZoomedInSize : actualCamZoomedOutSize;
+        float newSize = cameraZoomedIn ? 12 : 17;
 
         // Cancel early if we're already at the desired size
         if (currentSize == newSize) return;
 
         // If the distance between the camera and the target is greater than the threshold, zoom the camera
-        float threshold = 1 / 1000f;
+        float threshold = 1 / 10f; // 10% zoom threshold for the most expensive calculations
         if (Mathf.Abs(currentSize - newSize) > threshold && enableCameraAnimation)
         {
             newSize = Mathf.Lerp(currentSize, newSize, Time.deltaTime * cameraSpeedZoom);
         }
+        else
+        {
+            newSize = currentSize;
+        }
 
-        mainCameraComponent.orthographicSize = Mathf.Round(newSize * 10000f) / 10000f;
+        mainVirtualCamera.m_Lens.OrthographicSize = Mathf.Round(newSize * 10000f) / 10000f;
     }
 
     void HandleCameraMovement()
@@ -219,8 +223,6 @@ public class CameraManager : MonoBehaviour
 
     public static void Zoom(bool zoomIn = true)
     {
-        Instance.mainVirtualCamera.m_Lens.OrthographicSize = zoomIn ? 11 : 17;
-        return;
         if (Instance.debug) Debug.Log("CameraManager: Zoom " + (zoomIn ? "in" : "out"));
         Instance.cameraZoomedIn = zoomIn;
     }
