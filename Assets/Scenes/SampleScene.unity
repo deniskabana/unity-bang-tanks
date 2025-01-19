@@ -1809,7 +1809,7 @@ Camera:
   far clip plane: 5000
   field of view: 40
   orthographic: 1
-  orthographic size: 17
+  orthographic size: 16.8134
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -2661,7 +2661,6 @@ MonoBehaviour:
   cameraSpeedZoom: 2
   cameraSpeedMove: 1.35
   constrainCameraBoundaries: 1
-  mainCamera: {fileID: 519420032}
   mainVirtualCameraObject: {fileID: 1021221960}
 --- !u!114 &624826808
 MonoBehaviour:
@@ -4091,7 +4090,7 @@ MonoBehaviour:
   m_Follow: {fileID: 0}
   m_Lens:
     FieldOfView: 40
-    OrthographicSize: 17
+    OrthographicSize: 16.8134
     NearClipPlane: 0.1
     FarClipPlane: 5000
     Dutch: 0
@@ -4872,24 +4871,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_TrackedObjectOffset: {x: 0, y: -1, z: -20}
-  m_LookaheadTime: 0.305
-  m_LookaheadSmoothing: 2.2
+  m_LookaheadTime: 0.258
+  m_LookaheadSmoothing: 1.6
   m_LookaheadIgnoreY: 0
-  m_XDamping: 3
-  m_YDamping: 3
+  m_XDamping: 2.2
+  m_YDamping: 2.2
   m_ZDamping: 1
   m_TargetMovementOnly: 1
   m_ScreenX: 0.5
-  m_ScreenY: 0.5
+  m_ScreenY: 0.494
   m_CameraDistance: 10
-  m_DeadZoneWidth: 0.148
-  m_DeadZoneHeight: 0.153
+  m_DeadZoneWidth: 0.053
+  m_DeadZoneHeight: 0.099
   m_DeadZoneDepth: 0
   m_UnlimitedSoftZone: 0
-  m_SoftZoneWidth: 0.8
-  m_SoftZoneHeight: 0.8
+  m_SoftZoneWidth: 0.572
+  m_SoftZoneHeight: 0.501
   m_BiasX: 0
-  m_BiasY: 0.107
+  m_BiasY: 0.003
   m_CenterOnActivate: 1
   m_GroupFramingMode: 2
   m_AdjustmentMode: 0

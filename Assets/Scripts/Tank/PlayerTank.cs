@@ -111,8 +111,11 @@ public class PlayerTank : MonoBehaviour
     ControlsManager.OnControlUp.AddListener(OnNextWeaponButtonReleased);
 
     smokeEffectSM.SetActive(false);
+    smokeEffectSM.GetComponent<ParticleSystem>().Stop();
     smokeEffectMD.SetActive(false);
+    smokeEffectMD.GetComponent<ParticleSystem>().Stop();
     smokeEffectLG.SetActive(false);
+    smokeEffectLG.GetComponent<ParticleSystem>().Stop();
   }
 
   void SetInitialState()
@@ -260,15 +263,28 @@ public class PlayerTank : MonoBehaviour
     if (healthRatio >= minSafeHealth)
     {
       smokeEffectSM.SetActive(false);
+      smokeEffectSM.GetComponent<ParticleSystem>().Stop();
       smokeEffectMD.SetActive(false);
+      smokeEffectMD.GetComponent<ParticleSystem>().Stop();
       smokeEffectLG.SetActive(false);
+      smokeEffectLG.GetComponent<ParticleSystem>().Stop();
     }
     else
     {
       // If under minSafeHealth, activate effects
       smokeEffectSM.SetActive(true); // Automatically
-      if (healthRatio < 0.25f) smokeEffectMD.SetActive(true);
-      if (healthRatio < 0.15f) smokeEffectLG.SetActive(true);
+      smokeEffectSM.GetComponent<ParticleSystem>().Play();
+
+      if (healthRatio < 0.25f)
+      {
+        smokeEffectMD.SetActive(true);
+        smokeEffectMD.GetComponent<ParticleSystem>().Play();
+      }
+      if (healthRatio < 0.15f)
+      {
+        smokeEffectLG.SetActive(true);
+        smokeEffectLG.GetComponent<ParticleSystem>().Play();
+      }
     }
   }
 }
