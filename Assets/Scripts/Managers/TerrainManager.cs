@@ -105,6 +105,16 @@ public class TerrainManager : MonoBehaviour
         // Ensure the heightmapMaskObject retains the same size and position as the texture
         terrainTextureObject.transform.position = collidersGroupTransform.position;
         terrainTextureObject.transform.localScale = new Vector3(ts.terrainScale, ts.terrainScale, 1);
+        PolygonCollider2D bc = terrainTextureObject.AddComponent<PolygonCollider2D>();
+        // Create a rectangle collider as a camera confinement area
+        Vector2[] points = new Vector2[4];
+        points[0] = new Vector2(0, 0);
+        points[1] = new Vector2(ts.textureWidth / ts.pixelsPerUnit, 0);
+        points[2] = new Vector2(ts.textureWidth / ts.pixelsPerUnit, ts.textureHeight * 2 / ts.pixelsPerUnit);
+        points[3] = new Vector2(0, ts.textureHeight * 2 / ts.pixelsPerUnit);
+        bc.points = points;
+        bc.isTrigger = true;
+        bc.offset = new Vector2(ts.textureWidth / ts.pixelsPerUnit / 2 * -1, ts.textureHeight / ts.pixelsPerUnit / 2 * -1);
 
         if (debug) Debug.Log("Heightmap texture generated.");
     }

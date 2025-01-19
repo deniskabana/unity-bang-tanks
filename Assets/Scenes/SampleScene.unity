@@ -1809,7 +1809,7 @@ Camera:
   far clip plane: 5000
   field of view: 40
   orthographic: 1
-  orthographic size: 16.8134
+  orthographic size: 16.7651
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -2468,7 +2468,7 @@ MonoBehaviour:
     enableActiveIndicator: 1
     animateActiveIndicator: 1
   terrainSettings:
-    textureWidth: 2600
+    textureWidth: 2800
     textureHeight: 1400
     noiseScale: 0.0022
     heightMultiplier: 900
@@ -2655,13 +2655,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debug: 0
   enableCameraAnimation: 1
-  resolutionChangePollTime: 0.1
-  cameraZoomedOutRatio: 0.8
-  cameraZoomedInRatio: 0.56
   cameraSpeedZoom: 2
-  cameraSpeedMove: 1.35
-  constrainCameraBoundaries: 1
   mainVirtualCameraObject: {fileID: 1021221960}
+  objectWithCameraCollider: {fileID: 54272528}
 --- !u!114 &624826808
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4061,6 +4057,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1021221960}
   - component: {fileID: 1021221959}
+  - component: {fileID: 1021221961}
   m_Layer: 0
   m_Name: MainVC
   m_TagString: Untagged
@@ -4090,7 +4087,7 @@ MonoBehaviour:
   m_Follow: {fileID: 0}
   m_Lens:
     FieldOfView: 40
-    OrthographicSize: 16.8134
+    OrthographicSize: 16.7651
     NearClipPlane: 0.1
     FarClipPlane: 5000
     Dutch: 0
@@ -4123,6 +4120,21 @@ Transform:
   - {fileID: 1270002778}
   m_Father: {fileID: 1116393813}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1021221961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1021221958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f453f694addf4275988fac205bc91968, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_BoundingShape2D: {fileID: 0}
+  m_Damping: 0
+  m_MaxWindowSize: -1
 --- !u!1 &1023998994
 GameObject:
   m_ObjectHideFlags: 0
@@ -4872,23 +4884,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_TrackedObjectOffset: {x: 0, y: -1, z: -20}
   m_LookaheadTime: 0.258
-  m_LookaheadSmoothing: 1.6
+  m_LookaheadSmoothing: 4.4
   m_LookaheadIgnoreY: 0
-  m_XDamping: 2.2
-  m_YDamping: 2.2
+  m_XDamping: 3
+  m_YDamping: 3
   m_ZDamping: 1
   m_TargetMovementOnly: 1
   m_ScreenX: 0.5
-  m_ScreenY: 0.494
+  m_ScreenY: 0.514
   m_CameraDistance: 10
-  m_DeadZoneWidth: 0.053
-  m_DeadZoneHeight: 0.099
+  m_DeadZoneWidth: 0.013
+  m_DeadZoneHeight: 0.112
   m_DeadZoneDepth: 0
   m_UnlimitedSoftZone: 0
-  m_SoftZoneWidth: 0.572
-  m_SoftZoneHeight: 0.501
+  m_SoftZoneWidth: 0.752
+  m_SoftZoneHeight: 0.621
   m_BiasX: 0
-  m_BiasY: 0.003
+  m_BiasY: -0
   m_CenterOnActivate: 1
   m_GroupFramingMode: 2
   m_AdjustmentMode: 0

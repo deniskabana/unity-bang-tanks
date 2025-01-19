@@ -11,13 +11,9 @@ public class CameraManager : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] bool enableCameraAnimation = true;
-    [SerializeField] float resolutionChangePollTime = 0.1f; // 50ms
-    [SerializeField] float cameraZoomedOutRatio = 0.86f; // Manually tested ratios
-    [SerializeField] float cameraZoomedInRatio = 0.613f; // Manually tested ratios
     [SerializeField] float cameraSpeedZoom = 2f;
-    [SerializeField] float cameraSpeedMove = 2f;
-    [SerializeField] bool constrainCameraBoundaries = true;
     [SerializeField] Transform mainVirtualCameraObject;
+    [SerializeField] Transform objectWithCameraCollider;
 
     // Runtime variables
     // --------------------------------------------------
@@ -25,6 +21,7 @@ public class CameraManager : MonoBehaviour
     bool initialized = false;
     bool cameraZoomedIn = false;
     CinemachineVirtualCamera mainVirtualCamera;
+    PolygonCollider2D cameraBounds;
 
     // Built-in methods
     // --------------------------------------------------
@@ -53,12 +50,14 @@ public class CameraManager : MonoBehaviour
     public void Initialize()
     {
         initialized = true;
+        cameraBounds = objectWithCameraCollider.GetComponent<PolygonCollider2D>();
+        mainVirtualCamera.GetComponent<CinemachineConfiner2D>().m_BoundingShape2D = cameraBounds;
     }
 
     void HandleCameraZoom()
     {
         float currentSize = mainVirtualCamera.m_Lens.OrthographicSize;
-        float newSize = cameraZoomedIn ? 12 : 17;
+        float newSize = cameraZoomedIn ? 11.85f : 15.65f;
 
         // Cancel early if we're already at the desired size
         if (currentSize == newSize) return;
@@ -71,10 +70,12 @@ public class CameraManager : MonoBehaviour
         }
         else
         {
-            newSize = currentSize;
+            return;
         }
 
+        float roundedSize = Mathf.Round(newSize * 10000f) / 10000f;
         mainVirtualCamera.m_Lens.OrthographicSize = Mathf.Round(newSize * 10000f) / 10000f;
+        mainVirtualCamera.GetComponent<CinemachineConfiner2D>().InvalidateCache();
     }
 
 
@@ -85,7 +86,6 @@ public class CameraManager : MonoBehaviour
     {
         if (Instance.debug) Debug.Log("CameraManager: Track object " + obj.name);
         Instance.mainVirtualCamera.Follow = obj.transform;
-        Instance.mainVirtualCamera.LookAt = obj.transform;
     }
 
     public static void Zoom(bool zoomIn = true)
