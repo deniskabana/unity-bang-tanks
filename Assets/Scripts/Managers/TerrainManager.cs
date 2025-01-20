@@ -34,7 +34,7 @@ public class TerrainManager : MonoBehaviour
     // Custom methods
     // --------------------------------------------------
 
-    public void Initialize(TerrainSettings _terrainSettings)
+    public void Initialize(TerrainSettings _terrainSettings, bool previewOnly = false)
     {
         if (initialized) return;
         ts = _terrainSettings;
@@ -42,6 +42,8 @@ public class TerrainManager : MonoBehaviour
         if (debug) Debug.Log("Initializing terrain...");
         GenerateHeightmapData();
         GenerateHeightmapTexture();
+
+        if (previewOnly) return;
 
         if (ts.enableTerrainChunking) CreateTerrainChunks();
         else CreateTerrainSingleChunk();
@@ -105,6 +107,9 @@ public class TerrainManager : MonoBehaviour
         // Ensure the heightmapMaskObject retains the same size and position as the texture
         terrainTextureObject.transform.position = collidersGroupTransform.position;
         terrainTextureObject.transform.localScale = new Vector3(ts.terrainScale, ts.terrainScale, 1);
+
+        if (!initialized) return;
+        // Create a polygon collider for the camera confiner
         PolygonCollider2D bc = terrainTextureObject.AddComponent<PolygonCollider2D>();
         // Create a rectangle collider as a camera confinement area
         Vector2[] points = new Vector2[4];
