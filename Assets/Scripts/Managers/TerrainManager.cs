@@ -41,7 +41,7 @@ public class TerrainManager : MonoBehaviour
 
         if (debug) Debug.Log("Initializing terrain...");
         GenerateHeightmapData();
-        GenerateHeightmapTexture();
+        GenerateHeightmapTexture(previewOnly);
 
         if (previewOnly) return;
 
@@ -67,7 +67,7 @@ public class TerrainManager : MonoBehaviour
         if (debug) Debug.Log("Heightmap data generated.");
     }
 
-    void GenerateHeightmapTexture()
+    void GenerateHeightmapTexture(bool previewOnly = false)
     {
         if (debug) Debug.Log("Generating heightmap texture...");
         heightmapTexture = new Texture2D(ts.textureWidth, ts.textureHeight, TextureFormat.RGBA32, false);
@@ -108,7 +108,7 @@ public class TerrainManager : MonoBehaviour
         terrainTextureObject.transform.position = collidersGroupTransform.position;
         terrainTextureObject.transform.localScale = new Vector3(ts.terrainScale, ts.terrainScale, 1);
 
-        if (!initialized) return;
+        if (previewOnly) return;
         // Create a polygon collider for the camera confiner
         PolygonCollider2D bc = terrainTextureObject.AddComponent<PolygonCollider2D>();
         // Create a rectangle collider as a camera confinement area
